@@ -246,6 +246,7 @@ body.dark-mode .header-dark .burger-icon .line {
     align-items: center;
     justify-content: center;
     background: #000;
+    padding: 30px; /* Strong padding to ensure photo is fully visible */
 }
 
 .modal-gallery-slide img {
@@ -254,6 +255,7 @@ body.dark-mode .header-dark .burger-icon .line {
     width: auto;
     height: auto;
     object-fit: contain;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.4);
 }
 
 .modal-gallery-btn {
