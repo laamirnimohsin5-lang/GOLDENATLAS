@@ -212,8 +212,10 @@ body.dark-mode .header-dark .burger-icon .line {
 #modal-details-view {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    height: 100%;
-    min-height: 600px;
+    flex: 1;
+    height: 0;
+    min-height: 550px;
+    overflow: hidden;
 }
 
 @media (max-width: 900px) {
@@ -226,6 +228,7 @@ body.dark-mode .header-dark .burger-icon .line {
     background: #000;
     overflow: hidden;
     height: 100%;
+    min-height: 0;
 }
 
 .modal-gallery-wrapper {
