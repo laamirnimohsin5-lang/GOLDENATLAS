@@ -458,17 +458,29 @@ document.addEventListener('DOMContentLoaded', () => {
         "Zone Cardio": {
             desc: "Équipée par Technogym, notre zone cardio propose une vue inspirante et des machines de dernière génération pour votre endurance.",
             features: ["Tapis de course", "Vélos elliptiques", "Écrans connectés", "Suivi performance"],
-            images: ["https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800", "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=800"]
+            images: [
+                "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=1000",
+                "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1000",
+                "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=1000"
+            ]
         },
         "Musculation": {
             desc: "Un espace dédié à la force brute et au renforcement musculaire, avec des équipements ergonomiques pour tous les niveaux.",
             features: ["Poids libres", "Charges guidées", "Bancs réglables", "Espace fonctionnel"],
-            images: ["https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800", "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=800"]
+            images: [
+                "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1000",
+                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1000",
+                "https://images.unsplash.com/photo-1541534741688-6078c64b52d2?w=1000"
+            ]
         },
         "Studio Yoga": {
             desc: "Retrouvez la paix intérieure dans notre studio de yoga baigné de lumière, idéal pour le Pilates, la méditation et la souplesse.",
             features: ["Tapis premium", "Accessoires fournis", "Ambiance zen", "Sessions privées"],
-            images: ["https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=800", "https://images.unsplash.com/photo-1518611012118-29621e65e60d?q=80&w=800"]
+            images: [
+                "https://images.unsplash.com/photo-1518611012118-29621e65e60d?w=1000",
+                "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=1000",
+                "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1000"
+            ]
         }
     };
 

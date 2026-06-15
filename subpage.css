@@ -201,12 +201,12 @@ body.dark-mode .header-dark .burger-icon .line {
    SPA MODAL ENHANCEMENTS (FULL SCREEN SPLIT)
    =================================== */
 .reservation-modal {
-    width: min(1100px, 95vw);
+    width: min(1200px, 95vw);
     padding: 0;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    max-height: 90vh;
+    max-height: 85vh;
 }
 
 #modal-details-view {
@@ -300,11 +300,12 @@ body.dark-mode .header-dark .burger-icon .line {
 }
 
 .modal-info-content {
-    padding: 60px 50px;
+    padding: 50px 40px;
     background: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    overflow-y: auto;
 }
 body.dark-mode .modal-info-content { background: #0a0a0a; }
 
@@ -358,7 +359,8 @@ body.dark-mode .modal-info-content { background: #0a0a0a; }
 .modal-actions {
     display: flex;
     gap: 15px;
-    margin-top: auto;
+    margin-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .btn-close-modal {
