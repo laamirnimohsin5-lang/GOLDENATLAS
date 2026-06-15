@@ -514,12 +514,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (detailsView) detailsView.style.display = 'grid';
             if (bookingView) bookingView.style.display = 'none';
 
-            if (modal) {
-                modal.style.visibility = 'visible';
-                modal.style.opacity = '1';
-                modal.style.transform = 'translate(-50%, -55%)';
+            if (resvModal) {
+                resvModal.classList.add('active');
+                resvModal.style.transform = 'translate(-50%, -55%)';
             }
             if (overlay) overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         });
     });
 
