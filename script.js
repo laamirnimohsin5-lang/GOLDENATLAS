@@ -406,7 +406,106 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 7. EFFECTS
+    // 7. SPA MODAL GALLERY LOGIC
+    const spaRoomData = {
+        "Les Hammams": {
+            desc: "Plongez dans l'héritage des bains marocains. Nos hammams offrent une expérience de purification profonde utilisant le savon noir à l'eucalyptus, le gant kessa traditionnel et le ghassoul des montagnes de l'Atlas.",
+            features: ["Gommage traditionnel", "Bain de vapeur", "Enveloppement au Ghassoul", "Espace relaxation"],
+            images: [
+                "assets/les massages/Luxury_Moroccan_hammam_spa_202606152317.jpeg",
+                "assets/les massages/Luxury_Moroccan_hammam_interior_202606152341.jpeg",
+                "assets/les massages/Luxury_hammam_relaxation_area_202606152341.jpeg"
+            ]
+        },
+        "Les Massages": {
+            desc: "Une symphonie de gestes pour libérer les tensions. Du massage suédois relaxant au deep tissue tonifiant, nos experts utilisent des huiles d'argan bio et des essences rares pour votre bien-être.",
+            features: ["Deep Tissue", "Massage Atlas Signature", "Aromathérapie", "Pierres Chaudes"],
+            images: [
+                "assets/les massages/Luxury_spa_massage_suite_202606152341.jpeg",
+                "assets/les massages/Therapist_performing_massage_spa_202606152341.jpeg",
+                "assets/les massages/Deep_tissue_massage_luxury_center_202606152341_2.jpeg"
+            ]
+        },
+        "Les Soins Visage": {
+            desc: "Révélez l'éclat de votre peau avec nos soins experts. Nous combinons technologie moderne et ingrédients naturels marocains pour des résultats visibles et une relaxation totale.",
+            features: ["Hydratation Intense", "Soin Anti-Âge", "Détente Oculaire", "Diagnostic de Peau"],
+            images: [
+                "assets/les massages/Luxury_facial_treatment_room_202606152341.jpeg",
+                "assets/les massages/Facial_mask_treatment_in_spa_202606152341.jpeg",
+                "assets/les massages/Man_receiving_facial_treatment_202606152317.jpeg"
+            ]
+        },
+        "La Piscine & Sports": {
+            desc: "Un équilibre parfait entre effort et réconfort. Notre centre comprend une piscine intérieure chauffée à 28°C, une salle de fitness high-tech et des espaces de sauna traditionnel.",
+            features: ["Piscine Chauffée", "Fitness High-Tech", "Sauna & Hammam Sec", "Coaching Privé"],
+            images: [
+                "assets/les massages/Moroccan_spa_with_fountains_202606152341.jpeg",
+                "assets/les massages/Luxury_spa_relaxation_lounge_men_202606152317.jpeg",
+                "assets/les massages/Man_relaxing_in_wooden_sauna_202606152317.jpeg"
+            ]
+        }
+    };
+
+    let currentGalleryIndex = 0;
+    let currentGalleryImages = [];
+
+    function updateGallery() {
+        const track = document.getElementById('modal-gallery-track');
+        const dots = document.getElementById('modal-gallery-dots');
+        if (!track || !dots) return;
+
+        track.innerHTML = currentGalleryImages.map(img => `<div class="modal-gallery-slide"><img src="${img}" alt="Gallery image"></div>`).join('');
+        dots.innerHTML = currentGalleryImages.map((_, i) => `<div class="modal-dot ${i === currentGalleryIndex ? 'active' : ''}" data-index="${i}"></div>`).join('');
+        
+        track.style.transform = `translateX(-${currentGalleryIndex * 100}%)`;
+    }
+
+    document.querySelectorAll('.service-card, .btn-gold[data-room]').forEach(el => {
+        el.addEventListener('click', (e) => {
+            const roomName = el.dataset.room;
+            const data = spaRoomData[roomName];
+            if (!data) return;
+
+            // Fill modal
+            document.getElementById('modal-room-name').textContent = roomName;
+            document.getElementById('modal-room-desc').textContent = data.desc;
+            const featuresEl = document.getElementById('modal-room-features');
+            if (featuresEl) {
+                featuresEl.innerHTML = data.features.map(f => `<span>${f}</span>`).join('');
+            }
+
+            currentGalleryImages = data.images;
+            currentGalleryIndex = 0;
+            updateGallery();
+
+            // Show main modal
+            document.getElementById('modal-details-view').style.display = 'block';
+            document.getElementById('modal-booking-view').style.display = 'none';
+            window.openModalGlobal();
+        });
+    });
+
+    document.getElementById('modal-prev')?.addEventListener('click', () => {
+        currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+        updateGallery();
+    });
+
+    document.getElementById('modal-next')?.addEventListener('click', () => {
+        currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
+        updateGallery();
+    });
+
+    document.getElementById('btn-show-booking')?.addEventListener('click', () => {
+        document.getElementById('modal-details-view').style.display = 'none';
+        document.getElementById('modal-booking-view').style.display = 'block';
+    });
+
+    document.getElementById('btn-back-details')?.addEventListener('click', () => {
+        document.getElementById('modal-details-view').style.display = 'block';
+        document.getElementById('modal-booking-view').style.display = 'none';
+    });
+
+    // 8. EFFECTS (Hero & Menu Animation)
     if (typeof THREE !== 'undefined') {
         initHeroEffect();
         initMenuAnimation();
