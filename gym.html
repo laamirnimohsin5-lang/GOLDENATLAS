@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness & Bien-Être · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu (Simplified in code, assuming it point to all pages) -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane">
+        <canvas id="menu-canvas"></canvas>
+        <div class="menu-header">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="gym.html" data-i18n="menu_gym" style="color:var(--gold);">SALLE DE SPORT</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="menu-right-pane"></div>
+</nav>
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <section class="sub-hero">
+        <div class="sub-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&q=85');"></div>
+        <div class="sub-hero-overlay"></div>
+        <div class="sub-hero-content">
+            <span class="surtitle">Performance & Vitalité</span>
+            <h1 class="title-xl text-white">Fitness Center</h1>
+            <p class="text-white" style="letter-spacing:6px;text-transform:uppercase;font-size:0.82rem;margin-top:1.2rem;">L'excellence au service de votre corps</p>
+        </div>
+    </section>
+
+    <section class="section-pad text-center reveal">
+        <div class="container-sm">
+            <span class="surtitle">Le Fitness</span>
+            <h2 class="title-lg">Équilibre & Performance</h2>
+            <div class="separator"></div>
+            <p class="body-text">Entièrement équipée des dernières technologies Technogym, la salle de sport du Golden Atlas offre un cadre exceptionnel pour vos entraînements. Entre lumière naturelle et équipements de pointe, atteignez vos objectifs dans un environnement luxueux.</p>
+        </div>
+    </section>
+
+    <section class="section-pad bg-cream reveal">
+        <div class="container">
+            <div class="spa-services">
+                <div class="service-card" data-room-type="cardio" data-room="Zone Cardio">
+                    <div class="service-media">
+                        <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80" alt="Cardio Training">
+                    </div>
+                    <div class="service-content">
+                        <h3>Zone Cardio</h3>
+                        <p>Tapis de course, vélos et elliptiques de haute performance avec écrans tactiles intégrés et programmes personnalisés.</p>
+                        <button class="btn-gold" data-room="Zone Cardio">Découvrir</button>
+                    </div>
+                </div>
+                <div class="service-card" data-room-type="musculation" data-room="Musculation">
+                    <div class="service-media">
+                        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80" alt="Performance">
+                    </div>
+                    <div class="service-content">
+                        <h3>Force & Musculation</h3>
+                        <p>Appareils à charge guidée et poids libres pour un renforcement musculaire complet et sécurisé.</p>
+                        <button class="btn-gold" data-room="Musculation">Découvrir</button>
+                    </div>
+                </div>
+                <div class="service-card" data-room-type="yoga" data-room="Studio Yoga">
+                    <div class="service-media">
+                        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80" alt="Yoga Studio">
+                    </div>
+                    <div class="service-content">
+                        <h3>Studio Yoga</h3>
+                        <p>Un espace paisible dédié au yoga, au Pilates et aux étirements, avec tout le matériel nécessaire à votre disposition.</p>
+                        <button class="btn-gold" data-room="Studio Yoga">Découvrir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="block-split reveal">
+        <div class="split-img">
+            <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=900&q=80" alt="Fitness Center View">
+        </div>
+        <div class="split-body">
+            <span class="surtitle">Coaching Privé</span>
+            <h2 class="title-lg">Accompagnement Sur-mesure</h2>
+            <p>Nos coachs certifiés vous accompagnent pour des séances personnalisées adaptées à votre niveau et à vos objectifs spécifiques.</p>
+            <p>Que ce soit pour une remise en forme, un programme de perte de poids ou un entraînement athlétique, bénéficiez de l'expertise Golden Atlas.</p>
+            <a href="#" class="link-arrow">Réserver une séance →</a>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal">
+    <div class="footer-bottom text-center" style="padding:30px 5%;border:none;">
+        <p style="color:#666;">© 2026 Golden Atlas Errachidia · <a href="index.html" style="color:var(--gold);">Retour à l'accueil</a></p>
+    </div>
+</footer>
+
+<div class="reservation-modal" id="reservation-modal">
+    <div id="modal-details-view">
+        <div class="modal-gallery" id="modal-gallery">
+            <div class="modal-gallery-wrapper">
+                <div class="modal-gallery-track" id="modal-gallery-track"></div>
+            </div>
+            <button class="modal-gallery-btn prev" id="modal-prev">‹</button>
+            <button class="modal-gallery-btn next" id="modal-next">›</button>
+            <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
+        </div>
+        <div class="modal-info-content">
+            <p class="modal-sub">FITNESS CENTER</p>
+            <h2 class="modal-title" id="modal-room-name"></h2>
+            <div class="modal-full-desc" id="modal-room-desc"></div>
+            <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            <div class="modal-actions">
+                <button class="btn-gold" id="btn-show-booking" style="flex: 2;">Prendre rendez-vous</button>
+                <button class="btn-close-modal" id="btn-details-close">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

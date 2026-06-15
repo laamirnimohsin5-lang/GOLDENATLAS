@@ -446,6 +446,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    const gymRoomData = {
+        "Zone Cardio": {
+            desc: "Équipée par Technogym, notre zone cardio propose une vue inspirante et des machines de dernière génération pour votre endurance.",
+            features: ["Tapis de course", "Vélos elliptiques", "Écrans connectés", "Suivi performance"],
+            images: ["https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80", "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&q=80"]
+        },
+        "Musculation": {
+            desc: "Un espace dédié à la force brute et au renforcement musculaire, avec des équipements ergonomiques pour tous les niveaux.",
+            features: ["Poids libres", "Charges guidées", "Bancs réglables", "Espace fonctionnel"],
+            images: ["https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80", "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80"]
+        },
+        "Studio Yoga": {
+            desc: "Retrouvez la paix intérieure dans notre studio de yoga baigné de lumière, idéal pour le Pilates, la méditation et la souplesse.",
+            features: ["Tapis premium", "Accessoires fournis", "Ambiance zen", "Sessions privées"],
+            images: ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=80", "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80"]
+        }
+    };
+
     let currentGalleryIndex = 0;
     let currentGalleryImages = [];
 
@@ -463,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.service-card, .btn-gold[data-room]').forEach(el => {
         el.addEventListener('click', (e) => {
             const roomName = el.dataset.room;
-            const data = spaRoomData[roomName];
+            const data = spaRoomData[roomName] || gymRoomData[roomName];
             if (!data) return;
 
             // Fill modal
