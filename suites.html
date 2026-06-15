@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nos Suites · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1600&q=80'); background-size:cover; background-position:center; min-height:60vh; position:relative; display:flex; align-items:center; justify-content:center;">
+        <div class="sub-hero-overlay"></div>
+        <div class="sub-hero-content hero-anim" style="position:relative; z-index:2; text-align:center;">
+            <span class="surtitle" style="color:rgba(255,255,255,0.65);letter-spacing:5px;">Luxe & Espace</span>
+            <h1 class="sub-hero-title">Nos Suites</h1>
+        </div>
+    </section>
+
+    <section class="section-pad reveal" style="background: var(--bg-cream); text-align:center; padding: 80px 5%;">
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto;">
+            <span class="surtitle">Quintessence</span>
+            <h2 class="title-lg">Des espaces conçus pour l'émerveillement</h2>
+            <div class="separator"></div>
+            <p class="body-text">الأجنحة في فندق أطلس الذهبي هي أكثر من مجرد إقامة؛ إنها ملاذات واسعة تجمع بين الفن التقليدي وأعلى معايير الرفاهية العالمية. استمتع بإطلالات بانورامية وخدمة مخصصة بالكامل.</p>
+        </div>
+    </section>
+
+    <section class="section-pad reveal" style="background:#fff; padding: 60px 5%;">
+        <div class="container">
+            <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:40px;">
+                
+                <!-- Suite 1 -->
+                <div class="catalog-card" style="background:var(--bg-cream); transition: 0.4s; text-align: left; border-radius: 8px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Celestial Horizon"</h4>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">أفق يتجاوز الخيال. جناح ملكي يوفر إطلالة لا متناهية على جبال الأطلس مع شرفة خاصة واسعة لتناول العشاء تحت النجوم.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 12 000 MAD / Nuit</p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Celestial Horizon" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                    </div>
+                </div>
+
+                <!-- Suite 2 -->
+                <div class="catalog-card" style="background:var(--bg-cream); transition: 0.4s; text-align: left; border-radius: 8px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Golden Palm"</h4>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">بين النخيل والذهب. جناح فاخر محاط بجنيات الفندق الغناء، يتميز بتصميم داخلي يجمع بين النحاس المطروق والحرير الطبيعي.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 15 500 MAD / Nuit</p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Golden Palm" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                    </div>
+                </div>
+
+                <!-- Suite 3 -->
+                <div class="catalog-card" style="background:var(--bg-cream); transition: 0.4s; text-align: left; border-radius: 8px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                    <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Royal Zellige"</h4>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">لوحة فنية من الزليج الفاسي الأصيل. جناح يجسد روعة الهندسة المغربية بلمسات ملكية عصرية وراحة تفوق التوقعات.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 18 000 MAD / Nuit</p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Royal Zellige" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                    </div>
+                </div>
+
+                <!-- Suite 4 -->
+                <div class="catalog-card" style="background:var(--bg-cream); transition: 0.4s; text-align: left; border-radius: 8px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                    <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Midnight Saharienne"</h4>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">سحر الصحراء في سكون الليل. يتميز هذا الجناح بتصميم دافئ وإضاءة هادئة تجعلك تشعر بسكينة لا مثيل لها فب قلب الفندق.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 22 000 MAD / Nuit</p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Midnight Saharienne" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal"><div class="footer-bottom"><p>© 2026 Golden Atlas Errachidia.</p></div></footer>
+
+<!-- BOOKING MODAL -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    <p class="modal-title">Réserver votre séjour</p>
+    <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+    <p class="modal-room" id="modal-room-name" style="color:var(--gold); font-size: 1.2rem; margin-bottom: 20px; font-weight: 600;"></p>
+    <form id="booking-form">
+        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+        <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
+        <div class="form-group"><label>Voyageurs</label>
+            <select id="booking-guests" required>
+                <option value="" disabled selected>Sélectionner</option>
+                <option>1 Adulte</option><option>2 Adultes</option>
+                <option>2 Adultes + 1 Enfant</option><option>Famille (4+)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
+    </form>
+</div>
+<div class="toast" id="toast-msg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

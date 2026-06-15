@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Atlas · Palace de Luxe Errachidia · OFFICIEL</title>
+    <meta name="description" content="Golden Atlas, palace mythique de Errachidia. Hôtel 5 étoiles de luxe depuis 1923.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<header id="main-header">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg">
+            <video id="hero-video" autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                <source src="assets/Zellige_tile_wall_202604222349 (1).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="hero-overlay"></div>
+        <canvas id="hero-canvas" style="position:absolute; inset:0; z-index:1; pointer-events:none;"></canvas>
+        <div class="hero-content" style="position:relative; z-index:2;">
+            <h1 data-i18n="hero_title">Golden Atlas</h1>
+            <p class="hero-sub" data-i18n="hero_subtitle">Palace · Errachidia · Depuis 1923</p>
+        </div>
+        <button class="video-sound-btn" id="video-sound-btn" title="Activer le son">
+            <svg id="icon-muted" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <svg id="icon-sound" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+        </button>
+        <div class="scroll-down" id="scroll-down-btn"><span>Découvrir</span><div class="scroll-line"></div></div>
+    </section>
+
+    <section class="intro-section reveal" id="intro">
+        <div class="container-sm text-center">
+            <span class="surtitle" data-i18n="intro_surtitle">Bienvenue</span>
+            <h2 class="title-lg" data-i18n="intro_title">Au cœur de notre légende</h2>
+            <div class="separator"></div>
+            <p class="body-text" data-i18n="intro_text">Fidèle à son identité singulière, Golden Atlas se réinvente en permanence dans une magie toujours unique tissée d'élégance et d'exception. Depuis 1923, un héritage de raffinement inégalé.</p>
+        </div>
+    </section>
+
+    <section class="rever-section block-split reveal">
+        <div class="split-img"><img src="luxury_palace_experience_1781134213953.png" alt="Experience"></div>
+        <div class="split-body">
+            <span class="surtitle" data-i18n="rever_surtitle">Une tradition d'alchimie</span>
+            <h2 class="title-lg" data-i18n="rever_title">Les révélateurs d'âme</h2>
+            <div class="separator left"></div>
+            <p data-i18n="rever_text_1">Depuis des siècles, les voyageurs s'arrêtent au Tafilalet pour explorer les secrets d'Errachidia. Golden Atlas est le refuge où chaque détail raconte une histoire d'accueil et de partage.</p>
+            <p data-i18n="rever_text_2">Une collection de chambres et suites d'exception, conçues pour être votre havre de paix.</p>
+            <a href="hebergements.html" class="link-arrow" data-i18n="discover">Découvrir</a>
+        </div>
+    </section>
+
+    <!-- MOT DE REMERCIEMENT -->
+    <section class="section-pad reveal" style="background: var(--bg-cream); text-align: center; padding: 100px 5%;">
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto; border: 1px solid rgba(197,160,89,0.3); padding: 50px; background: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.05);">
+            <span class="surtitle" style="color: var(--gold-dark); margin-bottom: 20px; display: block;" data-i18n="thanks_surtitle">Gratitude & Reconnaissance</span>
+            <h2 style="font-family: var(--font-heading); font-size: 2.2rem; font-style: italic; color: var(--text-dark); margin-bottom: 30px;" data-i18n="thanks_title">Un mot de remerciement</h2>
+            <div class="separator" style="margin: 0 auto 30px;"></div>
+            <p style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.8; color: var(--text-mid); margin-bottom: 20px;" data-i18n="thanks_p1">
+                Nous tenons à exprimer nos plus sincères remerciements aux enfants et à vous tous, notre chère communauté, pour l'excellence de votre visite et vos merveilleux échanges.
+            </p>
+            <p style="font-family: var(--font-body); font-size: 1.1rem; line-height: 1.8; color: var(--text-mid);" data-i18n="thanks_p2">
+                Votre bienveillance, vos sourires chaleureux et la qualité de notre relation font la véritable richesse de notre établissement. C'est toujours un honneur de vous accueillir et de partager with vous ces moments inoubliables au sein du Golden Atlas. Merci pour votre fidélité !
+            </p>
+        </div>
+    </section>
+
+    <!-- METAMORPHOSE -->
+    <section class="metamorphose-section section-pad reveal" style="background:#0a0a0a; color:#fff; text-align:center; padding: 100px 5% 0;">
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto; padding-bottom: 60px;">
+            <div style="font-size:1.5rem; color:#888; font-family:var(--font-heading); margin-bottom:10px;" data-i18n="meta_surtitle">Contempler, s'enchanter :</div>
+            <h2 style="font-size: 2.8rem; font-family:var(--font-heading); font-style:italic; margin-bottom: 20px;" data-i18n="meta_title">Golden Atlas en métamorphose</h2>
+            <p style="font-style:italic; color:#aaa; font-family:var(--font-heading); font-size:1.2rem; margin-bottom:30px;" data-i18n="meta_quote">« Il faut que tout change pour que rien ne change »</p>
+            <p style="text-align:justify; font-size:0.95rem; line-height:1.6; margin-bottom: 20px; color:#ccc;" data-i18n="meta_p1">Golden Atlas possède un art particulier pour se réinventer sans cesse sans jamais rien trahir de sa mémoire, toujours fidèle, au fil des décennies, à son identité singulière. De rénovations en transformations, sa traversée du siècle s'achève en majesté, avec l'extraordinaire métamorphose imaginée en 2020 et 2023 par nos architectes, où toute la magie de la Grande Dame est révélée dans le respect de son âme originelle : la modernité n'a jamais été aussi intemporelle.</p>
+            <p style="text-align:justify; font-size:0.95rem; line-height:1.6; color:#ccc;" data-i18n="meta_p2">Les restaurants se déploient dans une alchimie d'ambiances aux multiples facettes, les lieux publics sont sublimés, des alcôves intimes et mystérieuses de la Galerie jusqu'au Salon d'Honneur tout en douceur bleue, jusqu'à l'apothéose, le fabuleux Chandelier du Centenaire : cette magnifique sculpture lumineuse qui rend hommage aux bijoux traditionnels berbères captive le regard dès l'entrée de l'hôtel, telle une invitation au voyage dans ce rêve éblouissant qu'est un séjour au Golden Atlas.</p>
+        </div>
+        <div style="width: 100%; max-width: 1200px; margin: 0 auto; position: relative; line-height: 0;">
+            <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&q=85" alt="Chandelier du Centenaire" style="width:100%; height:auto; display:block;">
+            <div style="position:absolute; right:0; top:50%; transform:translateY(-50%); background:#7c1a22; width:50px; height:50px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; cursor:pointer;" title="Découvrir">+</div>
+        </div>
+    </section>
+
+    <!-- REVER & EXCLUSIFS -->
+    <section class="rever-section section-pad reveal" style="background:#f9f6f0; text-align:center; padding: 80px 5% 0;">
+        <div style="margin-bottom: 50px;">
+            <div style="font-size: 2.2rem; font-family:var(--font-heading); font-style:italic; color:#7c1a22; margin-bottom:10px;" data-i18n="explore_surtitle">Rêver, s'émerveiller, explorer :</div>
+            <h3 style="font-size: 1.5rem; font-family:var(--font-body); font-weight:400; color:#5a4e42;" data-i18n="explore_title">un séjour inoubliable</h3>
+        </div>
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto; text-align:left; color:#1a1410; padding-bottom: 60px;">
+            <p style="margin-bottom:20px; line-height:1.6;" data-i18n="explore_p1">Si le besoin de bouger se fait sentir, les piscines, la salle de sports, les courts de tennis, les allées ombragées des sublimes jardins plantés de roses, d'orangers, d'oliviers, de palmiers... sont là pour vous.</p>
+            <p style="margin-bottom:20px; line-height:1.6;" data-i18n="explore_p2">Spa et hammams vous attendent pour prendre soin de vous.</p>
+            <p style="margin-bottom:30px; line-height:1.6;" data-i18n="explore_p3">Dissimulée dans les jardins, La Salle de Jeux vintage et colorée convie petits et grands à de chaleureuses parties de flipper, de billard, de baby-foot...</p>
+            <a href="#" style="color:#c5a059; text-transform:uppercase; text-decoration:none; letter-spacing:2px; font-size:0.8rem; font-weight:600;" data-i18n="explore_cta">LES EXCLUSIFS</a>
+        </div>
+        <div style="width: 100%; max-width: 1200px; margin: 0 auto; position: relative; line-height:0;">
+            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=85" alt="Vue Balcon" style="width:100%; height:auto; display:block;">
+            <div style="position:absolute; right:0; top:50%; transform:translateY(-50%); background:#7c1a22; width:50px; height:50px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:24px; cursor:pointer;" title="Découvrir">+</div>
+        </div>
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto; text-align:left; color:#1a1410; padding-top: 60px; padding-bottom:80px;">
+            <p style="font-family:var(--font-heading); font-style:italic; font-size:1.5rem; color:#c5a059; margin-bottom:20px;" data-i18n="explore_p4">Et puis Errachidia est là, avec son cœur qui bat juste aux portes de l'hôtel.</p>
+            <p style="margin-bottom:20px; line-height:1.6;" data-i18n="explore_p5">En quelques minutes, vous voici face à la magnifique mosquée, puis sur la bouillonnante place ou dans les ruelles de la Medina pour en découvrir les échoppes et les merveilles qui se dissimulent au détour d'un passage ou derrière de hautes portes.</p>
+            <p style="margin-bottom:0; line-height:1.6;" data-i18n="explore_p6">Pour visiter les lieux essentiels de la Ville - Les Jardins, le palais, les tombeaux, La Palmeraie... nous serons ravis d'organiser vos excursions et de mettre à votre disposition guide et chauffeur.</p>
+        </div>
+    </section>
+
+    <!-- INSPIRE PAR VOUS -->
+    <section class="inspire-section section-pad reveal" style="background:#f9f6f0; text-align:center; padding: 0 5% 100px;">
+        <h2 style="font-size: 2.2rem; font-family:var(--font-heading); color:#7c1a22; margin-bottom:15px;" data-i18n="inspire_title">Inspiré par vous</h2>
+        <div style="font-family:var(--font-heading); font-style:italic; font-size:1.2rem; color:#7c1a22; margin-bottom:50px; line-height:1.5;">
+            @mohsin_laamirni<br>
+            #GoldenAtlasLife<br>
+            #GoldenAtlasErrachidia
+        </div>
+        
+        <div class="masonry-grid" style="max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <!-- Colonne 1 -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=85" alt="Piscine" style="width:100%; object-fit:cover; display:block;">
+                <img src="https://images.unsplash.com/photo-1553653924-39b70295f8da?w=800&q=85" alt="Architecture" style="width:100%; object-fit:cover; display:block;">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=85" alt="Gastronomie" style="width:100%; object-fit:cover; display:block;">
+            </div>
+            <!-- Colonne 2 -->
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=800&q=85" alt="Restaurant" style="width:100%; object-fit:cover; display:block;">
+                <div style="position:relative; line-height:0;">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=85" alt="Lustre" style="width:100%; height:100%; object-fit:cover;">
+                    <div style="position:absolute; right:0; top:50%; transform:translateY(-50%); background:#7c1a22; width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:20px; cursor:pointer;" title="Voir la photo">+</div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=85" alt="Jardin" style="width:100%; object-fit:cover; display:block;">
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER -->
+    <section class="parallax-banner reveal">
+        <div class="banner-bg">
+            <video autoplay muted loop playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                <source src="assets/video/WhatsApp Video 2026-06-04 at 11.47.16 PM.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);"></div>
+        <div class="banner-text" style="position:relative;z-index:2;">
+            <p class="surtitle" style="color:var(--gold-light);">Golden Atlas · Errachidia</p>
+            <h2>« Il faut que tout change<br>pour que rien ne change »</h2>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-logo-col">
+                <span class="logo">Golden Atlas</span>
+                <p>Avenue Bab Jdid<br>40040 Errachidia, Maroc</p>
+                <a href="tel:+212648120577">+212 648 120 577</a>
+                <a href="mailto:laamirnimohsin5@gmail.com">laamirnimohsin5@gmail.com</a>
+                <div class="footer-socials" style="margin-top: 20px; display: flex; gap: 15px;">
+                    <a href="https://www.facebook.com/profile.php?id=100034458234293" target="_blank" title="Facebook" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    <a href="https://www.instagram.com/mohsin_laamirni?igsh=aXd3MWJ4aWVtc2Yw" target="_blank" title="Instagram" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_hotel">Hôtel</h4>
+                <ul>
+                    <li><a href="hebergements.html" data-i18n="footer_rooms">Hébergements</a></li>
+                    <li><a href="restaurants.html" data-i18n="footer_dining">Restaurants</a></li>
+                    <li><a href="spa.html" data-i18n="footer_spa">Spa & Bien-être</a></li>
+                    <li><a href="#" data-i18n="footer_events">Évènements</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_since">Depuis 1923</h4>
+                <ul>
+                    <li><a href="#" data-i18n="footer_gallery">Galerie photos</a></li>
+                    <li><a href="#" data-i18n="footer_careers">Carrières</a></li>
+                    <li><a href="#" data-i18n="footer_press">Presse</a></li>
+                </ul>
+            </div>
+            <div class="newsletter-col">
+                <h4 data-i18n="footer_contact_title">Contactez-nous</h4>
+                <p data-i18n="footer_contact_sub">Partagez vos impressions, vos notes ou vos remerciements.</p>
+                <form class="newsletter-form" id="feedback-form" style="display: flex; flex-direction: column; gap: 10px;">
+                    <textarea id="feedback-msg" placeholder="Écrivez votre message..." required style="width: 100%; border: none; padding: 15px; background: rgba(255,255,255,1); color: #333; font-family: var(--font-body); resize: none; min-height: 80px; font-size: 0.9rem; border-radius: 4px;" data-i18n="contact_placeholder"></textarea>
+                    <button type="submit" id="feedback-btn" style="background: var(--gold); border: none; color: #fff; padding: 10px; font-weight: 600; letter-spacing: 2px; cursor: pointer; border-radius: 4px;" data-i18n="contact_send">ENVOYER</button>
+                </form>
+                <a href="administrations.html" style="display: inline-block; margin-top: 15px; color: var(--gold); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(197,160,89,0.3); padding: 8px 15px; transition: 0.3s; border-radius: 4px;" data-i18n="nav_admin">Administration</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
+        <div class="footer-bottom-links">
+            <a href="#">Mentions légales</a>
+            <a href="#">Confidentialité</a>
+            <a href="#">Plan du site</a>
+        </div>
+    </div>
+</footer>
+
+<!-- RESERVATION MODAL -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    <p class="modal-title">Réserver votre séjour</p>
+    <p class="modal-sub">Golden Atlas Errachidia</p>
+    <p class="modal-room" id="modal-room-name"></p>
+    <form id="booking-form">
+        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+        <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
+        <div class="form-group"><label>Voyageurs</label>
+            <select id="booking-guests" required>
+                <option value="" disabled selected>Sélectionner</option>
+                <option>1 Adulte</option><option>2 Adultes</option>
+                <option>2 Adultes + 1 Enfant</option><option>Famille (4+)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
+    </form>
+</div>
+<div class="toast" id="toast-msg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

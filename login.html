@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S'identifier | Golden Atlas Palace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #b100ff;
+            --bg-dark: #05060f;
+            --glass-bg: rgba(10, 11, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .login-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                        0 0 40px rgba(0, 242, 255, 0.1);
+            transform: translateZ(0);
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            animation: fadeInScale 1.2s ease-out;
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .login-card:hover {
+            transform: translateZ(20px) translateY(-5px);
+            border-color: rgba(0, 242, 255, 0.3);
+            box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.6),
+                        0 0 50px rgba(177, 0, 255, 0.15);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+            transition: color 0.3s;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .form-group input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .form-group input:focus {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+        }
+
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label {
+            color: var(--primary);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: 10px;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.4);
+            letter-spacing: 4px;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .footer-links {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .footer-links a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            margin-left: 5px;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary);
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            .login-header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Showroom elements */
+        .neon-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .glow-1 {
+            top: -200px;
+            right: -200px;
+            background: var(--primary);
+        }
+        .glow-2 {
+            bottom: -200px;
+            left: -200px;
+            background: var(--secondary);
+        }
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+    <div class="neon-glow glow-1"></div>
+    <div class="neon-glow glow-2"></div>
+
+    <div id="canvas-container"></div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>GOLDEN ATLAS</h1>
+                <p>Administration Portal</p>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-container">
+                        <input type="text" id="username" placeholder="Enter your username" required autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-container">
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login" id="submitBtn">Login</button>
+            </form>
+
+            <div class="footer-links">
+                Forgot password? <a href="#">Reset here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- THREE.JS SCENE CONFIG ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.Fog(0x05060f, 10, 100);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 20);
+        camera.lookAt(0, 2, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMappingExposure = 1.2;
+        container.appendChild(renderer.domElement);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffffff, 2);
+        mainLight.position.set(10, 20, 10);
+        scene.add(mainLight);
+
+        // Neon Blue Light
+        const blueLight = new THREE.PointLight(0x00f2ff, 10, 50);
+        blueLight.position.set(-10, 5, 5);
+        scene.add(blueLight);
+
+        // Neon Purple Light
+        const purpleLight = new THREE.PointLight(0xb100ff, 10, 50);
+        purpleLight.position.set(10, 5, -5);
+        scene.add(purpleLight);
+
+        // --- FLOOR GRID ---
+        const gridHelper = new THREE.GridHelper(200, 100, 0x00f2ff, 0x111111);
+        gridHelper.position.y = 0;
+        gridHelper.material.opacity = 0.2;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
+
+        const floorGeo = new THREE.PlaneGeometry(1000, 1000);
+        const floorMat = new THREE.MeshStandardMaterial({ 
+            color: 0x010101, 
+            roughness: 0.05, 
+            metalness: 0.9 
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -0.05;
+        scene.add(floor);
+
+        // --- CAR MODEL ---
+        // Since loading an external glTF might be slow or fail, we build a sleek sports car from components
+        // as a fallback, or use a simplified loader.
+        
+        const carGroup = new THREE.Group();
+        
+        function createSleekCar() {
+            const bodyMat = new THREE.MeshStandardMaterial({ 
+                color: 0x050505, 
+                metalness: 1, 
+                roughness: 0.1,
+                envMapIntensity: 2
+            });
+            
+            const glassMat = new THREE.MeshStandardMaterial({ 
+                color: 0x000000, 
+                metalness: 1, 
+                roughness: 0,
+                transparent: true,
+                opacity: 0.7
+            });
+
+            const neonMat = new THREE.MeshBasicMaterial({ color: 0x00f2ff });
+
+            // Main Body
+            const body = new THREE.Mesh(new THREE.BoxGeometry(8, 1, 3.5), bodyMat);
+            body.position.y = 0.6;
+            carGroup.add(body);
+
+            // Cockpit
+            const cockpit = new THREE.Mesh(new THREE.BoxGeometry(4, 0.8, 3), bodyMat);
+            cockpit.position.set(-0.5, 1.4, 0);
+            carGroup.add(cockpit);
+            
+            // Windows
+            const window = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.6, 3.1), glassMat);
+            window.position.set(-0.5, 1.4, 0);
+            carGroup.add(window);
+
+            // Wheels
+            const wheelGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.4, 32);
+            const wheelMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.8 });
+            
+            const createWheel = (x, z) => {
+                const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+                wheel.rotation.x = Math.PI / 2;
+                wheel.position.set(x, 0.6, z);
+                carGroup.add(wheel);
+                return wheel;
+            };
+
+            const w1 = createWheel(2.5, 1.7);
+            const w2 = createWheel(2.5, -1.7);
+            const w3 = createWheel(-2.5, 1.7);
+            const w4 = createWheel(-2.5, -1.7);
+
+            // Headlights
+            const headLightGeo = new THREE.BoxGeometry(0.1, 0.3, 0.8);
+            const headLightLeft = new THREE.Mesh(headLightGeo, neonMat);
+            headLightLeft.position.set(4, 0.7, 1.2);
+            carGroup.add(headLightLeft);
+
+            const headLightRight = new THREE.Mesh(headLightGeo, neonMat);
+            headLightRight.position.set(4, 0.7, -1.2);
+            carGroup.add(headLightRight);
+
+            // Taillights
+            const tailLightMat = new THREE.MeshBasicMaterial({ color: 0xb100ff });
+            const tailLight = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 3), tailLightMat);
+            tailLight.position.set(-4, 0.8, 0);
+            carGroup.add(tailLight);
+
+            return carGroup;
+        }
+
+        const car = createSleekCar();
+        car.position.set(30, 0, 0); // Start off-screen right
+        scene.add(car);
+
+        // --- ANIMATION ---
+        let carProgress = 0;
+        let speed = 0.05;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Car movement: Right to Left loop
+            car.position.x -= speed;
+            if (car.position.x < -30) {
+                car.position.x = 30; // Reset to right
+            }
+
+            // Slight floating animation
+            car.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+            
+            // Camera tilt based on mouse
+            const time = Date.now() * 0.0005;
+            camera.position.x = Math.sin(time) * 2;
+            camera.lookAt(0, 2, 0);
+
+            // Pulsing neon lights
+            blueLight.intensity = 5 + Math.sin(Date.now() * 0.003) * 3;
+            purpleLight.intensity = 5 + Math.cos(Date.now() * 0.003) * 3;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // --- RESIZE HANDLER ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- FORM SUBMISSION ---
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.textContent = 'Verifying...';
+            btn.disabled = true;
+            
+            // Professional simulation
+            setTimeout(() => {
+                btn.style.background = '#00ff88';
+                btn.textContent = 'ACCESS GRANTED';
+                setTimeout(() => {
+                    window.location.href = 'administrations.html';
+                }, 1000);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
+

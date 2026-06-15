@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport de Luxe · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --gold: #c5a059;
+            --dark: #0a0a0a;
+            --cream: #f4f1ea;
+        }
+        body { font-family: 'Montserrat', sans-serif; background: var(--dark); color: #fff; overflow-x: hidden; }
+
+        /* ── Hero 3D Section ── */
+        .hero-3d { position: relative; width: 100%; height: 85vh; overflow: hidden; background: #000; }
+        #car-canvas { width: 100%; height: 100%; }
+
+        .hero-content {
+            position: absolute; top: 55%; left: 10%; transform: translateY(-50%);
+            z-index: 10; max-width: 550px;
+        }
+        .hero-content h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-style: italic; margin-bottom: 20px; color: var(--gold); line-height: 1.1; }
+        .hero-content p { font-size: 0.85rem; letter-spacing: 3px; text-transform: uppercase; line-height: 2; opacity: 0.7; }
+
+        /* ── Info Section ── */
+        .info-section { padding: 120px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 80px; background: #050505; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .info-card { border-left: 1px solid var(--gold); padding: 5px 0 5px 35px; }
+        .info-card h2 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 25px; font-style: italic; }
+        .info-card p { font-size: 0.95rem; color: #888; line-height: 1.8; letter-spacing: 0.5px; }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(0.4deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .hero-content { animation: float 7s ease-in-out infinite; }
+
+        .gallery-card {
+            position: relative;
+            height: 480px;
+            overflow: hidden;
+            border: 1px solid rgba(197,160,89,0.1);
+            border-radius: 2px;
+            transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .gallery-card:hover { transform: translateY(-15px); border-color: var(--gold); box-shadow: 0 30px 60px rgba(0,0,0,0.8); }
+        .gallery-card img { width: 100%; height: 100%; object-fit: cover; transition: 1.5s cubic-bezier(0.19, 1, 0.22, 1); filter: contrast(110%) brightness(90%); }
+        .gallery-card:hover img { transform: scale(1.12); filter: contrast(100%) brightness(100%); }
+        .gallery-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.9)); opacity: 0.7; transition: 0.5s; }
+        .gallery-card:hover::after { opacity: 0.4; }
+
+        /* Reveal delay helpers */
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
+    </style>
+</head>
+<body>
+
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+
+<section class="hero-3d">
+    <canvas id="car-canvas"></canvas>
+    <div class="hero-content reveal">
+        <p data-i18n="transport_hero_tag">Transferts d'exception</p>
+        <h1 data-i18n="transport_hero_title">L'Art du Voyage</h1>
+        <p data-i18n="transport_hero_desc">Découvrez nos limousines privées et voitures de collection pour vos trajets entre le palais et l'aéroport d'Errachidia.</p>
+    </div>
+</section>
+
+<section class="info-section">
+    <div class="info-card reveal delay-1">
+        <h2 data-i18n="transport_card1_title">Chauffeur Privé</h2>
+        <p data-i18n="transport_card1_desc">Une flotte de véhicules de prestige entretenus avec soin, avec des chauffeurs bilingues formés aux standards de l'hôtellerie de luxe.</p>
+    </div>
+    <div class="info-card reveal delay-2">
+        <h2 data-i18n="transport_card2_title">Collection Vintage</h2>
+        <p data-i18n="transport_card2_desc">Pour vos événements spéciaux ou mariages dans le désert, optez pour l'une de nos voitures de collection historiques.</p>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery-section" style="padding: 100px 5%; background: var(--dark);">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 60px;">
+        <div class="gallery-card reveal">
+            <img src="assets/service transport/WhatsApp Image 2026-06-11 at 1.06.49 AM.jpeg" alt="Transport 1">
+        </div>
+        <div class="gallery-card reveal delay-1">
+            <img src="assets/service transport/WhatsApp Image 2026-06-11 at 1.06.49 AM (1).jpeg" alt="Transport 2">
+        </div>
+        <div class="gallery-card reveal delay-2">
+            <img src="assets/service transport/WhatsApp Image 2026-06-11 at 1.06.49 AM (2).jpeg" alt="Transport 3">
+        </div>
+        <div class="gallery-card reveal delay-3">
+            <img src="assets/service transport/WhatsApp Image 2026-06-11 at 1.06.49 AM (3).jpeg" alt="Transport 4">
+        </div>
+    </div>
+
+    <!-- Booking Info Text -->
+    <div class="reveal" style="text-align: center; border: 1px solid rgba(197,160,89,0.2); padding: 50px 30px; background: rgba(197,160,89,0.03); max-width: 1000px; margin: 0 auto; border-radius: 2px; position: relative;">
+        <!-- Ornament -->
+        <div style="position: absolute; top: -1px; left: 50%; transform: translateX(-50%); width: 80px; height: 1px; background: var(--gold);"></div>
+        
+        <p style="font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.8rem; color: var(--gold); line-height: 1.4; margin-bottom: 35px;" data-i18n="transport_contact_msg">
+            Pour tout service de transport, veuillez nous informer 48 heures avant votre arrivée au 06 48 12 05 77.
+        </p>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://wa.me/212648120577" target="_blank" style="display: flex; align-items: center; gap: 12px; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.3); color: #25D366; padding: 14px 28px; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; border-radius: 2px; transition: 0.3s;" onmouseover="this.style.background='rgba(37, 211, 102, 0.2)'" onmouseout="this.style.background='rgba(37, 211, 102, 0.1)'" data-i18n="whatsapp">
+                WhatsApp
+            </a>
+            <a href="tel:+212648120577" style="display: flex; align-items: center; gap: 12px; background: rgba(197, 160, 89, 0.1); border: 1px solid rgba(197, 160, 89, 0.3); color: var(--gold); padding: 14px 28px; text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; border-radius: 2px; transition: 0.3s;" onmouseover="this.style.background='rgba(197, 160, 89, 0.2)'" onmouseout="this.style.background='rgba(197, 160, 89, 0.1)'" data-i18n="call_direct">
+                Appeler Directement
+            </a>
+        </div>
+    </div>
+</section>
+
+<footer class="main-footer reveal">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-logo-col">
+                <span class="logo">Golden Atlas</span>
+                <p>Avenue Bab Jdid<br>40040 Errachidia, Maroc</p>
+                <a href="tel:+212648120577">+212 648 120 577</a>
+                <a href="mailto:laamirnimohsin5@gmail.com">laamirnimohsin5@gmail.com</a>
+                <div class="footer-socials" style="margin-top: 20px; display: flex; gap: 15px;">
+                    <a href="https://www.facebook.com/profile.php?id=100034458234293" target="_blank" title="Facebook" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    <a href="https://www.instagram.com/mohsin_laamirni?igsh=aXd3MWJ4aWVtc2Yw" target="_blank" title="Instagram" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_hotel">Hôtel</h4>
+                <ul>
+                    <li><a href="hebergements.html" data-i18n="footer_rooms">Hébergements</a></li>
+                    <li><a href="restaurants.html" data-i18n="footer_dining">Restaurants</a></li>
+                    <li><a href="spa.html" data-i18n="footer_spa">Spa & Bien-être</a></li>
+                    <li><a href="#" data-i18n="footer_events">Évènements</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_since">Depuis 1923</h4>
+                <ul>
+                    <li><a href="#" data-i18n="footer_gallery">Galerie photos</a></li>
+                    <li><a href="#" data-i18n="footer_careers">Carrières</a></li>
+                    <li><a href="#" data-i18n="footer_press">Presse</a></li>
+                </ul>
+            </div>
+            <div class="newsletter-col">
+                <h4 data-i18n="footer_contact_title">Contactez-nous</h4>
+                <p data-i18n="footer_contact_sub">Partagez vos impressions, vos notes ou vos remerciements.</p>
+                <form class="newsletter-form" id="feedback-form" style="display: flex; flex-direction: column; gap: 10px;">
+                    <textarea id="feedback-msg" placeholder="Écrivez votre message..." required style="width: 100%; border: none; padding: 15px; background: rgba(255,255,255,1); color: #333; font-family: var(--font-body); resize: none; min-height: 80px; font-size: 0.9rem; border-radius: 4px;" data-i18n="contact_placeholder"></textarea>
+                    <button type="submit" id="feedback-btn" style="background: var(--gold); border: none; color: #fff; padding: 10px; font-weight: 600; letter-spacing: 2px; cursor: pointer; border-radius: 4px;" data-i18n="contact_send">ENVOYER</button>
+                </form>
+                <a href="administrations.html" style="display: inline-block; margin-top: 15px; color: var(--gold); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(197,160,89,0.3); padding: 8px 15px; transition: 0.3s; border-radius: 4px;" data-i18n="nav_admin">Administration</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    <p class="modal-title">Réserver votre séjour</p>
+    <p class="modal-sub">Golden Atlas Errachidia</p>
+    <p class="modal-room" id="modal-room-name"></p>
+    <form id="booking-form">
+        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+        <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
+        <div class="form-group"><label>Voyageurs</label>
+            <select id="booking-guests" required>
+                <option value="" disabled selected>Sélectionner</option>
+                <option>1 Adulte</option><option>2 Adultes</option>
+                <option>2 Adultes + 1 Enfant</option><option>Famille (4+)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
+    </form>
+</div>
+<div class="modal-overlay" id="modal-overlay"></div>
+<div class="toast" id="toast-msg"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   3D CAR ENGINE — DETAILED LUXURY LIMOUSINE
+   ═══════════════════════════════════════════ */
+(function() {
+    const canvas = document.getElementById('car-canvas');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050505);
+    scene.fog = new THREE.Fog(0x050505, 50, 400);
+
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.set(60, 30, 100);
+    camera.lookAt(0, 5, 0);
+
+    // LIGHTS
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(50, 80, 50); scene.add(dirLight);
+    const spotLight = new THREE.SpotLight(0xffffff, 1);
+    spotLight.position.set(-100, 50, 50); scene.add(spotLight);
+
+    /* ── GROUND ── */
+    const roadGeo = new THREE.PlaneGeometry(2000, 100);
+    const roadMat = new THREE.MeshPhongMaterial({ color: 0x111 });
+    const road = new THREE.Mesh(roadGeo, roadMat);
+    road.rotation.x = -Math.PI / 2;
+    scene.add(road);
+
+    /* ── DETAILED PROCEDURAL CAR ── */
+    function createCar() {
+        const car = new THREE.Group();
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0x111, shininess: 100 });
+        const goldMat = new THREE.MeshPhongMaterial({ color: 0xc5a059, shininess: 120 });
+        const glassMat = new THREE.MeshPhongMaterial({ color: 0x222, transparent: true, opacity: 0.5 });
+
+        // Lower Body
+        const base = new THREE.Mesh(new THREE.BoxGeometry(40, 6, 18), bodyMat);
+        base.position.y = 5; car.add(base);
+
+        // Upper Cabin
+        const cabin = new THREE.Mesh(new THREE.BoxGeometry(22, 6, 16), bodyMat);
+        cabin.position.set(-2, 11, 0); car.add(cabin);
+
+        // Windows
+        const windows = new THREE.Mesh(new THREE.BoxGeometry(20, 5, 17), glassMat);
+        windows.position.set(-2, 11, 0); car.add(windows);
+
+        // Wheels
+        const wheelGeo = new THREE.CylinderGeometry(4, 4, 3, 32);
+        const wheelMat = new THREE.MeshPhongMaterial({ color: 0x050505 });
+        const rimMat = new THREE.MeshPhongMaterial({ color: 0xc5a059 });
+
+        const createWheel = (x, z) => {
+            const wGroup = new THREE.Group();
+            const tire = new THREE.Mesh(wheelGeo, wheelMat);
+            tire.rotation.x = Math.PI/2;
+            wGroup.add(tire);
+            // Rim
+            const rim = new THREE.Mesh(new THREE.CylinderGeometry(2.5, 2.5, 3.2, 8), rimMat);
+            rim.rotation.x = Math.PI/2;
+            wGroup.add(rim);
+            wGroup.position.set(x, 4, z);
+            return wGroup;
+        };
+
+        car.wheelFR = createWheel(12, 9); car.add(car.wheelFR);
+        car.wheelFL = createWheel(12, -9); car.add(car.wheelFL);
+        car.wheelBR = createWheel(-14, 9); car.add(car.wheelBR);
+        car.wheelBL = createWheel(-14, -9); car.add(car.wheelBL);
+
+        // Headlights
+        const lightGeo = new THREE.SphereGeometry(1.5, 16, 16);
+        const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const hlR = new THREE.Mesh(lightGeo, lightMat);
+        hlR.position.set(20, 6, 6); car.add(hlR);
+        const hlL = hlR.clone(); hlL.position.z = -6; car.add(hlL);
+
+        // Grill (Gold)
+        const grill = new THREE.Mesh(new THREE.BoxGeometry(1, 4, 10), goldMat);
+        grill.position.set(20.2, 5, 0); car.add(grill);
+
+        return car;
+    }
+
+    const car = createCar();
+    scene.add(car);
+
+    /* ── ANIMATION ── */
+    let clock = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        clock += 0.05;
+
+        // Drive Animation (Looping Road)
+        car.wheelFR.rotation.z -= 0.15;
+        car.wheelFL.rotation.z -= 0.15;
+        car.wheelBR.rotation.z -= 0.15;
+        car.wheelBL.rotation.z -= 0.15;
+
+        // Subtle Vibration
+        car.position.y = Math.sin(clock * 2) * 0.2;
+
+        // Camera Pan
+        camera.position.x = 80 + Math.sin(clock * 0.1) * 30;
+        camera.lookAt(car.position.x - 20, 5, 0);
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+    });
+})();
+</script>
+<script src="script.js"></script>
+
+</body>
+</html>

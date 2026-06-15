@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spa & Bien-Être · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <!-- FULL HERO -->
+    <section class="sub-hero">
+        <div class="sub-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=1600&q=85');"></div>
+        <div class="sub-hero-overlay"></div>
+        <div class="sub-hero-content">
+            <span class="surtitle" style="color:rgba(255,255,255,0.7);">Golden Atlas · 2500 m²</span>
+            <h1 class="title-xl text-white">Spa & Bien-Être</h1>
+            <p class="text-white" style="letter-spacing:6px;text-transform:uppercase;font-size:0.82rem;margin-top:1.2rem;">Un sanctuaire de sérénité absolue</p>
+            <button class="btn-outline-white" style="margin-top:2rem;" id="btn-top-reserver2">Réserver un soin</button>
+        </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section-pad text-center reveal" id="intro">
+        <div class="container-sm">
+            <span class="surtitle">Le Spa</span>
+            <h2 class="title-lg">Soin du corps & de l'âme</h2>
+            <div class="separator"></div>
+            <p class="body-text">Sur 2500 m², le Spa de Golden Atlas déploie un univers raffiné de bien-être et de beauté. Hammams d'exception, soins du visage et massages signatures, piscine intérieure chauffée, salle de sport... Un véritable sanctuaire au cœur du palace.</p>
+        </div>
+    </section>
+
+    <!-- SERVICES GRID -->
+    <section class="section-pad bg-cream reveal">
+        <div class="container">
+            <div class="spa-services">
+                <div class="service-card" data-room-type="hammam" data-room="Les Hammams">
+                    <div class="service-icon">♨️</div>
+                    <h3>Les Hammams</h3>
+                    <p>Un rituel ancestral revisité dans un décor somptueux. Gommage au savon beldi, enveloppements et purification selon l'art du bain marocain.</p>
+                    <button class="btn-gold" data-room="Les Hammams">Voir Détails</button>
+                </div>
+                <div class="service-card" data-room-type="massage" data-room="Les Massages">
+                    <div class="service-icon">🤲</div>
+                    <h3>Les Massages</h3>
+                    <p>De l'effleurage doux au massage deep tissue, nos thérapeutes experts personnalisent chaque séance selon vos besoins et votre état du moment.</p>
+                    <button class="btn-gold" data-room="Les Massages">Voir Détails</button>
+                </div>
+                <div class="service-card" data-room-type="soin-visage" data-room="Les Soins Visage">
+                    <div class="service-icon">✨</div>
+                    <h3>Les Soins Visage</h3>
+                    <p>Des soins sur-mesure avec les meilleures marques internationales, associées aux ingrédients naturels précieux du Maroc : arganier, huile de roses...</p>
+                    <button class="btn-gold" data-room="Les Soins Visage">Voir Détails</button>
+                </div>
+                <div class="service-card" data-room-type="piscine" data-room="La Piscine & Sports">
+                    <div class="service-icon">🏊</div>
+                    <h3>La Piscine & Sports</h3>
+                    <p>Piscine intérieure chauffée, salle de sport équipée des dernières technologies, courts de tennis, yoga au lever du soleil dans les jardins historiques.</p>
+                    <button class="btn-gold" data-room="La Piscine & Sports">Voir Détails</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SPLIT IMAGE -->
+    <section class="block-split reveal">
+        <div class="split-img">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=900&q=80" alt="Spa Golden Atlas">
+        </div>
+        <div class="split-body">
+            <span class="surtitle">L'Art du Bien-être</span>
+            <h2 class="title-lg">Un voyage intérieur</h2>
+            <p>Dans ce cocon de sérénité, le temps s'étire, les sens s'éveillent et les tensions s'envolent. Nos thérapeutes, formés aux meilleures techniques du monde, vous accompagnent dans un voyage de régénération profonde.</p>
+            <p>En utilisant les produits les plus précieux — huile d'argan du Maroc, eau de fleur d'oranger, argile ghassoul — ils vous offrent des soins d'une efficacité et d'un luxe rares.</p>
+            <a href="#" onclick="document.getElementById('reservation-modal').classList.add('active');document.getElementById('modal-overlay').classList.add('active');document.body.style.overflow='hidden';return false;" class="link-arrow">Prendre rendez-vous →</a>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal">
+    <div class="footer-bottom text-center" style="padding:30px 5%;border:none;">
+        <p style="color:#666;">© 2026 Golden Atlas Errachidia · <a href="index.html" style="color:var(--gold);">Retour à l'accueil</a></p>
+    </div>
+</footer>
+
+<!-- Room Details & Reservation Modal -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    
+    <div id="modal-details-view">
+        <div class="modal-gallery" id="modal-gallery">
+            <div class="modal-gallery-wrapper">
+                <div class="modal-gallery-track" id="modal-gallery-track">
+                    <!-- Dynamic images will be inserted here -->
+                </div>
+            </div>
+            <button class="modal-gallery-btn prev" id="modal-prev">‹</button>
+            <button class="modal-gallery-btn next" id="modal-next">›</button>
+            <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
+        </div>
+        <div class="modal-info-content">
+            <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+            <h2 class="modal-title" id="modal-room-name"></h2>
+            <div class="modal-full-desc" id="modal-room-desc">
+                <!-- Dynamic description -->
+            </div>
+            <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;">
+                <!-- Dynamic features -->
+            </div>
+            <button class="btn-gold" id="btn-show-booking" style="width:100%;">Passer à la réservation</button>
+        </div>
+    </div>
+
+    <div id="modal-booking-view" style="display:none; padding-top: 20px;">
+        <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px;">← Retour aux détails</button>
+        <p class="modal-title">Réserver un soin</p>
+        <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+        <form id="booking-form">
+            <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+            <div class="form-group"><label>Type de soin</label>
+                <select id="modal-room-name" required><option value="" disabled selected>Sélectionner</option>
+                    <option>Hammam Traditionnel</option><option>Massage Signature Atlas</option>
+                    <option>Massage Deep Tissue 90min</option><option>Soin du Visage</option>
+                    <option>Circuit Journée Complète</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Date souhaitée</label><input type="date" id="booking-date" required></div>
+            <div class="form-group"><label>Thérapeute / Voyageurs</label>
+                 <select id="booking-guests"><option value="1">Pour 1 personne</option><option value="2">Pour 2 personnes</option></select>
+            </div>
+            <button type="submit" class="btn-modal-submit">CONFIRMER MON RENDEZ-VOUS</button>
+        </form>
+    </div>
+</div>
+<div class="toast" id="toast-msg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

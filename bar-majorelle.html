@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Bar Majorelle · Golden Atlas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+<main>
+    <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=85'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
+        <div class="sub-hero-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.5);"></div>
+        <div class="sub-hero-content" style="position:relative; z-index:2; text-align:center;">
+            <span class="surtitle" style="color:var(--gold); letter-spacing:5px;">Bars & Lounges</span>
+            <h1 style="font-family:var(--font-heading); color:#fff; font-size:4rem; margin-top:20px;">Le Bar Majorelle</h1>
+            <p style="color:#fff; font-style:italic; font-size:1.5rem; margin-top:10px;">Lounge & Jazz</p>
+        </div>
+    </section>
+    <section class="section-pad" style="background: var(--bg-cream); text-align:center; padding: 80px 5%;">
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto;">
+            <h2 class="title-lg">L'esprit des soirées mythiques</h2>
+            <div class="separator"></div>
+            <p class="body-text">L'endroit idéal pour déguster des cocktails créations dans une atmosphère jazzy chic et élégante, rythmée par la musique live tous les soirs. Un véritable voyage dans le temps.</p>
+            <p style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-top: 20px;">Prix : Cocktails à partir de 250 MAD</p>
+            <button class="btn-reserver" onclick="document.getElementById('reservation-modal').classList.add('show'); document.getElementById('modal-overlay').classList.add('show');" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer;">RÉSERVER UNE TABLE</button>
+        </div>
+    </section>
+    <section class="section-pad" style="background:#fff; padding: 60px 5%;">
+        <div class="container">
+            <h3 class="title-md text-center" style="margin-bottom: 50px;">Nos Collections d'Exception</h3>
+            <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:40px;">
+                
+                <!-- Collection 1 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="assets/bar-1.png" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">L'Expérience "Dark Skull"</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Une sélection pointue de Whiskeys Single Malt servis avec notre glace sculptée artisanale pour une dégustation mystique et raffinée.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 350 MAD / Verre</p>
+                    </div>
+                </div>
+
+                <!-- Collection 2 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="assets/bar-2.png" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Cocktails "Éclat Tropical"</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Des créations explosives à base de fruits frais et d'essences botaniques. Un festival de couleurs et de saveurs audacieuses.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 280 MAD / Création</p>
+                    </div>
+                </div>
+
+                <!-- Collection 3 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=800&q=85" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Le Carré Champagne</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Les plus grandes cuvées servies à température parfaite dans l'effervescence de nos soirées Jazz. Prestige et célébration.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 4 500 MAD / Bouteille</p>
+                    </div>
+                </div>
+
+                <!-- Collection 4 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=85" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">La Bibliothèque des Spiritueux</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Plus de 200 références de spiritueux d'exception provenant des quatre coins du monde. Un voyage initiatique pour les connaisseurs.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 180 MAD / Dégustation</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+<div class="modal-overlay" id="modal-overlay"></div>
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" onclick="document.getElementById('reservation-modal').classList.remove('show'); document.getElementById('modal-overlay').classList.remove('show');">×</button>
+    <p class="modal-title">Réserver une table</p>
+    <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+    <form id="booking-form">
+        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required></div>
+        <div class="form-group"><label>Date de réservation</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label>Nombre de personnes</label><select id="booking-guests" required><option value="2">2 Personnes</option><option value="4">4 Personnes</option></select></div>
+        <p id="modal-room-name" style="display:none;">Le Bar Majorelle</p>
+        <button type="submit" class="btn-modal-submit">CONFIRMER LA RÉSERVATION</button>
+    </form>
+</div>
+<div class="toast" id="toast-msg"></div>
+<script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hébergements · Golden Atlas Errachidia</title>
+    <meta name="description" content="Découvrez les chambres, suites et riads d'exception du Golden Atlas Errachidia — un luxe intemporel au cœur du désert.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+    <link rel="stylesheet" href="hebergements.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <!-- ══════════════════════════════════════════
+         HERO VIDEO
+    ═══════════════════════════════════════════ -->
+    <section class="sub-hero video-hero">
+        <div class="video-hero-bg">
+            <video id="hero-video" autoplay muted loop playsinline>
+                <source src="assets/Zellige_tile_wall_202604222349.mp4" type="video/mp4">
+                <source src="assets/Zellige_tile_wall_202604222349 (1).mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="sub-hero-overlay"></div>
+        <div class="sub-hero-content hero-anim">
+            <span class="surtitle" style="color:rgba(255,255,255,0.65);letter-spacing:5px;">Golden Atlas · 245 Espaces</span>
+            <h1 class="title-xl text-white" style="margin-top:1rem;">Hébergements</h1>
+            <div class="hero-divider"></div>
+            <p class="text-white" style="letter-spacing:5px;text-transform:uppercase;font-size:0.78rem;font-family:'Montserrat',sans-serif;font-weight:300;">Chambres · Suites · Riads d'Exception</p>
+        </div>
+        <button class="video-sound-btn" id="video-sound-btn" title="Activer le son">
+            <svg id="icon-muted" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>
+            </svg>
+            <svg id="icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+        </button>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         INTRO EDITORIALE — fond crème
+    ═══════════════════════════════════════════ -->
+    <section class="ed-intro reveal">
+        <div class="ed-intro-ornament">
+            <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+                <circle cx="21" cy="21" r="20" stroke="var(--gold)" stroke-width="0.8" opacity="0.5"/>
+                <circle cx="21" cy="21" r="13" stroke="var(--gold)" stroke-width="0.6" opacity="0.4"/>
+                <path d="M21 4 L21 38 M4 21 L38 21" stroke="var(--gold)" stroke-width="0.5" opacity="0.35"/>
+                <path d="M8 8 L34 34 M34 8 L8 34" stroke="var(--gold)" stroke-width="0.5" opacity="0.25"/>
+            </svg>
+        </div>
+        <p class="ed-intro-quote">« Il faut que tout change pour que rien ne change »</p>
+        <h2 class="ed-intro-title">L'Art du Séjour <em>absolu</em></h2>
+        <p class="ed-intro-body">Golden Atlas possède un art particulier pour se réinventer sans cesse sans jamais rien trahir de sa mémoire — toujours fidèle, au fil des décennies, à son identité singulière. Chacun de nos espaces est une œuvre d'art vivante, du mobilier artisanal aux matières nobles : marbre, velours, cuir et soie.</p>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION ÉDITORIALE 1 — Chambres (image gauche)
+    ═══════════════════════════════════════════ -->
+    <section class="ed-split reveal" data-direction="left">
+        <div class="ed-split-image" style="background-image:url('https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=85');">
+            <div class="ed-split-image-overlay"></div>
+            <span class="ed-split-label">Les Chambres</span>
+        </div>
+        <div class="ed-split-content">
+            <span class="ed-eyebrow">46 – 68 m² · Vue Jardin &amp; Piscine</span>
+            <h2 class="ed-heading">Contempler,<br><em>s'enchanter</em></h2>
+            <div class="ed-rule"></div>
+            <p class="ed-body">Les chambres se déploient dans une alchimie d'ambiances aux multiples facettes. Du mobilier ciselé en marqueterie de thuya aux plafonds en plâtre sculpté, chaque chambre rend hommage aux bijoux de l'Atlas tout en offrant le confort le plus contemporain.</p>
+            <p class="ed-body">Des alcôves intimes et mystérieuses aux panoramas ouverts sur les palmeraies : la modernité n'a jamais été aussi intemporelle.</p>
+            <div class="ed-amenities">
+                <span>Baignoire îlot</span>
+                <span>Vue jardin ou piscine</span>
+                <span>King Size</span>
+                <span>Dressing privé</span>
+            </div>
+            <div class="ed-cta-row">
+                <span class="ed-price">Dès <strong>650€</strong> <em>/nuit</em></span>
+                <button class="btn-ed-gold" data-room="Chambre">Découvrir</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- NOS CHAMBRES -->
+    <section class="rooms-vertical-section section-pad reveal" style="background:var(--bg-white)">
+        <div class="container mt-5" style="margin-top:0">
+            <div class="rooms-vertical-list">
+
+                <!-- VIP Luxury Super Delux -->
+                <div class="room-v-card">
+                    <div class="room-v-img">
+                        <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85" alt="VIP Luxury Super Delux">
+                    </div>
+                    <div class="room-v-info">
+                        <h3>Suite Royale Atlas</h3>
+                        <p class="room-v-price">12 000 MAD <span>/ nuit</span></p>
+                        <div class="room-v-rule"></div>
+                        <ul class="room-v-features">
+                            <li><span>Surface :</span> 80 m²</li>
+                            <li><span>Capacité :</span> 3 Guests</li>
+                            <li><span>Literie :</span> King size ultra premium</li>
+                            <li><span>Vue :</span> City View & Atlas Mountains</li>
+                        </ul>
+                        <!-- User explicitly wants a "voir" button to redirect -->
+                        <a href="vip-room.html" style="display:inline-block; margin-top:20px; font-family:var(--font-heading); color:var(--text-dark); text-decoration:none; padding-bottom:3px; border-bottom:1px solid var(--gold); letter-spacing:1px; text-transform:uppercase; margin-right: 20px;">Voir les détails</a>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Suite Royale Atlas">Réserver cette suite</button>
+                    </div>
+                </div>
+
+                <!-- Deluxe -->
+                <div class="room-v-card">
+                    <div class="room-v-img">
+                        <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&q=85" alt="Chambre Deluxe">
+                    </div>
+                    <div class="room-v-info">
+                        <h3>Chambre Deluxe Emeraude</h3>
+                        <p class="room-v-price">4 800 MAD <span>/ nuit</span></p>
+                        <div class="room-v-rule"></div>
+                        <ul class="room-v-features">
+                            <li><span>Surface :</span> 30-45 m²</li>
+                            <li><span>Capacité :</span> Jusqu'à 3 personnes</li>
+                            <li><span>Literie :</span> Lit King size ou lits jumeaux</li>
+                            <li><span>Vue :</span> Panoramique sur les jardins ou l'Atlas</li>
+                            <li><span>Bain :</span> Marbre, douche et baignoire séparées</li>
+                            <li><span>Extérieur :</span> Balcon / terrasse privée</li>
+                        </ul>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Deluxe Emeraude">Réserver cette chambre</button>
+                    </div>
+                </div>
+
+                <!-- Superieure -->
+                <div class="room-v-card reverse">
+                    <div class="room-v-info">
+                        <h3>Chambre Supérieure Saphir</h3>
+                        <p class="room-v-price">3 950 MAD <span>/ nuit</span></p>
+                        <div class="room-v-rule"></div>
+                        <ul class="room-v-features">
+                            <li><span>Surface :</span> 28-38 m²</li>
+                            <li><span>Capacité :</span> Jusqu'à 2 personnes + 1 enfant</li>
+                            <li><span>Literie :</span> Grand lit ou lits jumeaux</li>
+                            <li><span>Bain :</span> Salle de bain en marbre</li>
+                            <li><span>Produits :</span> Signature La Mamounia</li>
+                        </ul>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Supérieure Saphir">Réserver cette chambre</button>
+                    </div>
+                    <div class="room-v-img">
+                        <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&q=85" alt="Chambre Supérieure">
+                    </div>
+                </div>
+
+                <!-- Classique -->
+                <div class="room-v-card">
+                    <div class="room-v-img">
+                        <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=85" alt="Chambre Classique">
+                    </div>
+                    <div class="room-v-info">
+                        <h3>Chambre Classique Perle</h3>
+                        <p class="room-v-price">3 200 MAD <span>/ nuit</span></p>
+                        <div class="room-v-rule"></div>
+                        <ul class="room-v-features">
+                            <li><span>Surface :</span> 25-32 m²</li>
+                            <li><span>Capacité :</span> Jusqu'à 2 personnes</li>
+                            <li><span>Literie :</span> Lit King size</li>
+                            <li><span>Vue :</span> Jardin intérieur</li>
+                            <li><span>Bain :</span> Douche et baignoire</li>
+                        </ul>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Classique Perle">Réserver cette chambre</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         PULL QUOTE — fond noir
+    ═══════════════════════════════════════════ -->
+    <section class="ed-pullquote reveal">
+        <div class="ed-pq-ornament">
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                <circle cx="18" cy="18" r="17" stroke="var(--gold)" stroke-width="0.7" opacity="0.5"/>
+                <path d="M18 2 L18 34 M2 18 L34 18" stroke="var(--gold)" stroke-width="0.5" opacity="0.3"/>
+                <path d="M6 6 L30 30 M30 6 L6 30" stroke="var(--gold)" stroke-width="0.5" opacity="0.2"/>
+            </svg>
+        </div>
+        <blockquote class="ed-pq-text">Avoir été distingué à plusieurs reprises comme le meilleur hôtel du monde nous honore et nous engage.</blockquote>
+        <p class="ed-pq-sub">Notre excellence est le fruit d'un travail incessant, de la mobilisation sans faille de nos équipes, d'innovations audacieuses et respectueuses pour que Golden Atlas demeure ce lieu mythique qui traverse les années.</p>
+        <a href="#" class="ed-pq-link" id="btn-pq-reserver" onclick="window.openModalGlobal()">RÉSERVER UNE CHAMBRE</a>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         FULL-BLEED IMAGE — transition vers Suites
+    ═══════════════════════════════════════════ -->
+    <section class="ed-fullbleed reveal">
+        <div class="ed-fullbleed-img" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=1600&q=90');"></div>
+        <div class="ed-fullbleed-content">
+            <span class="ed-fullbleed-eyebrow">Chandelier du Centenaire</span>
+            <p class="ed-fullbleed-caption">Cette magnifique sculpture lumineuse captive le regard dès l'entrée — une invitation au voyage dans ce rêve éblouissant.</p>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION ÉDITORIALE 2 — Suites (image droite)
+    ═══════════════════════════════════════════ -->
+    <section class="ed-split reveal" data-direction="right">
+        <div class="ed-split-content">
+            <span class="ed-eyebrow">90 – 350 m² · Vue Panoramique</span>
+            <h2 class="ed-heading">Rêver,<br><em>s'émerveiller, explorer</em></h2>
+            <div class="ed-rule"></div>
+            <p class="ed-body">Nos suites sont des résidences à part entière. Grand salon avec cheminée, chambre indépendante et double terrasse privée surplombant les jardins historiques. La quintessence du luxe saharien.</p>
+            <p class="ed-body">Séjournez dans la suite d'exception héritière d'une longue tradition de raffinement — des soieries brodées à la main aux plafonds en cèdre de l'Atlas sculpté.</p>
+            <div class="ed-amenities">
+                <span>Cheminée</span>
+                <span>Terrasse panoramique</span>
+                <span>Jacuzzi extérieur</span>
+                <span>Majordome 24h/24</span>
+            </div>
+            <div class="ed-cta-row">
+                <span class="ed-price">Dès <strong>1 800€</strong> <em>/nuit</em></span>
+                <button class="btn-ed-gold" data-room="Suite">Découvrir</button>
+            </div>
+        </div>
+        <div class="ed-split-image" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=85');">
+            <div class="ed-split-image-overlay"></div>
+            <span class="ed-split-label">Les Suites</span>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION CHIFFRES / STATS — fond crème
+    ═══════════════════════════════════════════ -->
+    <section class="ed-stats reveal">
+        <div class="ed-stats-grid">
+            <div class="ed-stat">
+                <span class="ed-stat-num">245</span>
+                <span class="ed-stat-label">Espaces de prestige</span>
+            </div>
+            <div class="ed-stat-divider"></div>
+            <div class="ed-stat">
+                <span class="ed-stat-num">800</span>
+                <span class="ed-stat-label">Artisans &amp; employés</span>
+            </div>
+            <div class="ed-stat-divider"></div>
+            <div class="ed-stat">
+                <span class="ed-stat-num">100<small>ans</small></span>
+                <span class="ed-stat-label">D'héritage vivant</span>
+            </div>
+            <div class="ed-stat-divider"></div>
+            <div class="ed-stat">
+                <span class="ed-stat-num">#1</span>
+                <span class="ed-stat-label">Meilleur hôtel du monde</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         SECTION ÉDITORIALE 3 — Riads (image gauche, fond noir)
+    ═══════════════════════════════════════════ -->
+    <section class="ed-split ed-split-dark reveal" data-direction="left">
+        <div class="ed-split-image" style="background-image:url('https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200&q=85');">
+            <div class="ed-split-image-overlay"></div>
+            <span class="ed-split-label">Les Riads</span>
+        </div>
+        <div class="ed-split-content">
+            <span class="ed-eyebrow" style="color:rgba(197,160,89,0.8);">Exclusivité absolue · 750 m²</span>
+            <h2 class="ed-heading" style="color:#fff;">Venir, revenir<br><em>à Golden Atlas</em></h2>
+            <div class="ed-rule"></div>
+            <p class="ed-body" style="color:rgba(255,255,255,0.75);">Nichés dans les jardins centenaires du palace, nos riads privés offrent un espace de vie complet avec piscine chauffée, terrasse panoramique, cuisine équipée et service Majordome 24h/24.</p>
+            <p class="ed-body" style="color:rgba(255,255,255,0.75);">Un art de vivre hérité d'une longue tradition de raffinement et d'attention. Une atmosphère singulière au léger parfum de dattier — des sourires chaleureux et des gestes attentionnés.</p>
+            <div class="ed-amenities ed-amenities-dark">
+                <span>Piscine chauffée</span>
+                <span>Jardin privé</span>
+                <span>Cuisine privée</span>
+                <span>Majordome 24h/24</span>
+            </div>
+            <div class="ed-cta-row">
+                <span class="ed-price" style="color:#fff;">Dès <strong style="color:var(--gold);">15 000€</strong> <em>/nuit</em></span>
+                <button class="btn-ed-gold" data-room="Riad Privé avec Piscine">Réserver ce Riad</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         CE QUI REND GOLDEN ATLAS UNIQUE
+    ═══════════════════════════════════════════ -->
+    <section class="ed-unique reveal">
+        <div class="ed-unique-inner">
+            <div class="ed-unique-ornament">
+                <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
+                    <circle cx="21" cy="21" r="20" stroke="var(--gold)" stroke-width="0.8" opacity="0.4"/>
+                    <path d="M21 4 L21 38 M4 21 L38 21" stroke="var(--gold)" stroke-width="0.5" opacity="0.25"/>
+                    <path d="M8 8 L34 34 M34 8 L8 34" stroke="var(--gold)" stroke-width="0.5" opacity="0.2"/>
+                </svg>
+            </div>
+            <h2 class="ed-unique-title">Ce qui rend<br><em>Golden Atlas<br>si unique à leurs yeux ?</em></h2>
+            <div class="ed-unique-grid">
+                <div class="ed-unique-item">
+                    <div class="ed-unique-num">01</div>
+                    <p>Un art de vivre hérité d'une longue tradition de raffinement et d'attention.</p>
+                </div>
+                <div class="ed-unique-item">
+                    <div class="ed-unique-num">02</div>
+                    <p>Une atmosphère singulière au léger parfum de dattes. Des sourires chaleureux et des gestes attentionnés.</p>
+                </div>
+                <div class="ed-unique-item">
+                    <div class="ed-unique-num">03</div>
+                    <p>Un sens de l'hospitalité qui se traduit par mille et un détails — dès votre première venue, nous retenons vos préférences.</p>
+                </div>
+                <div class="ed-unique-item">
+                    <div class="ed-unique-num">04</div>
+                    <p>La plus belle de nos récompenses est la fidélité de nos clients qui aiment revenir ici parce qu'ils s'y sentent toujours accueillis comme chez eux.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════
+         PANORAMIC CLOSING BANNER
+    ═══════════════════════════════════════════ -->
+    <section class="ed-banner reveal">
+        <div class="ed-banner-bg" style="background-image:url('https://images.unsplash.com/photo-1553653924-39b70295f8da?w=1600&q=90');"></div>
+        <div class="ed-banner-overlay"></div>
+        <div class="ed-banner-content">
+            <div class="ed-banner-ornament">
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+                    <circle cx="18" cy="18" r="17" stroke="rgba(197,160,89,0.6)" stroke-width="0.8"/>
+                    <path d="M18 2 L18 34 M2 18 L34 18" stroke="rgba(197,160,89,0.4)" stroke-width="0.5"/>
+                </svg>
+            </div>
+            <h2 class="ed-banner-title">Un séjour <em>inoubliable</em></h2>
+            <p class="ed-banner-sub">Un sentiment d'appartenance à un lieu unique, intemporel, qui s'imprime dans votre mémoire pour toujours.</p>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-logo-col">
+                <span class="logo">Golden Atlas</span>
+                <p>Avenue Bab Jdid<br>40040 Errachidia, Maroc</p>
+                <a href="tel:+212648120577">+212 648 120 577</a>
+                <a href="mailto:laamirnimohsin5@gmail.com">laamirnimohsin5@gmail.com</a>
+                <div class="footer-socials" style="margin-top: 20px; display: flex; gap: 15px;">
+                    <a href="https://www.facebook.com/profile.php?id=100034458234293" target="_blank" title="Facebook" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                    <a href="https://www.instagram.com/mohsin_laamirni?igsh=aXd3MWJ4aWVtc2Yw" target="_blank" title="Instagram" style="color: var(--gold); transition: 0.3s; opacity: 0.8;"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_hotel">Hôtel</h4>
+                <ul>
+                    <li><a href="hebergements.html" data-i18n="footer_rooms">Hébergements</a></li>
+                    <li><a href="restaurants.html" data-i18n="footer_dining">Restaurants</a></li>
+                    <li><a href="spa.html" data-i18n="footer_spa">Spa &amp; Bien-être</a></li>
+                    <li><a href="#" data-i18n="footer_events">Évènements</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4 data-i18n="footer_since">Depuis 1923</h4>
+                <ul>
+                    <li><a href="#" data-i18n="footer_gallery">Galerie photos</a></li>
+                    <li><a href="#" data-i18n="footer_careers">Carrières</a></li>
+                    <li><a href="#" data-i18n="footer_press">Presse</a></li>
+                </ul>
+            </div>
+            <div class="newsletter-col">
+                <h4 data-i18n="footer_contact_title">Contactez-nous</h4>
+                <p data-i18n="footer_contact_sub">Partagez vos impressions, vos notes ou vos remerciements.</p>
+                <form class="newsletter-form" id="feedback-form" style="display: flex; flex-direction: column; gap: 10px;">
+                    <textarea id="feedback-msg" placeholder="Écrivez votre message..." required style="width: 100%; border: none; padding: 15px; background: rgba(255,255,255,1); color: #333; font-family: var(--font-body); resize: none; min-height: 80px; font-size: 0.9rem; border-radius: 4px;" data-i18n="contact_placeholder"></textarea>
+                    <button type="submit" id="feedback-btn" style="background: var(--gold); border: none; color: #fff; padding: 10px; font-weight: 600; letter-spacing: 2px; cursor: pointer; border-radius: 4px;" data-i18n="contact_send">ENVOYER</button>
+                </form>
+                <a href="administrations.html" style="display: inline-block; margin-top: 15px; color: var(--gold); font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; border: 1px solid rgba(197,160,89,0.3); padding: 8px 15px; transition: 0.3s; border-radius: 4px;" data-i18n="nav_admin">Administration</a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
+    </div>
+</footer>
+
+<!-- Room Details & Reservation Modal -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    
+    <div id="modal-details-view">
+        <div class="modal-gallery" id="modal-gallery">
+            <div class="modal-gallery-wrapper">
+                <div class="modal-gallery-track" id="modal-gallery-track">
+                    <!-- Dynamic images will be inserted here -->
+                </div>
+            </div>
+            <button class="modal-gallery-btn prev" id="modal-prev">‹</button>
+            <button class="modal-gallery-btn next" id="modal-next">›</button>
+            <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
+        </div>
+        <div class="modal-info-content">
+            <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+            <h2 class="modal-title" id="modal-room-name"></h2>
+            <div class="modal-full-desc" id="modal-room-desc"></div>
+            <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;"></div>
+            <button class="btn-gold" id="btn-show-booking" style="width:100%; height: 50px; background: var(--gold); border: none; color: #fff; font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 2px; cursor: pointer;">PASSER À LA RÉSERVATION</button>
+        </div>
+    </div>
+
+    <div id="modal-booking-view" style="display:none; padding: 40px; padding-top: 20px;">
+        <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px; text-transform: uppercase; letter-spacing: 1px;">← Retour aux détails</button>
+        <p class="modal-title" data-i18n="booking_title">Réserver votre séjour</p>
+        <p class="modal-sub" data-i18n="hotel_name">GOLDEN ATLAS ERRACHIDIA</p>
+        <form id="booking-form">
+            <div class="form-group"><label data-i18n="form_name">Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+            <div class="form-group row" style="display:flex; gap:15px;">
+                <div class="form-group" style="flex:1;"><label data-i18n="form_arrival">Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+                <div class="form-group" style="flex:1;"><label data-i18n="form_departure">Date de départ</label><input type="date" id="booking-departure" required></div>
+            </div>
+            <div class="form-group"><label data-i18n="form_guests">Voyageurs</label>
+                 <select id="booking-guests" required>
+                    <option value="" disabled selected>Sélectionner</option>
+                    <option>1 Adulte</option><option selected>2 Adultes</option>
+                    <option>2 Adultes · 1 Enfant</option><option>Famille (4+)</option>
+                 </select>
+            </div>
+            <button type="submit" class="btn-modal-submit" style="width: 100%; height: 54px; margin-top: 22px; background: var(--gold); border: none; color: #fff; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer;">CONFIRMER MA RÉSERVATION</button>
+        </form>
+    </div>
+</div>
+
+<div id="toast-msg" class="toast"></div>
+
+<script src="script.js"></script>
+<script>
+// ── Gallery navigation state ────────────────────────────────────
+let hbGalleryIndex = 0;
+let hbGalleryImages = [];
+
+function updateGallery(idx) {
+    const track = document.getElementById('modal-gallery-track');
+    const dots = document.querySelectorAll('.modal-gallery-dot');
+    if (!track || hbGalleryImages.length === 0) return;
+    hbGalleryIndex = (idx + hbGalleryImages.length) % hbGalleryImages.length;
+    track.style.transform = `translateX(-${hbGalleryIndex * 100}%)`;
+    dots.forEach((d, i) => d.classList.toggle('active', i === hbGalleryIndex));
+}
+
+document.getElementById('modal-prev')?.addEventListener('click', () => updateGallery(hbGalleryIndex - 1));
+document.getElementById('modal-next')?.addEventListener('click', () => updateGallery(hbGalleryIndex + 1));
+document.getElementById('modal-gallery-dots')?.addEventListener('click', e => {
+    if (e.target.dataset.index !== undefined) updateGallery(Number(e.target.dataset.index));
+});
+
+// ── Show/hide booking view ────────────────────────────────────────
+document.getElementById('btn-show-booking')?.addEventListener('click', () => {
+    document.getElementById('modal-details-view').style.display = 'none';
+    document.getElementById('modal-booking-view').style.display = 'block';
+});
+document.getElementById('btn-back-details')?.addEventListener('click', () => {
+    document.getElementById('modal-booking-view').style.display = 'none';
+    document.getElementById('modal-details-view').style.display = 'block';
+});
+
+// ── Room data for editorial CTA buttons ──────────────────────────
+const ROOM_DATA = {
+    'Chambre': {
+        name: 'Chambre Supérieure',
+        imgs: [
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1000&q=85',
+            'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1000&q=85',
+            'https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?w=1000&q=85'
+        ],
+        desc: 'Vue sur les célèbres jardins andalous. Mobilier artisanal, plâtre ciselé et zellige authentique. Une invitation au rêve dans un espace de 46 à 68 m² entièrement pensé pour votre bien-être.',
+        features: ['🛁 Baignoire îlot', '🌿 Vue Jardin', '👑 King Size', '✨ Plâtre ciselé', '🛋️ Salon attenant']
+    },
+    'Suite': {
+        name: 'Suite d\'Exception',
+        imgs: [
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1000&q=85',
+            'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1000&q=85',
+            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1000&q=85'
+        ],
+        desc: 'La quintessence du luxe saharien. Grand salon avec cheminée, chambre indépendante et double terrasse privée surplombant les jardins historiques. Des soieries brodées à la main aux plafonds en cèdre de l\'Atlas sculpté.',
+        features: ['🔥 Cheminée', '🌿 Double Terrasse', '👑 King Size', '🌟 Majordome', '♨️ Jacuzzi extérieur']
+    },
+    'Riad Privé avec Piscine': {
+        name: 'Riad Privé avec Piscine',
+        imgs: [
+            'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200&q=85',
+            'https://images.unsplash.com/photo-1553653924-39b70295f8da?w=1200&q=85',
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=85'
+        ],
+        desc: 'Nichés dans les jardins centenaires de Golden Atlas, nos riads privés offrent un espace de vie complet de 750 m² avec piscine chauffée, terrasse panoramique, cuisine équipée et service Majordome 24h/24.',
+        features: ['🏊 Piscine Chauffée', '🌿 Jardin Privé', '🌟 Majordome 24h/24', '🍽️ Cuisine Privée', '🏛️ Exclusivité']
+    },
+    'Suite Royale Atlas': {
+        name: 'Suite Royale Atlas',
+        imgs: [
+            'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85',
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1000&q=85',
+            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1000&q=85'
+        ],
+        desc: 'L\'apothéose du luxe. Une suite de 80 m² surplombant les montagnes de l\'Atlas avec vue panoramique, literie King size ultra premium et salon privatif. Le summum de l\'art de vivre à Errachidia.',
+        features: ['🏔️ Vue Atlas', '👑 King Ultra Premium', '🛁 Baignoire Marbre', '🌟 Majordome', '80 m²']
+    },
+    'Chambre Deluxe Emeraude': {
+        name: 'Chambre Deluxe Emeraude',
+        imgs: [
+            'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&q=85',
+            'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=85',
+            'https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=1200&q=85'
+        ],
+        desc: 'Un espace raffiné de 30 à 45 m² avec balcon privé surplombant les jardins ou piscine. Salle de bain en marbre avec douche et baignoire séparées, produits d\'accueil de luxe.',
+        features: ['🌿 Vue Jardins/Piscine', '🏊 Balcon Privé', '👑 King ou Twin', '🛁 Marbre', '✨ Produits Luxe']
+    },
+    'Chambre Supérieure Saphir': {
+        name: 'Chambre Supérieure Saphir',
+        imgs: [
+            'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&q=85',
+            'https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?w=1200&q=85',
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=85'
+        ],
+        desc: 'Une chambre de 28 à 38 m² alliant élégance et confort contemporain. Salle de bain en marbre, produits signature Golden Atlas et une vue imprenable pour un séjour inoubliable.',
+        features: ['🏛️ Salle de bain Marbre', '🌿 Vue Jardins', '👑 Grand Lit', '✨ Produits Signature', '📡 Wi-Fi Haut Débit']
+    },
+    'Chambre Classique Perle': {
+        name: 'Chambre Classique Perle',
+        imgs: [
+            'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=85',
+            'https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?w=1200&q=85',
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=85'
+        ],
+        desc: 'L\'élégance intemporelle dans un espace de 25 à 32 m². Vue sur le jardin intérieur, lit King size, douche et baignoire séparées. Le parfait équilibre entre raffinement et sérénité.',
+        features: ['🌿 Vue Jardin Intérieur', '👑 Lit King Size', '🚿 Douche & Baignoire', '📡 Wi-Fi', '☕ Mini-bar']
+    }
+};
+
+function openRoomModal(roomName) {
+    const data = ROOM_DATA[roomName];
+    if (!data) {
+        // Generic open for unknown rooms
+        document.getElementById('reservation-modal').classList.add('active');
+        document.getElementById('modal-overlay').classList.add('active');
+        document.getElementById('modal-details-view').style.display = 'none';
+        document.getElementById('modal-booking-view').style.display = 'block';
+        const nameEl = document.getElementById('modal-room-name');
+        if (nameEl) nameEl.textContent = roomName;
+        return;
+    }
+
+    hbGalleryImages = data.imgs;
+    hbGalleryIndex = 0;
+
+    document.getElementById('modal-room-name').textContent = data.name;
+    document.getElementById('modal-room-desc').textContent = data.desc;
+
+    const track = document.getElementById('modal-gallery-track');
+    track.innerHTML = data.imgs.map(src => `<img src="${src}" alt="${data.name}">`).join('');
+    track.style.transform = 'translateX(0)';
+
+    const featEl = document.getElementById('modal-room-features');
+    featEl.innerHTML = data.features.map(f => `<span>${f}</span>`).join('');
+
+    const dotsEl = document.getElementById('modal-gallery-dots');
+    dotsEl.innerHTML = data.imgs.map((_, i) => `<button class="modal-gallery-dot${i===0?' active':''}" data-index="${i}"></button>`).join('');
+
+    document.getElementById('reservation-modal').classList.add('active');
+    document.getElementById('modal-overlay').classList.add('active');
+    document.getElementById('modal-details-view').style.display = 'block';
+    document.getElementById('modal-booking-view').style.display = 'none';
+}
+
+// ── Editorial CTA buttons ─────────────────────────────────────────
+document.querySelectorAll('.btn-ed-gold').forEach(btn => {
+    btn.addEventListener('click', function() { openRoomModal(this.dataset.room); });
+});
+
+// ── Room card "Réserver" buttons ──────────────────────────────────
+document.querySelectorAll('.btn-room-reserver').forEach(btn => {
+    btn.addEventListener('click', function() { openRoomModal(this.dataset.room); });
+});
+
+// ── Booking buttons in pullquote & banner ────────────────────────
+['btn-pq-reserver', 'btn-banner-reserver'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => {
+        document.getElementById('reservation-modal').classList.add('active');
+        document.getElementById('modal-overlay').classList.add('active');
+        document.getElementById('modal-details-view').style.display = 'none';
+        document.getElementById('modal-booking-view').style.display = 'block';
+    });
+});
+</script>
+</body>
+</html>
+

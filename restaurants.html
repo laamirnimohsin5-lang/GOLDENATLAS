@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurants & Bars · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="subpage.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<header id="main-header" class="header-dark">
+    <div class="header-left">
+        <button class="menu-btn">
+            <span class="burger-icon"><span class="line"></span><span class="line"></span><span class="line"></span></span>
+            <span class="menu-text">Menu</span>
+        </button>
+        <div class="header-controls" style="display: flex; align-items: center; gap: 20px;">
+            <button id="theme-toggle" class="theme-toggle-btn" style="background: none; border: 1px solid rgba(255,255,255,0.2); color: inherit; cursor: pointer; padding: 6px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s;" title="Changer le mode">
+                <svg id="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg id="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            </button>
+            <div class="lang-selector-wrapper" id="lang-selector">
+                <div class="lang-selector"><span id="current-lang">FR</span>
+                    <svg width="9" height="6"><path d="M1 1L4.5 5L8 1" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+                </div>
+                <ul class="lang-dropdown">
+                    <li data-lang="FR" class="active">Français</li>
+                    <li data-lang="EN">English</li>
+                    <li data-lang="ES">Español</li>
+                    <li data-lang="AR">العربية</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="header-center">
+        <a href="index.html" class="logo">Golden Atlas</a>
+        <span class="logo-subtitle">Errachidia</span>
+    </div>
+    <div class="header-right" style="gap: 15px;">
+        <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
+    </div>
+</header>
+
+<!-- Mega Menu -->
+<nav id="mega-menu" class="mega-menu">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
+            <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+        </div>
+        <div class="menu-links-container" style="position:relative; z-index:1;">
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
+                    <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
+                    <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
+                </ul>
+            </div>
+            <div class="menu-column">
+                <ul class="sub-links pt-0">
+                    <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
+                    <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="restaurant.html" data-i18n="menu_rest">LE RESTAURANT</a></li>
+                    <li><a href="spa.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport" style="color: var(--gold); font-weight: 600;">TRANSPORT</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
+    </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
+</nav>
+<div class="modal-overlay" id="modal-overlay"></div>
+
+<main>
+    <!-- HERO -->
+    <section class="sub-hero hero-anim">
+        <div class="sub-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85');"></div>
+        <div class="sub-hero-overlay"></div>
+        <div class="sub-hero-content">
+            <span class="surtitle" style="color:rgba(255,255,255,0.7);">Golden Atlas · Errachidia</span>
+            <h1 class="title-xl text-white">Restaurants & Bars</h1>
+            <p class="text-white" style="letter-spacing:6px;text-transform:uppercase;font-size:0.82rem;margin-top:1.2rem;">Un univers de saveurs d'exception</p>
+        </div>
+    </section>
+
+    <!-- INTRO -->
+    <section class="section-pad text-center reveal" id="intro">
+        <div class="container-sm">
+            <span class="surtitle">Gastronomie</span>
+            <h2 class="title-lg">L'Excellence Culinaire</h2>
+            <div class="separator"></div>
+            <p class="body-text">Quatre restaurants signés par des chefs de renommée mondiale, quatre bars aux personnalités distinctes et deux salons de thé d'exception signés Pierre Hermé. À Golden Atlas, chaque repas est une invitation au voyage.</p>
+        </div>
+    </section>
+
+    <!-- RESTAURANT GRID (big cards) -->
+    <section class="resto-showcase container reveal">
+        <div class="resto-big-grid">
+
+            <div class="resto-card" data-room-type="asiatique" data-room="L'Asiatique">
+                <div class="resto-card-img">
+                    <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80" alt="L'Asiatique">
+                </div>
+                <div class="resto-card-body">
+                    <span class="surtitle">Restaurant</span>
+                    <h3>L'Asiatique</h3>
+                    <p class="resto-chef">par Jean-Georges Vongerichten</p>
+                    <p class="resto-desc">Saveurs asiatiques d'une finesse inouïe, entre traditions japonaises, chinoises et thaïlandaises réinterprétées par un maestro de la gastronomie mondiale.</p>
+                    <div class="resto-meta">
+                        <span>🕯️ Dîner</span><span>🍾 Sommelier</span><span>⭐ Chef Étoilé</span>
+                    </div>
+                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Asiatique">Voir Détails</button>
+                </div>
+            </div>
+
+            <div class="resto-card reversed" data-room-type="italien" data-room="L'Italien">
+                <div class="resto-card-img">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80" alt="L'Italien">
+                </div>
+                <div class="resto-card-body">
+                    <span class="surtitle">Restaurant</span>
+                    <h3>L'Italien</h3>
+                    <p class="resto-chef">par Simone Zanoni</p>
+                    <p class="resto-desc">La dolce vita dans toute sa splendeur. Une cuisine italienne moderne et lumineuse, portée par la passion d'un chef qui a fait ses armes dans les plus grandes maisons.</p>
+                    <div class="resto-meta">
+                        <span>🕯️ Déjeuner & Dîner</span><span>🍝 Pasta Maison</span><span>🌿 Bio</span>
+                    </div>
+                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Italien">Voir Détails</button>
+                </div>
+            </div>
+
+            <div class="resto-card" data-room-type="marocain" data-room="Le Marocain">
+                <div class="resto-card-img">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80" alt="Le Marocain">
+                </div>
+                <div class="resto-card-body">
+                    <span class="surtitle">Restaurant</span>
+                    <h3>Le Marocain</h3>
+                    <p class="resto-chef">Chef Rachid Agouray</p>
+                    <p class="resto-desc">La tradition marocaine dans sa plus belle expression. Tajines parfumés, couscous royaux, pastillas croustillantes dans un décor qui est lui-même une ode à l'art marocain.</p>
+                    <div class="resto-meta">
+                        <span>🕯️ Dîner</span><span>🎵 Musique Live</span><span>🏛️ Décor Royal</span>
+                    </div>
+                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="Le Marocain">Voir Détails</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BARS SECTION -->
+    <section class="section-pad bg-dark-section reveal">
+        <div class="container">
+            <div class="section-title-block">
+                <span class="surtitle" style="color:var(--gold-light);">Bars & Lounges</span>
+                <h2 class="title-lg text-white">Une hospitalité unique</h2>
+                <div class="separator"></div>
+            </div>
+            <div class="grid-2" style="gap: 3px;">
+                <div class="card" onclick="openModalGlobal()">
+                    <img class="card-img" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80" alt="Bar Majorelle">
+                    <div class="card-overlay"><h3>Le Bar Majorelle</h3><p>Cocktails & Ambiance</p><span class="card-cta">Réserver →</span></div>
+                </div>
+                <div class="card" onclick="openModalGlobal()">
+                    <img class="card-img" src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=800&q=80" alt="Churchill Bar">
+                    <div class="card-overlay"><h3>Le Churchill</h3><p>Bar Légendaire</p><span class="card-cta">Réserver →</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="main-footer reveal">
+    <div class="footer-bottom text-center" style="padding:30px 5%;border:none;">
+        <p style="color:#666;">© 2026 Golden Atlas Errachidia · <a href="index.html" style="color:var(--gold);">Retour à l'accueil</a></p>
+    </div>
+</footer>
+
+<!-- Room Details & Reservation Modal -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    
+    <div id="modal-details-view">
+        <div class="modal-gallery" id="modal-gallery">
+            <div class="modal-gallery-wrapper">
+                <div class="modal-gallery-track" id="modal-gallery-track">
+                    <!-- Dynamic images will be inserted here -->
+                </div>
+            </div>
+            <button class="modal-gallery-btn prev" id="modal-prev">‹</button>
+            <button class="modal-gallery-btn next" id="modal-next">›</button>
+            <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
+        </div>
+        <div class="modal-info-content">
+            <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+            <h2 class="modal-title" id="modal-room-name"></h2>
+            <div class="modal-full-desc" id="modal-room-desc">
+                <!-- Dynamic description -->
+            </div>
+            <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;">
+                <!-- Dynamic features -->
+            </div>
+            <button class="btn-gold" id="btn-show-booking" style="width:100%;">Passer à la réservation</button>
+        </div>
+    </div>
+
+    <div id="modal-booking-view" style="display:none; padding-top: 20px;">
+        <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px;">← Retour aux détails</button>
+        <p class="modal-title">Réserver une table</p>
+        <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+        <form id="booking-form">
+            <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+            <div class="form-group"><label>Restaurant</label>
+                <select id="modal-room-name" required><option value="" disabled selected>Choisir</option>
+                    <option>L'Asiatique par Jean-Georges</option><option>L'Italien par Simone Zanoni</option><option>Le Marocain</option><option>Le Pavillon de la Piscine</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Date du repas</label><input type="date" id="booking-date" required></div>
+            <div class="form-group"><label>Nombre de couverts</label>
+                <select id="booking-guests" required><option value="" disabled selected>Choisir</option><option>1-2</option><option>3-4</option><option>5+</option></select>
+            </div>
+            <button type="submit" class="btn-modal-submit">CONFIRMER LA RÉSERVATION</button>
+        </form>
+    </div>
+</div>
+<div class="toast" id="toast-msg"></div>
+
+<script src="script.js"></script>
+<script>
+    function openModalGlobal() {
+        document.getElementById('reservation-modal').classList.add('active');
+        document.getElementById('modal-overlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+</script>
+</body>
+</html>
+

@@ -1,0 +1,220 @@
+/* ===================================
+   SUB-PAGES SHARED (restaurants, spa, hebergements)
+   =================================== */
+
+/* Fixed dark header for sub pages */
+.header-dark {
+    --header-bg: #0d2b1f;
+    background: var(--header-bg);
+    padding: 1.2rem 5%;
+}
+
+body.dark-mode .header-dark {
+    --header-bg: #000000;
+    background: rgba(0,0,0,0.97) !important;
+    border-bottom: 1px solid rgba(197,160,89,0.15) !important;
+}
+
+body.dark-mode .header-dark .menu-text,
+body.dark-mode .header-dark .logo,
+body.dark-mode .header-dark .logo-subtitle,
+body.dark-mode .header-dark #current-lang,
+body.dark-mode .header-dark .lang-selector,
+body.dark-mode .header-dark .burger-icon .line,
+body.dark-mode .header-dark .header-controls {
+    color: #ffffff !important;
+}
+
+body.dark-mode .header-dark .burger-icon .line {
+    background-color: #ffffff !important;
+}
+
+/* Sub-page Hero (full height from top) */
+.sub-hero {
+    height: 100vh; min-height: 650px;
+    position: relative;
+    display: flex; align-items: flex-end; justify-content: flex-start;
+    color: #fff; overflow: hidden;
+}
+
+.hero-anim { opacity: 0; animation: subHeroIn 0s forwards; }
+.sub-hero.hero-anim { opacity: 1; }
+.sub-hero-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    z-index: -2;
+}
+
+.sub-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 55%, transparent 100%);
+    z-index: -1;
+}
+
+.sub-hero-content {
+    position: relative; z-index: 2;
+    padding: 80px 7%;
+    opacity: 0; transform: translateY(30px);
+    animation: heroIn 1.2s ease 0.3s forwards;
+}
+
+/* ===================================
+   RESTAURANT CARDS
+   =================================== */
+.resto-showcase { padding-bottom: 80px; }
+
+.resto-big-grid { display: flex; flex-direction: column; gap: 3px; }
+
+.resto-card {
+    display: flex; min-height: 500px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s;
+}
+.resto-card.reversed { flex-direction: row-reverse; }
+
+.resto-card-img {
+    flex: 1.2; overflow: hidden;
+    position: relative;
+}
+.resto-card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+
+.resto-card-body {
+    flex: 1;
+    padding: 60px 7%;
+    background: var(--bg-cream);
+    display: flex; flex-direction: column; justify-content: center;
+}
+.resto-card.reversed .resto-card-body { background: #fff; }
+
+.resto-card-body h3 {
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    font-style: italic;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+}
+.resto-chef {
+    font-size: 0.78rem; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--gold);
+    margin-bottom: 1.5rem; font-weight: 500;
+}
+.resto-desc {
+    font-size: 1rem; color: var(--text-mid);
+    line-height: 1.85; margin-bottom: 1.5rem;
+    max-width: 520px;
+}
+.resto-meta {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 0.5rem;
+}
+.resto-meta span {
+    font-size: 0.72rem; padding: 5px 13px;
+    border: 1px solid rgba(197,160,89,0.3);
+    color: var(--text-mid); border-radius: 20px;
+    background: rgba(197,160,89,0.07);
+}
+
+/* ===================================
+   DARK SECTION (BARS)
+   =================================== */
+.bg-dark-section { background: #0d1c14; }
+.bg-dark-section .separator { background: var(--gold-light); }
+
+@media (max-width: 900px) {
+    .resto-card, .resto-card.reversed { flex-direction: column; }
+    .resto-card-img { height: 320px; }
+    .resto-card-body { padding: 40px 6%; }
+}
+
+/* ===================================
+   SPA PAGE SPECIFIC
+   =================================== */
+.spa-services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    margin-top: 50px;
+}
+.service-card {
+    background: var(--bg-cream);
+    padding: 40px 30px;
+    border-bottom: 2px solid var(--gold);
+    transition: transform 0.4s, box-shadow 0.4s;
+    cursor: pointer;
+}
+.service-card:hover { transform: translateY(-6px); box-shadow: 0 15px 40px rgba(0,0,0,0.08); }
+.service-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.service-card h3 { font-size: 1.4rem; font-style: italic; margin-bottom: 1rem; }
+.service-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.8; margin-bottom: 1.5rem; }
+
+@media (max-width: 900px) {
+    .spa-services { grid-template-columns: 1fr; }
+}
+
+/* ===================================
+   HEBERGEMENTS TABS
+   =================================== */
+.tabs-nav {
+    display: flex; justify-content: center;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    margin-bottom: 60px; gap: 0;
+}
+.tab-btn {
+    background: none; border: none;
+    padding: 1rem 3rem; font-family: var(--font-body);
+    font-size: 0.75rem; text-transform: uppercase; letter-spacing: 3px;
+    color: #aaa; cursor: pointer; position: relative; transition: 0.3s;
+}
+.tab-btn::after {
+    content: ''; position: absolute; bottom: -1px; left: 0;
+    width: 0; height: 2px; background: var(--gold); transition: width 0.4s;
+}
+.tab-btn.active { color: var(--text-dark); font-weight: 600; }
+.tab-btn.active::after { width: 100%; }
+.tab-btn:hover { color: var(--gold); }
+
+.tab-content { display: none; animation: fadeTab 0.5s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.room-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+
+.room-card {
+    background: #fff; overflow: hidden;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+    transition: transform 0.4s, box-shadow 0.4s;
+}
+.room-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+
+.room-card-img {
+    position: relative; overflow: hidden; height: 280px;
+}
+.room-card-img img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+
+.room-card-img-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.4s;
+}
+.room-card:hover .room-card-img-overlay { opacity: 1; }
+
+.room-card-body { padding: 28px; }
+.room-card-top { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.room-card-top h3 { font-size: 1.4rem; font-style: italic; }
+.room-size { font-size: 0.78rem; color: var(--gold); font-weight: 600; letter-spacing: 1px; padding-top: 4px; }
+.room-card-body > p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.75; margin-bottom: 16px; }
+.room-amenities { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+.room-amenities span { font-size: 0.7rem; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(197,160,89,0.25); background: rgba(197,160,89,0.06); color: #6b5a48; }
+.room-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0ebe3; padding-top: 18px; }
+.room-price { font-size: 0.88rem; color: #777; }
+.room-price strong { font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); }
+.room-price small { font-size: 0.72rem; color: #aaa; }
+
+@media (max-width: 1000px) { .room-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 680px) { .room-grid { grid-template-columns: 1fr; } .tabs-nav { flex-direction: column; align-items: center; } }

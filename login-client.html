@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un compte · Golden Atlas Errachidia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #e8c97a;
+            --gold-dark: #8a6a20;
+            --dark: #050505;
+            --glass: rgba(12, 11, 10, 0.82);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--dark);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 20px;
+        }
+
+        #world { position: fixed; inset: 0; z-index: 0; }
+
+        .login-wrapper { position: relative; z-index: 10; width: 100%; max-width: 500px; }
+        .login-wrapper.wide { max-width: 760px; }
+        .login-card {
+            background: var(--glass);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            padding: 50px;
+            box-shadow: 0 60px 120px rgba(0,0,0,0.9);
+            animation: fadeIn 1.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .back-link {
+            display: inline-flex; align-items: center; gap: 10px;
+            color: rgba(201,168,76,0.7); text-decoration: none;
+            font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
+            margin-bottom: 35px; transition: 0.4s; padding: 8px 14px; background: rgba(201,168,76,0.05);
+        }
+        .back-link:hover { color: var(--gold); transform: translateX(-5px); }
+
+        .login-logo { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); letter-spacing: 4px; text-align: center; display: block; }
+        .login-subtitle { text-align: center; font-size: 0.62rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 10px; margin-bottom: 25px; }
+
+        .login-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400; text-align: center; margin-bottom: 35px; color: #fff; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+        .form-group input {
+            width: 100%; height: 50px; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
+            padding: 0 20px; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none; transition: 0.3s;
+        }
+        .form-group input:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); }
+
+        .btn-submit {
+            width: 100%; height: 60px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+            background-size: 200% 200%; border: none; color: #000;
+            font-size: 0.75rem; font-weight: 800; letter-spacing: 5px; text-transform: uppercase;
+            cursor: pointer; transition: 0.4s; animation: gradShift 5s ease infinite;
+        }
+        @keyframes gradShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        .register-footer { text-align: center; margin-top: 30px; font-size: 0.75rem; color: rgba(255,255,255,0.3); }
+        .register-footer a { color: var(--gold); text-decoration: none; font-weight: 600; margin-left: 8px; }
+
+        .toast {
+            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--gold); color: #000; padding: 15px 35px; font-weight: 700; opacity: 0; transition: 0.5s; z-index: 1000;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ── ACCEPTANCE NOTIFICATION ── */
+        .notification-banner {
+            background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(34,197,94,0.06));
+            border: 1px solid rgba(34,197,94,0.4);
+            border-left: 4px solid #22c55e;
+            padding: 20px 25px;
+            margin-bottom: 20px;
+            animation: slideInBanner 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .notification-banner::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(34,197,94,0.05), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes slideInBanner {
+            from { opacity: 0; transform: translateY(-15px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        .notification-banner .notif-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            display: block;
+            animation: pulse-check 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-check {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .notification-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: #22c55e;
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+        .notification-banner p {
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+        .notification-banner .res-confirmed-list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .notification-banner .res-confirmed-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: #a7f3d0;
+            background: rgba(34,197,94,0.08);
+            padding: 8px 14px;
+            border-radius: 4px;
+        }
+        /* ── ACCOUNT DASHBOARD ── */
+        .login-wrapper.wide { max-width: 760px; }
+
+        .account-header {
+            display: flex; align-items: center; gap: 20px;
+            background: rgba(201,168,76,0.05);
+            border: 1px solid rgba(201,168,76,0.15);
+            padding: 25px; margin-bottom: 30px;
+        }
+        .account-avatar {
+            width: 65px; height: 65px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #000;
+            flex-shrink: 0;
+        }
+        .account-meta { flex: 1; }
+        .account-meta h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #fff; letter-spacing: 2px; }
+        .account-meta p { font-size: 0.65rem; letter-spacing: 3px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-top: 5px; }
+        .status-badge {
+            display: inline-block; padding: 5px 14px;
+            font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
+            border-radius: 30px; margin-top: 8px;
+        }
+        .status-badge.approved { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+        .status-badge.pending  { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
+        .status-badge.rejected { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+
+        .section-title {
+            font-size: 0.62rem; letter-spacing: 5px; text-transform: uppercase;
+            color: var(--gold); margin-bottom: 18px; display: flex;
+            align-items: center; gap: 12px;
+        }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,76,0.2); }
+
+        .reservation-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(201,168,76,0.15);
+            padding: 22px 25px; margin-bottom: 14px;
+            transition: 0.3s; position: relative;
+        }
+        .reservation-card:hover { background: rgba(201,168,76,0.05); border-color: rgba(201,168,76,0.3); }
+        .res-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+        .res-room { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.1rem; color: #fff; }
+        .res-status { font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; padding: 5px 12px; border-radius: 30px; font-weight: 700; }
+        .res-status.Validée, .res-status.Acceptée { background: rgba(34,197,94,0.15); color: #22c55e; }
+        .res-status.Refusée { background: rgba(239,68,68,0.15); color: #ef4444; }
+        .res-status\.En\ attente, .res-pending { background: rgba(251,146,60,0.15); color: #fb923c; }
+        .res-details { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+        .res-detail-item label { display: block; font-size: 0.55rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 4px; }
+        .res-detail-item span { font-size: 0.85rem; color: #e8c97a; font-weight: 600; }
+        .res-price-total {
+            background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2);
+            padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 14px;
+        }
+        .res-price-total label { font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.5); text-transform: uppercase; }
+        .res-price-total span { font-size: 1.2rem; color: var(--gold); font-weight: 700; font-family: 'Playfair Display', serif; }
+        .btn-cancel {
+            background: transparent; border: 1px solid rgba(239,68,68,0.3);
+            color: #ef4444; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase;
+            padding: 10px 20px; cursor: pointer; transition: 0.3s; font-family: inherit; font-weight: 700;
+        }
+        .btn-cancel:hover { background: rgba(239,68,68,0.1); border-color: #ef4444; }
+        .btn-cancel:disabled { opacity: 0.4; cursor: not-allowed; }
+        .empty-state {
+            text-align: center; padding: 40px;
+            color: rgba(255,255,255,0.3); font-size: 0.8rem;
+            border: 1px dashed rgba(201,168,76,0.15);
+        }
+        .empty-state .icon { font-size: 2rem; margin-bottom: 10px; display: block; }
+        .btn-row { display: flex; gap: 12px; margin-top: 25px; }
+        .btn-row .btn-submit { flex: 1; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+</head>
+<body>
+
+<div id="world"></div>
+<div id="toast" class="toast"></div>
+
+<div class="login-wrapper">
+    <div class="login-card">
+        <a href="index.html" class="back-link">
+            ← RETOUR · BACK
+        </a>
+
+        <div class="login-header">
+            <span class="login-logo">GOLDEN ATLAS</span>
+            <p class="login-subtitle">Espace Privilège · Client</p>
+            <h1 id="form-title">Espace Client</h1>
+        </div>
+
+        <div id="login-view">
+            <form id="login-client-form">
+                <div class="form-group">
+                    <label>Nom Complet</label>
+                    <input type="text" id="login-name" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label>N° CIN</label>
+                    <input type="text" id="login-cin" placeholder="Votre CIN" required>
+                </div>
+                <button type="submit" class="btn-submit">SE CONNECTER</button>
+            </form>
+            
+            <div style="display: flex; align-items: center; margin: 25px 0;">
+                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
+                <span style="padding: 0 15px; font-size: 0.65rem; color: rgba(201,168,76,0.5); letter-spacing: 2px;">OU</span>
+                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
+            </div>
+
+            <button id="btn-google-login" style="width: 100%; height: 50px; background: #fff; border: none; color: #333; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; border-radius: 4px; transition: 0.3s;">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.78 17.77 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                CONTINUER AVEC GOOGLE
+            </button>
+
+            <div class="register-footer">
+                Pas encore de compte ? <a href="#" id="show-register">Créer un compte →</a>
+            </div>
+        </div>
+
+        <div id="register-view" style="display: none;">
+            <form id="register-client-form">
+                <div class="form-group">
+                    <label>Nom Complet</label>
+                    <input type="text" id="reg-name" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="reg-email" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>N° CIN / Passport</label>
+                    <input type="text" id="reg-cin" placeholder="CIN ou Passport" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" id="reg-phone" placeholder="+212 ..." required>
+                </div>
+                <button type="submit" class="btn-submit">CRÉER MON COMPTE</button>
+            </form>
+            
+            <div style="display: flex; align-items: center; margin: 25px 0;">
+                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
+                <span style="padding: 0 15px; font-size: 0.65rem; color: rgba(201,168,76,0.5); letter-spacing: 2px;">OU</span>
+                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
+            </div>
+
+            <button id="btn-google-register" style="width: 100%; height: 50px; background: #fff; border: none; color: #333; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; border-radius: 4px; transition: 0.3s;">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.78 17.77 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                CONTINUER AVEC GOOGLE
+            </button>
+
+            <div class="register-footer">
+                Déjà inscrit ? <a href="#" id="show-login">Se connecter →</a>
+            </div>
+        </div>
+
+        <div id="account-view" style="display: none;">
+            <!-- Account Header -->
+            <div class="account-header">
+                <div class="account-avatar" id="acc-initials">G</div>
+                <div class="account-meta">
+                    <h2 id="display-user-name">NOM DU CLIENT</h2>
+                    <p id="display-user-email" style="letter-spacing:1px;"></p>
+                    <span class="status-badge pending" id="display-user-status">En attente</span>
+                </div>
+            </div>
+
+            <!-- Reservations Section -->
+            <p class="section-title">Mes Réservations</p>
+            <div id="reservations-container">
+                <div class="empty-state">
+                    <span class="icon">⏳</span>
+                    Chargement de vos réservations...
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="btn-row">
+                <button class="btn-submit" id="btn-logout" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem;">SE DÉCONNECTER</button>
+                <a href="index.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem;">↩ RETOUR AU SITE</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ── High-Quality 3D Engine ── */
+(function() {
+    const world = document.getElementById('world');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x050505, 100, 950);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
+    camera.position.set(0, 50, 200);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    world.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+    scene.add(new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9));
+    const shadowLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    shadowLight.position.set(150, 350, 350); scene.add(shadowLight);
+
+    const seaGeo = new THREE.CylinderGeometry(600, 600, 800, 40, 10);
+    seaGeo.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI/2));
+    const sea = new THREE.Mesh(seaGeo, new THREE.MeshPhongMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.15, flatShading: true }));
+    sea.position.y = -600; scene.add(sea);
+
+    const Airplane = function() {
+        this.mesh = new THREE.Group();
+        const matBody = new THREE.MeshPhongMaterial({ color: 0xc9a84c, flatShading: true });
+        const cockpit = new THREE.Mesh(new THREE.BoxGeometry(60, 50, 50), matBody);
+        this.mesh.add(cockpit);
+        const engine = new THREE.Mesh(new THREE.BoxGeometry(20, 50, 50), new THREE.MeshPhongMaterial({ color: 0xffffff, flatShading: true }));
+        engine.position.x = 40; this.mesh.add(engine);
+        const tail = new THREE.Mesh(new THREE.BoxGeometry(15, 20, 5), matBody);
+        tail.position.set(-35, 25, 0); this.mesh.add(tail);
+        const wing = new THREE.Mesh(new THREE.BoxGeometry(40, 8, 150), matBody);
+        this.mesh.add(wing);
+        this.propeller = new THREE.Mesh(new THREE.BoxGeometry(20, 10, 10), new THREE.MeshPhongMaterial({ color: 0x111, flatShading: true }));
+        this.propeller.position.set(50, 0, 0);
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(1, 100, 20), new THREE.MeshPhongMaterial({ color: 0x111, flatShading: true }));
+        blade.position.set(8, 0, 0); this.propeller.add(blade);
+        this.mesh.add(this.propeller);
+    };
+
+    const airplane = new Airplane();
+    airplane.mesh.scale.set(0.35, 0.35, 0.35);
+    airplane.mesh.position.y = 80; scene.add(airplane.mesh);
+
+    const Cloud = function() {
+        this.mesh = new THREE.Group();
+        const geom = new THREE.BoxGeometry(20, 20, 20);
+        const mat = new THREE.MeshPhongMaterial({ color: 0xffffff, transparent: true, opacity: 0.4 });
+        for (let i=0; i<4; i++) {
+            const m = new THREE.Mesh(geom, mat);
+            m.position.set(i*15, Math.random()*10, Math.random()*10);
+            const s = 0.1 + Math.random() * 0.9; m.scale.set(s,s,s);
+            this.mesh.add(m);
+        }
+    };
+    const cloudsGroup = new THREE.Group();
+    for (let i=0; i<15; i++) {
+        const c = new Cloud();
+        c.mesh.position.set((Math.random()-0.5)*1000, 100 + Math.random()*200, (Math.random()-0.5)*500);
+        cloudsGroup.add(c.mesh);
+    }
+    scene.add(cloudsGroup);
+
+    let clock = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        clock += 0.01;
+        sea.rotation.z += 0.005;
+        airplane.propeller.rotation.x += 0.4;
+        airplane.mesh.position.y = 80 + Math.sin(clock * 2) * 10;
+        airplane.mesh.rotation.z = Math.cos(clock) * 0.1;
+        cloudsGroup.children.forEach(c => {
+            c.position.x -= 2;
+            if (c.position.x < -800) c.position.x = 800;
+        });
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+    });
+})();
+
+document.getElementById('show-register').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('register-view').style.display = 'block';
+    document.getElementById('form-title').textContent = "Rejoindre l'excellence";
+});
+
+document.getElementById('show-login').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('register-view').style.display = 'none';
+    document.getElementById('login-view').style.display = 'block';
+    document.getElementById('form-title').textContent = "Espace Client";
+});
+
+const toast = document.getElementById('toast');
+function simToast(msg, bg) {
+    toast.textContent = msg;
+    toast.style.background = bg || 'var(--gold)';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+document.getElementById('register-client-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    btn.textContent = 'CHARGEMENT...';
+    
+    const user = {
+        name: document.getElementById('reg-name').value.trim(),
+        email: document.getElementById('reg-email').value.trim(),
+        cin: document.getElementById('reg-cin').value.trim(),
+        phone: document.getElementById('reg-phone').value.trim(),
+        status: 'En attente'
+    };
+    
+    const { data: existing } = await window.supabaseClient.from('ga_users').select('cin').eq('cin', user.cin);
+    if (existing && existing.length > 0) {
+        simToast("⚠️ Carte d'identité déjà utilisée !", '#ef4444');
+        btn.textContent = 'CRÉER MON COMPTE';
+        return;
+    }
+    
+    await window.supabaseClient.from('ga_users').insert([user]);
+    
+    simToast("✓ DEMANDE ENVOYÉE. EN ATTENTE DE L'ADMINISTRATION.", 'var(--gold)');
+    document.getElementById('show-login').click();
+    btn.textContent = 'CRÉER MON COMPTE';
+    this.reset();
+});
+
+// Room pricing table (MAD per night)
+const ROOM_PRICES = {
+    'Suite Royale': 4800,
+    'Chambre Deluxe': 2900,
+    'Riad Premium': 3600,
+    'Suite Atlas': 5500,
+    'Chambre Classique': 1800,
+    'Villa Privatif': 8200,
+    'default': 2500
+};
+
+function calcNights(arrival, departure) {
+    const a = new Date(arrival), d = new Date(departure);
+    if (isNaN(a) || isNaN(d) || d <= a) return 1;
+    return Math.round((d - a) / (1000 * 60 * 60 * 24));
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function getStatusClass(status) {
+    if (!status || status === 'En attente') return 'res-pending';
+    if (status.includes('Valid') || status.includes('Accept')) return 'Validée';
+    if (status.includes('Refus')) return 'Refusée';
+    return 'res-pending';
+}
+
+async function showAccountDashboard(user) {
+    // Update wrapper width
+    document.querySelector('.login-wrapper').classList.add('wide');
+    
+    // Update header info
+    document.getElementById('display-user-name').textContent = user.name || user.email || '';
+    document.getElementById('display-user-email').textContent = user.email || user.cin || '';
+    document.getElementById('acc-initials').textContent = (user.name || 'G')[0].toUpperCase();
+    document.getElementById('form-title').textContent = 'Mon Espace';
+
+    // Status badge
+    const statusEl = document.getElementById('display-user-status');
+    const st = user.status || 'En attente';
+    statusEl.textContent = st;
+    statusEl.className = 'status-badge ' + (st.includes('Valid') ? 'approved' : st.includes('Refus') ? 'rejected' : 'pending');
+
+    // Show account view, hide others
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('register-view').style.display = 'none';
+    document.getElementById('account-view').style.display = 'block';
+
+    // Load reservations by email OR name
+    const container = document.getElementById('reservations-container');
+    container.innerHTML = '<div class="empty-state"><span class="icon">⏳</span>Chargement...</div>';
+
+    let query = window.supabaseClient.from('ga_reservations').select('*');
+    
+    if (user.email) {
+        // Search by email (linked) OR by name (legacy)
+        query = window.supabaseClient.from('ga_reservations')
+            .select('*')
+            .or(`user_email.eq.${user.email},name.ilike.%${(user.name || '').split(' ')[0]}%`);
+    } else {
+        query = query.ilike('name', `%${(user.name || '').split(' ')[0]}%`);
+    }
+
+    const { data: reservations, error } = await query.order('created_at', { ascending: false });
+
+    if (error) {
+        container.innerHTML = '<div class="empty-state"><span class="icon">⚠️</span>Erreur de chargement. Vérifiez votre connexion.</div>';
+        return;
+    }
+
+    if (!reservations || reservations.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <span class="icon">🏨</span>
+                Aucune réservation trouvée.<br>
+                <a href="index.html" style="color: var(--gold); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; margin-top: 12px; display: inline-block;">Faire une réservation →</a>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = reservations.map(r => {
+        const nights = calcNights(r.arrival, r.departure);
+        const pricePerNight = ROOM_PRICES[r.room] || ROOM_PRICES['default'];
+        const total = (pricePerNight * nights).toLocaleString('fr-FR');
+        const statusClass = getStatusClass(r.status);
+        const statusLabel = r.status || 'En attente';
+        const canCancel = !r.status || r.status === 'En attente';
+
+        // Premium accepted banner for this specific reservation
+        const acceptedBanner = (r.status === 'Validée' || r.status === 'Acceptée') ? `
+        <div class="notification-banner" style="margin-bottom: 0; margin-top: 16px;">
+            <span class="notif-icon">✅</span>
+            <h3>Réservation Confirmée !</h3>
+            <p>Votre réservation pour <strong style="color:#e8c97a">${r.room}</strong> a été acceptée par notre équipe.<br>
+            Nous vous contacterons bientôt pour finaliser votre arrivée.</p>
+        </div>` : '';
+        return `
+        <div class="reservation-card" id="res-${r.id}">
+            <div class="res-top">
+                <div class="res-room">🏨 ${r.room}</div>
+                <span class="res-status ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="res-details">
+                <div class="res-detail-item">
+                    <label>Arrivée</label>
+                    <span>${formatDate(r.arrival)}</span>
+                </div>
+                <div class="res-detail-item">
+                    <label>Départ</label>
+                    <span>${formatDate(r.departure)}</span>
+                </div>
+                <div class="res-detail-item">
+                    <label>Nuits</label>
+                    <span>${nights} nuit${nights > 1 ? 's' : ''}</span>
+                </div>
+            </div>
+            <div class="res-price-total">
+                <label>💳 Prix Total Estimé</label>
+                <span>${total} MAD</span>
+            </div>
+            ${acceptedBanner}
+            ${canCancel ? `<button class="btn-cancel" onclick="cancelReservation('${r.id}', this)">❌ Annuler cette réservation</button>` : 
+              `<span style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.3); text-transform:uppercase">🔒 Réservation finalisée</span>`}
+        </div>`;
+    }).join('');
+}
+
+window.cancelReservation = async function(id, btn) {
+    if (!confirm('Voulez-vous vraiment annuler cette réservation ?')) return;
+    btn.disabled = true;
+    btn.textContent = 'Annulation...';
+    const { error } = await window.supabaseClient.from('ga_reservations').delete().eq('id', id);
+    if (error) {
+        simToast('⚠️ Erreur lors de l\'annulation.', '#ef4444');
+        btn.disabled = false;
+        btn.textContent = '❌ Annuler cette réservation';
+    } else {
+        document.getElementById('res-' + id)?.remove();
+        simToast('✅ Réservation annulée avec succès.', '#22c55e');
+        const container = document.getElementById('reservations-container');
+        if (!container.querySelector('.reservation-card')) {
+            container.innerHTML = '<div class="empty-state"><span class="icon">🏨</span>Aucune réservation.</div>';
+        }
+    }
+};
+
+document.getElementById('login-client-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    btn.textContent = 'VÉRIFICATION...';
+    
+    const name = document.getElementById('login-name').value.trim();
+    const cin = document.getElementById('login-cin').value.trim();
+    
+    const { data: users } = await window.supabaseClient.from('ga_users').select('*').ilike('name', `%${name}%`).ilike('cin', `%${cin}%`);
+    const user = users && users.length > 0 ? users[0] : null;
+    
+    if (user) {
+        if (user.status === 'En attente') {
+            simToast("⏳ Votre compte est en attente d'approbation par l'administration.", '#fb923c');
+        } else if (user.status === 'Refusé' || user.status === 'Refusée') {
+            simToast("❌ Votre demande de compte a été refusée.", '#ef4444');
+        } else if (user.status === 'Bloqué') {
+            simToast("🚫 Votre compte a été bloqué.", '#ef4444');
+        } else {
+            simToast(`👋 Bienvenue, ${user.name} !`);
+            localStorage.setItem('ga_current_user', JSON.stringify(user));
+            await showAccountDashboard(user);
+        }
+    } else {
+        simToast("❌ Identifiants incorrects.", '#ef4444');
+    }
+    btn.textContent = 'SE CONNECTER';
+});
+
+document.getElementById('btn-logout').addEventListener('click', async () => {
+    document.getElementById('account-view').style.display = 'none';
+    document.getElementById('login-view').style.display = 'block';
+    document.getElementById('form-title').textContent = "Espace Client";
+    document.getElementById('login-client-form').reset();
+    localStorage.removeItem('ga_current_user');
+    await window.supabaseClient.auth.signOut();
+});
+
+// Google OAuth Handlers
+const cleanRedirectUrl = window.location.origin + window.location.pathname;
+
+document.getElementById('btn-google-login')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await window.supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: cleanRedirectUrl } });
+});
+
+document.getElementById('btn-google-register')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await window.supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: cleanRedirectUrl } });
+});
+
+// Check Supabase Auth State for Google returning flow
+window.addEventListener('load', async () => {
+    if (!window.supabaseClient) {
+        console.error("Supabase client not loaded");
+        return;
+    }
+    
+    // Check if user is logged in via OAuth
+    window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (session && session.user && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+            simToast("🔄 Chargement Google...", 'var(--gold)');
+            const email = session.user.email;
+            const fullName = session.user.user_metadata?.full_name || email;
+            
+            // Check ga_users
+            let { data: users, error: errSelect } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
+            
+            if (errSelect) {
+                console.error("Database Select Error:", errSelect);
+                simToast("⚠️ Erreur : Table SQL (ga_users) introuvable. Avez-vous exécuté le script SQL ?", '#ef4444');
+                return;
+            }
+
+            let user = null;
+            if (users && users.length > 0) {
+                user = users[0];
+            } else {
+                // Auto register the user with Google info
+                const newUser = {
+                    name: fullName,
+                    email: email,
+                    cin: 'GOOGLE-' + Math.floor(Math.random() * 999999),
+                    phone: 'N/A',
+                    status: 'Validée' // Auto-approve Google users for convenience
+                };
+                const { data: inserted, error: errInsert } = await window.supabaseClient.from('ga_users').insert([newUser]).select();
+                if (errInsert) {
+                    console.error("Database Insert Error:", errInsert);
+                    simToast("⚠️ Erreur : Impossible d'enregistrer. Table SQL manquante ?", '#ef4444');
+                    return;
+                }
+                if (inserted && inserted.length > 0) {
+                    user = inserted[0];
+                }
+            }
+            
+            if (user) {
+                localStorage.setItem('ga_current_user', JSON.stringify(user));
+                simToast(`👋 Bienvenue, ${user.name} ! (Google)`, '#22c55e');
+                await showAccountDashboard(user);
+            }
+        }
+    });
+
+    // Check localStorage fallback just in case
+    const localUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+    if (localUser) {
+        await showAccountDashboard(localUser);
+    }
+});
+
+</script>
+
+</body>
+</html>
+
