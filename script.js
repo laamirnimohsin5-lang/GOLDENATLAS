@@ -370,8 +370,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. RESERVATION FORM
+    // 5. RESERVATION FORM — Auto-fill from logged-in user
     const bookingForm = document.getElementById('booking-form');
+    const bookingNameInput = document.getElementById('booking-name');
+
+    // Pre-fill name if user is logged in
+    if (currentUser && bookingNameInput) {
+        bookingNameInput.value = currentUser.name || '';
+        bookingNameInput.style.background = 'rgba(197,160,89,0.08)';
+        bookingNameInput.setAttribute('title', 'Rempli depuis votre compte');
+    }
+
     bookingForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const arr = document.getElementById('booking-arrival')?.value || document.getElementById('booking-date')?.value;
