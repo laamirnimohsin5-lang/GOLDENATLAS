@@ -458,17 +458,17 @@ document.addEventListener('DOMContentLoaded', () => {
         "Zone Cardio": {
             desc: "Équipée par Technogym, notre zone cardio propose une vue inspirante et des machines de dernière génération pour votre endurance.",
             features: ["Tapis de course", "Vélos elliptiques", "Écrans connectés", "Suivi performance"],
-            images: ["assets/les massages/Man_relaxing_in_wooden_sauna_202606152317.jpeg", "assets/les massages/Luxury_spa_relaxation_lounge_men_202606152317.jpeg"]
+            images: ["https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800", "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?q=80&w=800"]
         },
         "Musculation": {
             desc: "Un espace dédié à la force brute et au renforcement musculaire, avec des équipements ergonomiques pour tous les niveaux.",
             features: ["Poids libres", "Charges guidées", "Bancs réglables", "Espace fonctionnel"],
-            images: ["assets/les massages/Luxury_spa_relaxation_lounge_men_202606152317_2.jpeg", "assets/les massages/Luxury_massage_room_elegant_bed_202606152341_2.jpeg"]
+            images: ["https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800", "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=800"]
         },
         "Studio Yoga": {
             desc: "Retrouvez la paix intérieure dans notre studio de yoga baigné de lumière, idéal pour le Pilates, la méditation et la souplesse.",
             features: ["Tapis premium", "Accessoires fournis", "Ambiance zen", "Sessions privées"],
-            images: ["assets/les massages/Moroccan_spa_with_fountains_202606152341.jpeg", "assets/les massages/Luxury_hammam_relaxation_area_202606152341_3.jpeg"]
+            images: ["https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=800", "https://images.unsplash.com/photo-1518611012118-29621e65e60d?q=80&w=800"]
         }
     };
 
@@ -488,14 +488,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.service-card, .btn-gold[data-room]').forEach(el => {
         el.addEventListener('click', (e) => {
+            e.stopPropagation();
             const roomName = el.dataset.room;
             const data = spaRoomData[roomName] || gymRoomData[roomName];
             if (!data) return;
 
             // Fill modal
-            document.getElementById('modal-room-name').textContent = roomName;
-            document.getElementById('modal-room-desc').textContent = data.desc;
+            const roomNameEl = document.getElementById('modal-room-name');
+            const roomDescEl = document.getElementById('modal-room-desc');
             const featuresEl = document.getElementById('modal-room-features');
+
+            if (roomNameEl) roomNameEl.textContent = roomName;
+            if (roomDescEl) roomDescEl.textContent = data.desc;
             if (featuresEl) {
                 featuresEl.innerHTML = data.features.map(f => `<span>${f}</span>`).join('');
             }
@@ -504,10 +508,18 @@ document.addEventListener('DOMContentLoaded', () => {
             currentGalleryIndex = 0;
             updateGallery();
 
-            // Show main modal
-            document.getElementById('modal-details-view').style.display = 'block';
-            document.getElementById('modal-booking-view').style.display = 'none';
-            window.openModalGlobal();
+            // Set modal layout and reveal
+            const detailsView = document.getElementById('modal-details-view');
+            const bookingView = document.getElementById('modal-booking-view');
+            if (detailsView) detailsView.style.display = 'grid';
+            if (bookingView) bookingView.style.display = 'none';
+
+            if (modal) {
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                modal.style.transform = 'translate(-50%, -55%)';
+            }
+            if (overlay) overlay.classList.add('active');
         });
     });
 
