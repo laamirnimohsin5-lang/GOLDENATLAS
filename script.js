@@ -505,6 +505,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('modal-booking-view').style.display = 'none';
     });
 
+    document.getElementById('btn-details-close')?.addEventListener('click', closeAllModals);
+
     // 8. EFFECTS (Hero & Menu Animation)
     if (typeof THREE !== 'undefined') {
         initHeroEffect();
