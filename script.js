@@ -459,18 +459,18 @@ document.addEventListener('DOMContentLoaded', () => {
             desc: "Équipée par Technogym, notre zone cardio propose une vue inspirante et des machines de dernière génération pour votre endurance.",
             features: ["Tapis de course", "Vélos elliptiques", "Écrans connectés", "Suivi performance"],
             images: [
-                "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=1000",
-                "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1000",
-                "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=1000"
+                "assets/fitness/cardio1.jpg",
+                "assets/fitness/cardio2.jpg",
+                "assets/fitness/cardio3.jpg"
             ]
         },
         "Musculation": {
             desc: "Un espace dédié à la force brute et au renforcement musculaire, avec des équipements ergonomiques pour tous les niveaux.",
             features: ["Poids libres", "Charges guidées", "Bancs réglables", "Espace fonctionnel"],
             images: [
-                "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=1000",
-                "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1000",
-                "https://images.unsplash.com/photo-1541534741688-6078c64b52d2?w=1000"
+                "assets/fitness/muscu1.jpg",
+                "assets/fitness/muscu2.jpg",
+                "assets/fitness/muscu3.jpg"
             ]
         },
         "Studio Yoga": {
