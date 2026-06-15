@@ -1,18 +1,139 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Riads · Golden Atlas Errachidia</title>
+    <title>Les Riads · Oasis Privée · Golden Atlas Errachidia</title>
+    <meta name="description" content="Découvrez les Riads privés du Golden Atlas Errachidia, véritables havres de paix avec piscine et majordome dédié.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="subpage.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <style>
+        .riads-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .riad-card {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            height: 580px;
+        }
+        .riad-card img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .riad-card:hover img { transform: scale(1.08); }
+        .riad-card-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+            display: flex; flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            transition: background 0.4s;
+        }
+        .riad-card:hover .riad-card-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.35) 55%, rgba(0,0,0,0.1) 100%);
+        }
+        .riad-tag {
+            font-size: 0.65rem;
+            letter-spacing: 4px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .riad-card h3 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+            font-style: italic;
+            color: #fff;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+        .riad-card p {
+            font-size: 0.88rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.4s ease 0.1s, transform 0.4s ease 0.1s;
+        }
+        .riad-card:hover p { opacity: 1; transform: translateY(0); }
+        .riad-card-footer {
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .riad-price {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            color: var(--gold);
+        }
+        .riad-price small { font-family: var(--font-body); font-size: 0.72rem; color: rgba(255,255,255,0.6); display: block; margin-top: 2px; }
+        .btn-riad {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.6);
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-riad:hover { background: var(--gold); border-color: var(--gold); }
+        .riad-featured {
+            grid-column: span 2;
+            height: 650px;
+        }
+        @media (max-width: 768px) {
+            .riads-grid { grid-template-columns: 1fr; }
+            .riad-featured { grid-column: span 1; height: 480px; }
+            .riad-card { height: 420px; }
+        }
+        .amenities-bar {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 60px 5%;
+            background: #0a0a0a;
+            flex-wrap: wrap;
+        }
+        .amenity-item {
+            text-align: center;
+            color: #fff;
+        }
+        .amenity-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .amenity-label {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.6);
+        }
+        .amenity-value {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            color: var(--gold);
+            font-style: italic;
+        }
+    </style>
 </head>
 <body>
+
 <header id="main-header" class="header-dark">
     <div class="header-left">
         <button class="menu-btn">
@@ -62,7 +183,7 @@
                     <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
                     <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
                     <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
-                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads" style="color:var(--gold);">LES RIADS</a></li>
                     <li><a href="pavillon.html" data-i18n="menu_pavillon">LE PAVILLON</a></li>
                     <li><a href="spa.html" data-i18n="menu_massage">LES MASSAGES</a></li>
                     <li><a href="spa.html" data-i18n="menu_hammam">LE HAMMAM</a></li>
@@ -88,93 +209,206 @@
     </div>
     <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
+
 <div class="modal-overlay" id="modal-overlay"></div>
+
 <main>
-    <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1600&q=85'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
+    <!-- HERO -->
+    <section class="sub-hero">
+        <div class="sub-hero-bg" style="background-image:url('assets/riads/hero.jpg');"></div>
         <div class="sub-hero-overlay"></div>
-        <div class="sub-hero-content hero-anim" style="position:relative; z-index:2; text-align:center;">
-            <span class="surtitle" style="color:rgba(255,255,255,0.65);letter-spacing:5px;">Oasis Privée</span>
-            <h1 class="sub-hero-title">Les Riads</h1>
+        <div class="sub-hero-content">
+            <span class="surtitle">Oasis Privée · Golden Atlas</span>
+            <h1 class="title-xl text-white">Les Riads</h1>
+            <p class="text-white" style="letter-spacing:5px; text-transform:uppercase; font-size:0.82rem; margin-top:1.2rem;">Votre maison au cœur du palais</p>
         </div>
     </section>
-    <section class="section-pad reveal" style="background: var(--bg-cream); text-align:center; padding: 80px 5%;">
-        <div class="container-sm" style="max-width: 800px; margin: 0 auto;">
-            <span class="surtitle">Havre de Paix</span>
-            <h2 class="title-lg">Le comble de l'exclusivité</h2>
+
+    <!-- INTRO -->
+    <section class="section-pad reveal" style="background: var(--bg-cream); text-align:center; padding: 90px 5%;">
+        <div class="container-sm" style="max-width: 750px; margin: 0 auto;">
+            <span class="surtitle">Le comble de l'exclusivité</span>
+            <h2 class="title-lg">Votre havre de paix privé</h2>
             <div class="separator"></div>
-            <p class="body-text">Votre oasis privée au cœur du Golden Atlas. Chaque Riad dispose de sa propre cour intérieure somptueuse, d'une piscine chauffée luxueuse et d'un service de majordome dédié 24h/24. Plongez dans la véritable essence de l'hospitalité marocaine de prestige.</p>
-            <p style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-top: 20px;">Tarif : 28 000 MAD / nuit</p>
-            <button class="btn-reserver" onclick="document.getElementById('reservation-modal').classList.add('show'); document.getElementById('modal-overlay').classList.add('show');" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer;">RÉSERVER MON RIAD</button>
+            <p class="body-text">Chaque Riad est un monde à part entière — une demeure privée nichée au sein du Golden Atlas, avec sa propre cour intérieure parfumée, sa piscine chauffée et un service majordome dédié disponible 24h/24. Une immersion totale dans l'art de vivre marocain à son apogée.</p>
         </div>
     </section>
-    <section class="section-pad reveal" style="background:#fff; padding: 60px 5%;">
-        <div class="container">
-            <h3 class="title-md text-center" style="margin-bottom: 50px;">Nos Riads d'Exception</h3>
-            <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:40px;">
-                    <!-- Riad 1 -->
-                <div class="riad-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; text-align: left;">
-                    <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1600&q=85" style="width:100%; height:450px; object-fit:cover;">
-                    <div style="padding: 30px;">
-                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Riad "Patio de Cristal"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">L'éclat d'un matin parfait. Une cour intérieure immaculée où le petit-déjeuner vous est servi au bord de l'eau, entre arches de plâtre ciselé et zelliges émeraude.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 18 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Riad Patio de Cristal" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px;">RÉSERVER CE RIAD</button>
+
+    <!-- AMENITIES BAR -->
+    <div class="amenities-bar">
+        <div class="amenity-item">
+            <span class="amenity-icon">🏊</span>
+            <div class="amenity-label">Piscine</div>
+            <div class="amenity-value">Privée & Chauffée</div>
+        </div>
+        <div class="amenity-item">
+            <span class="amenity-icon">🛎️</span>
+            <div class="amenity-label">Majordome</div>
+            <div class="amenity-value">24h / 24</div>
+        </div>
+        <div class="amenity-item">
+            <span class="amenity-icon">🍽️</span>
+            <div class="amenity-label">Petit-déjeuner</div>
+            <div class="amenity-value">Servi en chambre</div>
+        </div>
+        <div class="amenity-item">
+            <span class="amenity-icon">🌿</span>
+            <div class="amenity-label">Jardin</div>
+            <div class="amenity-value">Patio fleurie</div>
+        </div>
+        <div class="amenity-item">
+            <span class="amenity-icon">✨</span>
+            <div class="amenity-label">Superficie</div>
+            <div class="amenity-value">350 – 600 m²</div>
+        </div>
+    </div>
+
+    <!-- RIADS GRID -->
+    <section class="section-pad reveal" style="background:#fff; padding: 80px 0;">
+        <div style="text-align:center; padding: 0 5% 60px;">
+            <span class="surtitle">Nos Riads d'Exception</span>
+            <h2 class="title-lg">Choisissez votre univers</h2>
+            <div class="separator"></div>
+        </div>
+
+        <div class="riads-grid">
+
+            <!-- Riad 1 — Featured -->
+            <div class="riad-card riad-featured">
+                <img src="assets/riads/riad1.jpg" alt="Riad Patio de Cristal">
+                <div class="riad-card-overlay">
+                    <div class="riad-tag">Riad Signature</div>
+                    <h3>Riad « Patio de Cristal »</h3>
+                    <p>L'éclat d'un matin parfait. Une cour intérieure immaculée où le petit-déjeuner vous est servi entre arches de plâtre ciselé et zelliges émeraude. Piscine privée et salon de réception.</p>
+                    <div class="riad-card-footer">
+                        <div class="riad-price">18 000 MAD <small>par nuit</small></div>
+                        <button class="btn-riad btn-room-reserver" data-room="Riad Patio de Cristal">Réserver</button>
                     </div>
                 </div>
-
-                <!-- Riad 2 -->
-                <div class="riad-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; text-align: left;">
-                    <img src="https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=1600&q=85" style="width:100%; height:450px; object-fit:cover;">
-                    <div style="padding: 30px;">
-                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Riad "Néon Ancestral"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">Le futur rencontre la tradition. Un salon de feu unique souligné par des rétro-éclairages néons bleus, créant une atmosphère mystique sous les voûtes séculaires.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 22 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Riad Néon Ancestral" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px;">RÉSERVER CE RIAD</button>
-                    </div>
-                </div>
-
-                <!-- Riad 3 -->
-                <div class="riad-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; text-align: left;">
-                    <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1600&q=85" style="width:100%; height:450px; object-fit:cover;">
-                    <div style="padding: 30px;">
-                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Riad "Vibrations Bohêmes"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">Une symphonie de couleurs et de rayures. Profitez de notre vaste patio baigné de soleil, orné de textiles artisanaux et de jardins luxuriants.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 16 500 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Riad Vibrations Bohêmes" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px;">RÉSERVER CE RIAD</button>
-                    </div>
-                </div>
-
-                <!-- Riad 4 -->
-                <div class="riad-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; text-align: left; overflow:hidden; border-radius: 4px;">
-                    <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1600&q=85" style="width:100%; height:450px; object-fit:cover;">
-                    <div style="padding: 30px;">
-                        <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Riad "Bleu Infini"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">Inspiré par le ciel et la mer. Un espace draperies de soie bleue et lanternes sculptées offrant une sérénité absolue et une vue à couper le souffle.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 25 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Riad Bleu Infini" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600; transition: 0.3s;">RÉSERVER CE RIAD</button>
-                    </div>
-                </div>
-
             </div>
+
+            <!-- Riad 2 -->
+            <div class="riad-card">
+                <img src="assets/riads/riad2.jpg" alt="Riad Néon Ancestral">
+                <div class="riad-card-overlay">
+                    <div class="riad-tag">Riad Mystique</div>
+                    <h3>Riad « Néon Ancestral »</h3>
+                    <p>Le futur rencontre la tradition. Un salon de feu unique souligné par des rétro-éclairages créant une atmosphère mystique sous les voûtes séculaires.</p>
+                    <div class="riad-card-footer">
+                        <div class="riad-price">22 000 MAD <small>par nuit</small></div>
+                        <button class="btn-riad btn-room-reserver" data-room="Riad Néon Ancestral">Réserver</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riad 3 -->
+            <div class="riad-card">
+                <img src="assets/riads/riad3.jpg" alt="Riad Vibrations Bohêmes">
+                <div class="riad-card-overlay">
+                    <div class="riad-tag">Riad Artisanal</div>
+                    <h3>Riad « Vibrations Bohêmes »</h3>
+                    <p>Une symphonie de couleurs et de rayures. Profitez de notre vaste patio orné de textiles artisanaux et de jardins luxuriants pour une détente totale.</p>
+                    <div class="riad-card-footer">
+                        <div class="riad-price">16 500 MAD <small>par nuit</small></div>
+                        <button class="btn-riad btn-room-reserver" data-room="Riad Vibrations Bohêmes">Réserver</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riad 4 — Featured -->
+            <div class="riad-card riad-featured">
+                <img src="assets/riads/riad4.jpg" alt="Riad Bleu Infini">
+                <div class="riad-card-overlay">
+                    <div class="riad-tag">Riad Royal</div>
+                    <h3>Riad « Bleu Infini »</h3>
+                    <p>Inspiré par le ciel et la mer. Un espace drapé de soie bleue et de lanternes sculptées, offrant une sérénité absolue et une vue incomparable. Notre suite la plus prisée.</p>
+                    <div class="riad-card-footer">
+                        <div class="riad-price">25 000 MAD <small>par nuit</small></div>
+                        <button class="btn-riad btn-room-reserver" data-room="Riad Bleu Infini">Réserver</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- BLOCK SPLIT -->
+    <section class="block-split reveal" style="min-height: 500px;">
+        <div class="split-img">
+            <img src="assets/riads/hero.jpg" alt="Riad Golden Atlas">
+        </div>
+        <div class="split-body">
+            <span class="surtitle">Service Conciergerie</span>
+            <h2 class="title-lg">Un monde de privilèges</h2>
+            <div class="separator left"></div>
+            <p>Du dîner aux chandelles dans votre cour privée au bain de pétales au coucher du soleil, notre équipe dédiée orchestre chaque moment de votre séjour avec une discrétion absolue et un sens du détail inégalé.</p>
+            <p>Chaque Riad est réservé en exclusivité, garantissant une intimité et une tranquillité totales.</p>
         </div>
     </section>
 </main>
-<footer class="main-footer reveal"><div class="footer-bottom"><p>© 2026 Golden Atlas Errachidia.</p></div></footer>
+
+<footer class="main-footer reveal">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-logo-col">
+                <span class="logo">Golden Atlas</span>
+                <p>Avenue Bab Jdid<br>40040 Errachidia, Maroc</p>
+                <a href="tel:+212648120577">+212 648 120 577</a>
+            </div>
+            <div class="footer-col">
+                <h4>Hébergements</h4>
+                <ul>
+                    <li><a href="hebergements.html">Les Chambres</a></li>
+                    <li><a href="suites.html">Les Suites</a></li>
+                    <li><a href="riads.html" style="color:var(--gold);">Les Riads</a></li>
+                    <li><a href="vip-room.html">Chambres VIP</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="spa.html">Spa & Bien-être</a></li>
+                    <li><a href="restaurants.html">Restaurants</a></li>
+                    <li><a href="gym.html">Fitness Center</a></li>
+                    <li><a href="transport.html">Transport</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
+        <div class="footer-bottom-links">
+            <a href="#">Mentions légales</a>
+            <a href="#">Confidentialité</a>
+            <a href="index.html">Accueil</a>
+        </div>
+    </div>
+</footer>
+
+<!-- RESERVATION MODAL -->
 <div class="reservation-modal" id="reservation-modal">
-    <button class="modal-close-btn" onclick="document.getElementById('reservation-modal').classList.remove('show'); document.getElementById('modal-overlay').classList.remove('show');">×</button>
+    <button class="modal-close-btn" id="modal-close">×</button>
     <p class="modal-title">Réserver votre Riad</p>
     <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+    <p class="modal-room" id="modal-room-name"></p>
     <form id="booking-form">
         <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
         <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
         <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
-        <div class="form-group"><label>Voyageurs</label><select id="booking-guests" required><option value="" disabled selected>Sélectionner</option><option>Suite Familiale</option></select></div>
-        <p id="modal-room-name" style="display:none;">Riad Privé</p>
-        <button type="submit" class="btn-modal-submit">CONFIRMER LA RÉSERVATION</button>
+        <div class="form-group"><label>Voyageurs</label>
+            <select id="booking-guests" required>
+                <option value="" disabled selected>Sélectionner</option>
+                <option>2 Adultes</option>
+                <option>2 Adultes + 1 Enfant</option>
+                <option>Famille (4+)</option>
+                <option>Suite Familiale</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
     </form>
 </div>
 <div class="toast" id="toast-msg"></div>
+
 <script src="script.js"></script>
 </body>
 </html>
-
