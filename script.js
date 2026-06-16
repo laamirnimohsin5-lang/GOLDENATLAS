@@ -155,7 +155,11 @@ const translations = {
         transport_card1_desc: "Chauffeurs bilingues formés aux standards de l'hôtellerie de luxe.",
         transport_card2_title: "Collection Vintage",
         transport_card2_desc: "Pour vos événements spéciaux ou mariages dans le désert.",
-        transport_contact_msg: "Pour tout service de transport, veuillez nous informer 48 heures avant votre arrivée au 06 48 12 05 77."
+        transport_contact_msg: "Pour tout service de transport, veuillez nous informer 48 heures avant votre arrivée au 06 48 12 05 77.",
+        loc_title: "Situation & Accès",
+        loc_surtitle: "Destination Errachidia",
+        loc_text: "Situé au cœur de la ville impériale, Golden Atlas est le point de départ idéal pour explorer les trésors du Tafilalet. Un emplacement prestigieux à quelques pas des sites emblématiques.",
+        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Maroc"
     },
     EN: {
         nav_login: "SIGN IN",
@@ -308,7 +312,11 @@ const translations = {
         transport_card1_desc: "Bilingual drivers trained to luxury hospitality standards.",
         transport_card2_title: "Vintage Collection",
         transport_card2_desc: "For your special events or weddings in the desert.",
-        transport_contact_msg: "For any transport service, please inform us 48 hours before your arrival at 06 48 12 05 77."
+        transport_contact_msg: "For any transport service, please inform us 48 hours before your arrival at 06 48 12 05 77.",
+        loc_title: "Location & Access",
+        loc_surtitle: "Destination Errachidia",
+        loc_text: "Located in the heart of the imperial city, Golden Atlas is the perfect starting point to explore the treasures of Tafilalet. A prestigious location just steps from iconic landmarks.",
+        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Morocco"
     },
     ES: {
         nav_login: "IDENTIFICARSE",
@@ -382,7 +390,11 @@ const translations = {
         resto_intro_title: "Excelencia Culinaria",
         resto_intro_text: "Restaurantes firmados por chefs de renombre mundial.",
         transport_hero_title: "El Arte de Viajar",
-        transport_hero_desc: "Limusinas privadas y coches clásicos para sus trayectos."
+        transport_hero_desc: "Limusinas privadas y coches clásicos para sus trayectos.",
+        loc_title: "Ubicación y Acceso",
+        loc_surtitle: "Destino Errachidia",
+        loc_text: "Situado en el corazón de la ciudad imperial, Golden Atlas es el punto de partida perfecto para explorar los tesoros del Tafilalet. Una ubicación de prestigio a pocos pasos de los lugares emblemáticos.",
+        loc_address: "Avenida Bab Jdid, 40040 Errachidia, Marruecos"
     },
     AR: {
         nav_login: "تسجيل الدخول",
@@ -534,7 +546,11 @@ const translations = {
         transport_card1_desc: "سائقون يتحدثون لغتين مدربون على معايير الضيافة الفاخرة.",
         transport_card2_title: "مجموعة كلاسيكية",
         transport_card2_desc: "لمناسباتكم الخاصة أو حفلات الزفاف في الصحراء.",
-        transport_contact_msg: "لأي خدمة نقل، يرجى إبلاغنا قبل 48 ساعة من وصولكم على 06 48 12 05 77."
+        transport_contact_msg: "لأي خدمة نقل، يرجى إبلاغنا قبل 48 ساعة من وصولكم على 06 48 12 05 77.",
+        loc_title: "الموقع والوصول",
+        loc_surtitle: "وجهة الرشيدية",
+        loc_text: "يقع فندق غولدن أطلس في قلب المدينة الإمبراطورية، وهو نقطة الانطلاق المثالية لاستكشاف كنوز تافيلالت. موقع مرموق على بعد خطوات قليلة من المعالم الأثرية.",
+        loc_address: "شارع باب جديد، 40040 الرشيدية، المغرب"
     }
 };
 
