@@ -220,12 +220,17 @@ const translations = {
 /**
  * UTILITIES
  */
-function showToast(msg) {
-    const toast = document.getElementById('toast-msg');
-    if (!toast) return;
-    toast.textContent = msg;
+function showToast(msg, bg = "var(--gold)", duration = 3000) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.innerHTML = msg;
+    toast.style.background = bg;
+    document.body.appendChild(toast);
     toast.classList.add('active');
-    setTimeout(() => toast.classList.remove('active'), 4000);
+    setTimeout(() => {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 500);
+    }, duration);
 }
 
 function updateLanguage(lang) {
@@ -566,7 +571,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (error) {
             showToast("Erreur lors de l'envoi.");
         } else {
-            showToast("Réservation confirmée !");
+            showToast("Réservation confirmée ! <br><button onclick=\"location.href='login-client.html'\" style='margin-top:10px; background:#000; color:var(--gold); border:1px solid var(--gold); padding:5px 10px; cursor:pointer; font-size:0.6rem;'>VOIR MES RÉSERVATIONS</button>", "var(--gold)", 6000);
             closeAllModals();
         }
     });

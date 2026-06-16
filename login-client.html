@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -568,12 +570,17 @@ async function showAccountDashboard(user) {
 
         // Premium accepted banner for this specific reservation
         const acceptedBanner = (r.status === 'Validée' || r.status === 'Acceptée') ? `
-        <div class="notification-banner" style="margin-bottom: 0; margin-top: 16px;">
+        <div class="notification-banner" style="margin-bottom: 0; margin-top: 16px; border-radius: 8px;">
             <span class="notif-icon">✅</span>
-            <h3>Réservation Confirmée !</h3>
-            <p>Votre réservation pour <strong style="color:#e8c97a">${r.room}</strong> a été acceptée par notre équipe.<br>
-            Nous vous contacterons bientôt pour finaliser votre arrivée.</p>
+            <h3>Séjour Confirmé !</h3>
+            <p>Votre réservation pour <strong style="color:#e8c97a">${r.room}</strong> est prête.<br>
+            Veuillez télécharger votre bon de séjour ci-dessous.</p>
+            <button class="btn-submit" style="height: 45px; margin-top: 15px; font-size: 0.65rem;" onclick="downloadReservationPDF('${r.id}')">📥 TÉLÉCHARGER MON BON (PDF)</button>
         </div>` : '';
+        
+        // Cache reservations globally for the PDF generator
+        window.localReservations = reservations;
+
         return `
         <div class="reservation-card" id="res-${r.id}">
             <div class="res-top">
@@ -622,6 +629,63 @@ window.cancelReservation = async function(id, btn) {
             container.innerHTML = '<div class="empty-state"><span class="icon">🏨</span>Aucune réservation.</div>';
         }
     }
+};
+
+window.downloadReservationPDF = function(resId) {
+    const res = window.localReservations?.find(r => r.id == resId);
+    if (!res) return;
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // Design PDF
+    doc.setFillColor(15, 15, 15);
+    doc.rect(0, 0, 210, 45, 'F');
+
+    doc.setTextColor(201, 168, 76);
+    doc.setFontSize(26);
+    doc.text("GOLDEN ATLAS PRESTIGE", 105, 25, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text("ERRACHIDIA - TAFILALET - LUXE & PATRIMOINE", 105, 33, { align: 'center' });
+
+    doc.setTextColor(40, 40, 40);
+    doc.setFontSize(16);
+    doc.text("CONFIRMATION DE SÉJOUR", 20, 65);
+    
+    doc.setDrawColor(201, 168, 76);
+    doc.setLineWidth(0.5);
+    doc.line(20, 70, 190, 70);
+
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Dossier N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
+    doc.text(`Émis le : ${new Date().toLocaleDateString('fr-FR')}`, 190, 80, { align: 'right' });
+
+    const drawInfo = (label, data, y) => {
+        doc.setFontSize(10);
+        doc.setTextColor(120, 120, 120);
+        doc.text(label, 20, y);
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(11);
+        doc.text(data, 75, y);
+    };
+
+    drawInfo("NOM DU CLIENT", res.name.toUpperCase(), 100);
+    drawInfo("HÉBERGEMENT / N°", res.room.toUpperCase(), 110);
+    drawInfo("DATE D'ARRIVÉE", res.arrival, 125);
+    drawInfo("DATE DE DÉPART", res.departure, 135);
+    drawInfo("NB. DE PERSONNES", (res.guests || 1) + " Personne(s)", 145);
+    drawInfo("TYPE DE SÉJOUR", "PRESTIGE & DÉTENTE", 155);
+    
+    doc.setDrawColor(230, 230, 230);
+    doc.line(20, 165, 190, 165);
+
+    doc.setFontSize(9);
+    doc.setTextColor(120, 120, 120);
+    doc.text("Ce document doit être présenté à la réception dès votre arrivée.", 105, 185, { align: 'center' });
+    doc.text("Contact Conciergerie : +212 (0) 555-987-654 | contact@goldenatlas.com", 105, 192, { align: 'center' });
+
+    doc.save(`Confirmation_GA_${res.id.slice(0,8).toUpperCase()}.pdf`);
 };
 
 document.getElementById('login-client-form').addEventListener('submit', async function(e) {
