@@ -862,7 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay?.addEventListener('click', closeAllModals);
 
     // Dynamic Room Selection
-    document.querySelectorAll('.btn-room-reserver').forEach(btn => {
+    document.querySelectorAll('.btn-room-reserver, .btn-reserver-trigger').forEach(btn => {
         btn.addEventListener('click', () => {
             const roomName = btn.dataset.room;
             const modalRoom = document.getElementById('modal-room-name');
