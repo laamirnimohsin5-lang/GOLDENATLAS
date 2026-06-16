@@ -322,19 +322,13 @@
                 </div>
             </div>
 
-            <!-- Reservations Section -->
-            <p class="section-title">Mes Réservations</p>
-            <div id="reservations-container">
-                <div class="empty-state">
-                    <span class="icon">⏳</span>
-                    Chargement de vos réservations...
-                </div>
-            </div>
-
             <!-- Action Buttons -->
             <div class="btn-row">
                 <button class="btn-submit" id="btn-logout" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem;">SE DÉCONNECTER</button>
-                <a href="index.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem;">↩ RETOUR AU SITE</a>
+                <a href="mes-reservations.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem;">VOIR MES RÉSERVATIONS</a>
+            </div>
+            <div class="btn-row">
+                <a href="index.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem; background: transparent; border: 1px solid var(--gold); color: var(--gold);">↩ RETOUR AU SITE</a>
             </div>
         </div>
     </div>
@@ -498,15 +492,6 @@ function formatDate(dateStr) {
     const d = new Date(dateStr);
     if (isNaN(d)) return dateStr;
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-function getStatusClass(status) {
-    if (!status || status === 'En attente') return 'res-pending';
-    if (status.includes('Valid') || status.includes('Accept')) return 'Validée';
-    if (status.includes('Refus')) return 'Refusée';
-    return 'res-pending';
-}
-
 async function showAccountDashboard(user) {
     // Update wrapper width
     document.querySelector('.login-wrapper').classList.add('wide');
@@ -527,166 +512,7 @@ async function showAccountDashboard(user) {
     document.getElementById('login-view').style.display = 'none';
     document.getElementById('register-view').style.display = 'none';
     document.getElementById('account-view').style.display = 'block';
-
-    // Load reservations by email OR name
-    const container = document.getElementById('reservations-container');
-    container.innerHTML = '<div class="empty-state"><span class="icon">⏳</span>Chargement...</div>';
-
-    let query = window.supabaseClient.from('ga_reservations').select('*');
-    
-    if (user.email) {
-        // Search by email (linked) OR by name (legacy)
-        query = window.supabaseClient.from('ga_reservations')
-            .select('*')
-            .or(`user_email.eq.${user.email},name.ilike.%${(user.name || '').split(' ')[0]}%`);
-    } else {
-        query = query.ilike('name', `%${(user.name || '').split(' ')[0]}%`);
-    }
-
-    const { data: reservations, error } = await query.order('created_at', { ascending: false });
-
-    if (error) {
-        container.innerHTML = '<div class="empty-state"><span class="icon">⚠️</span>Erreur de chargement. Vérifiez votre connexion.</div>';
-        return;
-    }
-
-    if (!reservations || reservations.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <span class="icon">🏨</span>
-                Aucune réservation trouvée.<br>
-                <a href="index.html" style="color: var(--gold); text-decoration: none; font-size: 0.7rem; letter-spacing: 2px; margin-top: 12px; display: inline-block;">Faire une réservation →</a>
-            </div>`;
-        return;
-    }
-
-    container.innerHTML = reservations.map(r => {
-        const nights = calcNights(r.arrival, r.departure);
-        const pricePerNight = ROOM_PRICES[r.room] || ROOM_PRICES['default'];
-        const total = (pricePerNight * nights).toLocaleString('fr-FR');
-        const statusClass = getStatusClass(r.status);
-        const statusLabel = r.status || 'En attente';
-        const canCancel = !r.status || r.status === 'En attente';
-
-        // Premium accepted banner for this specific reservation
-        const acceptedBanner = (r.status === 'Validée' || r.status === 'Acceptée') ? `
-        <div class="notification-banner" style="margin-bottom: 0; margin-top: 16px; border-radius: 8px;">
-            <span class="notif-icon">✅</span>
-            <h3>Séjour Confirmé !</h3>
-            <p>Votre réservation pour <strong style="color:#e8c97a">${r.room}</strong> est prête.<br>
-            Veuillez télécharger votre bon de séjour ci-dessous.</p>
-            <button class="btn-submit" style="height: 45px; margin-top: 15px; font-size: 0.65rem;" onclick="downloadReservationPDF('${r.id}')">📥 TÉLÉCHARGER MON BON (PDF)</button>
-        </div>` : '';
-        
-        // Cache reservations globally for the PDF generator
-        window.localReservations = reservations;
-
-        return `
-        <div class="reservation-card" id="res-${r.id}">
-            <div class="res-top">
-                <div class="res-room">🏨 ${r.room}</div>
-                <span class="res-status ${statusClass}">${statusLabel}</span>
-            </div>
-            <div class="res-details">
-                <div class="res-detail-item">
-                    <label>Arrivée</label>
-                    <span>${formatDate(r.arrival)}</span>
-                </div>
-                <div class="res-detail-item">
-                    <label>Départ</label>
-                    <span>${formatDate(r.departure)}</span>
-                </div>
-                <div class="res-detail-item">
-                    <label>Nuits</label>
-                    <span>${nights} nuit${nights > 1 ? 's' : ''}</span>
-                </div>
-            </div>
-            <div class="res-price-total">
-                <label>💳 Prix Total Estimé</label>
-                <span>${total} MAD</span>
-            </div>
-            ${acceptedBanner}
-            ${canCancel ? `<button class="btn-cancel" onclick="cancelReservation('${r.id}', this)">❌ Annuler cette réservation</button>` : 
-              `<span style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.3); text-transform:uppercase">🔒 Réservation finalisée</span>`}
-        </div>`;
-    }).join('');
 }
-
-window.cancelReservation = async function(id, btn) {
-    if (!confirm('Voulez-vous vraiment annuler cette réservation ?')) return;
-    btn.disabled = true;
-    btn.textContent = 'Annulation...';
-    const { error } = await window.supabaseClient.from('ga_reservations').delete().eq('id', id);
-    if (error) {
-        simToast('⚠️ Erreur lors de l\'annulation.', '#ef4444');
-        btn.disabled = false;
-        btn.textContent = '❌ Annuler cette réservation';
-    } else {
-        document.getElementById('res-' + id)?.remove();
-        simToast('✅ Réservation annulée avec succès.', '#22c55e');
-        const container = document.getElementById('reservations-container');
-        if (!container.querySelector('.reservation-card')) {
-            container.innerHTML = '<div class="empty-state"><span class="icon">🏨</span>Aucune réservation.</div>';
-        }
-    }
-};
-
-window.downloadReservationPDF = function(resId) {
-    const res = window.localReservations?.find(r => r.id == resId);
-    if (!res) return;
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    // Design PDF
-    doc.setFillColor(15, 15, 15);
-    doc.rect(0, 0, 210, 45, 'F');
-
-    doc.setTextColor(201, 168, 76);
-    doc.setFontSize(26);
-    doc.text("GOLDEN ATLAS PRESTIGE", 105, 25, { align: 'center' });
-    doc.setFontSize(10);
-    doc.text("ERRACHIDIA - TAFILALET - LUXE & PATRIMOINE", 105, 33, { align: 'center' });
-
-    doc.setTextColor(40, 40, 40);
-    doc.setFontSize(16);
-    doc.text("CONFIRMATION DE SÉJOUR", 20, 65);
-    
-    doc.setDrawColor(201, 168, 76);
-    doc.setLineWidth(0.5);
-    doc.line(20, 70, 190, 70);
-
-    doc.setFontSize(10);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Dossier N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
-    doc.text(`Émis le : ${new Date().toLocaleDateString('fr-FR')}`, 190, 80, { align: 'right' });
-
-    const drawInfo = (label, data, y) => {
-        doc.setFontSize(10);
-        doc.setTextColor(120, 120, 120);
-        doc.text(label, 20, y);
-        doc.setTextColor(0, 0, 0);
-        doc.setFontSize(11);
-        doc.text(data, 75, y);
-    };
-
-    drawInfo("NOM DU CLIENT", res.name.toUpperCase(), 100);
-    drawInfo("HÉBERGEMENT / N°", res.room.toUpperCase(), 110);
-    drawInfo("DATE D'ARRIVÉE", res.arrival, 125);
-    drawInfo("DATE DE DÉPART", res.departure, 135);
-    drawInfo("NB. DE PERSONNES", (res.guests || 1) + " Personne(s)", 145);
-    drawInfo("TYPE DE SÉJOUR", "PRESTIGE & DÉTENTE", 155);
-    
-    doc.setDrawColor(230, 230, 230);
-    doc.line(20, 165, 190, 165);
-
-    doc.setFontSize(9);
-    doc.setTextColor(120, 120, 120);
-    doc.text("Ce document doit être présenté à la réception dès votre arrivée.", 105, 185, { align: 'center' });
-    doc.text("Contact Conciergerie : +212 (0) 555-987-654 | contact@goldenatlas.com", 105, 192, { align: 'center' });
-
-    doc.save(`Confirmation_GA_${res.id.slice(0,8).toUpperCase()}.pdf`);
-};
 
 document.getElementById('login-client-form').addEventListener('submit', async function(e) {
     e.preventDefault();
