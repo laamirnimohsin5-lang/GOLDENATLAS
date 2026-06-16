@@ -645,6 +645,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 16/9;
+    max-height: 420px;
     min-height: 250px;
     background: #000;
 }
