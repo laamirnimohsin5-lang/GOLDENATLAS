@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -107,10 +108,10 @@
     <!-- INTRO -->
     <section class="section-pad text-center reveal" id="intro">
         <div class="container-sm">
-            <span class="surtitle">Le Spa</span>
-            <h2 class="title-lg">Soin du corps & de l'âme</h2>
+            <span class="surtitle" data-i18n="menu_spa">Le Spa</span>
+            <h2 class="title-lg" data-i18n="spa_intro_title">Soin du corps & de l'âme</h2>
             <div class="separator"></div>
-            <p class="body-text">Sur 2500 m², le Spa de Golden Atlas déploie un univers raffiné de bien-être et de beauté. Hammams d'exception, soins du visage et massages signatures, piscine intérieure chauffée, salle de sport... Un véritable sanctuaire au cœur du palace.</p>
+            <p class="body-text" data-i18n="spa_intro_text">Sur 2500 m², le Spa de Golden Atlas déploie un univers raffiné de bien-être et de beauté.</p>
         </div>
     </section>
 
@@ -123,9 +124,9 @@
                         <img src="assets/les massages/Luxury_Moroccan_hammam_spa_202606152317.jpeg" alt="Les Hammams">
                     </div>
                     <div class="service-content">
-                        <h3>Les Hammams</h3>
-                        <p>Un rituel ancestral revisité dans un décor somptueux. Gommage au savon beldi, enveloppements et purification selon l'art du bain marocain.</p>
-                        <button class="btn-gold" data-room="Les Hammams">Voir Détails</button>
+                        <h3 data-i18n="spa_hammam_title">Les Hammams</h3>
+                        <p data-i18n="spa_hammam_desc">Un rituel ancestral revisité dans un décor somptueux.</p>
+                        <button class="btn-gold" data-room="Les Hammams" data-i18n="discover">Voir Détails</button>
                     </div>
                 </div>
                 <div class="service-card" data-room-type="massage" data-room="Les Massages">
@@ -133,9 +134,9 @@
                         <img src="assets/les massages/Luxury_spa_massage_suite_202606152341.jpeg" alt="Les Massages">
                     </div>
                     <div class="service-content">
-                        <h3>Les Massages</h3>
-                        <p>De l'effleurage doux au massage deep tissue, nos thérapeutes experts personnalisent chaque séance selon vos besoins et votre état du moment.</p>
-                        <button class="btn-gold" data-room="Les Massages">Voir Détails</button>
+                        <h3 data-i18n="spa_massage_title">Les Massages</h3>
+                        <p data-i18n="spa_massage_desc">De l'effleurage doux au massage deep tissue.</p>
+                        <button class="btn-gold" data-room="Les Massages" data-i18n="discover">Voir Détails</button>
                     </div>
                 </div>
                 <div class="service-card" data-room-type="soin-visage" data-room="Les Soins Visage">
@@ -143,9 +144,9 @@
                         <img src="assets/les massages/Luxury_facial_treatment_room_202606152341.jpeg" alt="Les Soins Visage">
                     </div>
                     <div class="service-content">
-                        <h3>Les Soins Visage</h3>
-                        <p>Des soins sur-mesure avec les meilleures marques internationales, associées aux ingrédients naturels précieux du Maroc : arganier, huile de roses...</p>
-                        <button class="btn-gold" data-room="Les Soins Visage">Voir Détails</button>
+                        <h3 data-i18n="spa_facials_title">Les Soins Visage</h3>
+                        <p data-i18n="spa_facials_desc">Des soins sur-mesure avec les meilleures marques.</p>
+                        <button class="btn-gold" data-room="Les Soins Visage" data-i18n="discover">Voir Détails</button>
                     </div>
                 </div>
             </div>

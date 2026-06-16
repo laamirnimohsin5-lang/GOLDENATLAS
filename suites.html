@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -94,17 +95,17 @@
     <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1600&q=80'); background-size:cover; background-position:center; min-height:60vh; position:relative; display:flex; align-items:center; justify-content:center;">
         <div class="sub-hero-overlay"></div>
         <div class="sub-hero-content hero-anim" style="position:relative; z-index:2; text-align:center;">
-            <span class="surtitle" style="color:rgba(255,255,255,0.65);letter-spacing:5px;">Luxe & Espace</span>
-            <h1 class="sub-hero-title">Nos Suites</h1>
+            <span class="surtitle" style="color:rgba(255,255,255,0.65);letter-spacing:5px;" data-i18n="menu_suites">Luxe & Espace</span>
+            <h1 class="sub-hero-title" data-i18n="menu_suites">Nos Suites</h1>
         </div>
     </section>
 
     <section class="section-pad reveal" style="background: var(--bg-cream); text-align:center; padding: 80px 5%;">
         <div class="container-sm" style="max-width: 800px; margin: 0 auto;">
-            <span class="surtitle">Quintessence</span>
-            <h2 class="title-lg">Des espaces conçus pour l'émerveillement</h2>
+            <span class="surtitle" data-i18n="discover">Quintessence</span>
+            <h2 class="title-lg" data-i18n="suites_intro_title">Des espaces conçus pour l'émerveillement</h2>
             <div class="separator"></div>
-            <p class="body-text">الأجنحة في فندق أطلس الذهبي هي أكثر من مجرد إقامة؛ إنها ملاذات واسعة تجمع بين الفن التقليدي وأعلى معايير الرفاهية العالمية. استمتع بإطلالات بانورامية وخدمة مخصصة بالكامل.</p>
+            <p class="body-text" data-i18n="suites_intro">L'élégance mystique d'une suite au Golden Atlas, fusion de tradition et de luxe contemporain.</p>
         </div>
     </section>
 
@@ -117,9 +118,9 @@
                     <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Celestial Horizon"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">أفق يتجاوز الخيال. جناح ملكي يوفر إطلالة لا متناهية على جبال الأطلس مع شرفة خاصة واسعة لتناول العشاء تحت النجوم.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 12 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Suite Celestial Horizon" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;" data-i18n="suite_celestial_desc">Un horizon au-delà de l'imagination. Une suite royale offrant une vue infinie sur les montagnes de l'Atlas.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;"><span data-i18n="suite_price_label">Tarif</span> : 12 000 MAD / <span data-i18n="suite_per_night">Nuit</span></p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Celestial Horizon" data-i18n="suite_book_btn" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
                     </div>
                 </div>
 
@@ -128,9 +129,9 @@
                     <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Golden Palm"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">بين النخيل والذهب. جناح فاخر محاط بجنيات الفندق الغناء، يتميز بتصميم داخلي يجمع بين النحاس المطروق والحرير الطبيعي.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 15 500 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Suite Golden Palm" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;" data-i18n="suite_palm_desc">Entre palmiers et or. Une suite luxueuse entourée des jardins chantants de l'hôtel.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;"><span data-i18n="suite_price_label">Tarif</span> : 15 500 MAD / <span data-i18n="suite_per_night">Nuit</span></p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Golden Palm" data-i18n="suite_book_btn" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
                     </div>
                 </div>
 
@@ -139,9 +140,9 @@
                     <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Royal Zellige"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">لوحة فنية من الزليج الفاسي الأصيل. جناح يجسد روعة الهندسة المغربية بلمسات ملكية عصرية وراحة تفوق التوقعات.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 18 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Suite Royal Zellige" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;" data-i18n="suite_zellige_desc">Une œuvre d'art en Zellige de Fès authentique. Une suite incarnant la splendeur de l'architecture marocaine.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;"><span data-i18n="suite_price_label">Tarif</span> : 18 000 MAD / <span data-i18n="suite_per_night">Nuit</span></p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Royal Zellige" data-i18n="suite_book_btn" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
                     </div>
                 </div>
 
@@ -150,9 +151,9 @@
                     <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 2rem; color: var(--gold);">Suite "Midnight Saharienne"</h4>
-                        <p style="margin: 15px 0; color: #666; line-height: 1.6;">سحر الصحراء في سكون الليل. يتميز هذا الجناح بتصميم دافئ وإضاءة هادئة تجعلك تشعر بسكينة لا مثيل لها فب قلب الفندق.</p>
-                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;">Tarif : 22 000 MAD / Nuit</p>
-                        <button class="btn-reserver btn-room-reserver" data-room="Suite Midnight Saharienne" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
+                        <p style="margin: 15px 0; color: #666; line-height: 1.6;" data-i18n="suite_midnight_desc">Le charme du désert dans le calme de la nuit. Cette suite présente un design chaleureux.</p>
+                        <p style="font-weight: 600; color: var(--text-dark); font-size: 1.3rem; margin-bottom: 20px;"><span data-i18n="suite_price_label">Tarif</span> : 22 000 MAD / <span data-i18n="suite_per_night">Nuit</span></p>
+                        <button class="btn-reserver btn-room-reserver" data-room="Suite Midnight Saharienne" data-i18n="suite_book_btn" onclick="window.openModalGlobal()" style="width: 100%; background: var(--gold); border: none; color: white; padding: 12px; cursor: pointer; letter-spacing: 2px; font-weight: 600;">RÉSERVER CETTE SUITE</button>
                     </div>
                 </div>
 

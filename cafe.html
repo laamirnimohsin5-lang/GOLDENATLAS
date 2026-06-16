@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -124,51 +125,190 @@
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:40px;">
                 
                 <!-- Thé à la Menthe -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
                     <img src="cafe_tea.png" alt="Thé à la Menthe Royal" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
-                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Thé à la Menthe Royal</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Le rituel traditionnel, préparé avec de la menthe fraîche et servi avec un assortiment de pâtisseries marocaines fines.</p>
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;" data-i18n="cafe_tea_title">Thé à la Menthe Royal</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;" data-i18n="cafe_tea_desc">Le rituel traditionnel, préparé avec de la menthe fraîche et servi avec un assortiment de pâtisseries marocaines fines.</p>
                     <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">75 MAD</div>
                 </div>
 
-                <!-- Qahwa Arabiya -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <img src="qahwa_photo.jpg" alt="Qahwa Arabiya" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
-                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Qahwa Arabiya aux Épices</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café noir traditionnel infusé à la cardamome et au clou de girofle, signature de l'hospitalité du désert.</p>
-                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">50 MAD</div>
+                <!-- Café Noir -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="cafe_noir_luxury.png" alt="Café Noir" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;" data-i18n="cafe_noir_title">Café Noir Signature</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;" data-i18n="cafe_noir_desc">Un café noir d'exception, intense et aromatique.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">45 MAD</div>
                 </div>
 
                 <!-- Le Nous-Nous -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <img src="nous_nous_photo.jpg" alt="Le Nous-Nous" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
-                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Le "Nous-Nous"</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">L'équilibre parfait entre un espresso corsé et un lait crémeux, le classique indémodable des cafés marocains.</p>
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Café_au_Lait_breakfast_table_202606161751_2.jpeg" alt="Le Nous-Nous" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;" data-i18n="cafe_nousnous_title">Le "Nous-Nous"</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;" data-i18n="cafe_nousnous_desc">L'équilibre parfait entre un espresso corsé et un lait crémeux.</p>
                     <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">45 MAD</div>
                 </div>
 
                 <!-- Espresso -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <img src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=800&q=85" alt="Espresso Signature" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
-                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Espresso Signature</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Grains Arabica sélectionnés, torréfiés avec soin pour une richesse aromatique incomparable.</p>
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Espresso_coffee_in_white_cup_202606161751.jpeg" alt="Espresso" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;" data-i18n="cafe_espresso_title">Espresso</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;" data-i18n="cafe_espresso_desc">L'essence pure du café, extrait sous pression pour une crème onctueuse.</p>
                     <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">40 MAD</div>
                 </div>
 
+                <!-- Ristretto -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Ristretto_coffee_in_black_cup_202606161751.jpeg" alt="Ristretto" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Ristretto</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso très court, plus concentré et moins amer, capturant le cœur des arômes.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">40 MAD</div>
+                </div>
+
+                <!-- Lungo -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Lungo_coffee_in_glass_cup_202606161751.jpeg" alt="Lungo" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Lungo</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso allongé pour une tasse plus généreuse, révélant des notes subtiles et douces.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">45 MAD</div>
+                </div>
+
+                <!-- Americano -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Americano_coffee_in_mug_202606161751.jpeg" alt="Americano" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Americano Atlas</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso double allongé à l'eau chaude pour un café long et équilibré.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">45 MAD</div>
+                </div>
+
                 <!-- Cappuccino -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
-                    <img src="https://images.unsplash.com/photo-1534778101976-62847782c213?w=800&q=85" alt="Cappuccino Atlas" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
-                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Cappuccino Atlas</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Une mousse de lait onctueuse sur un lit d'espresso, saupoudrée d'une touche de cacao pur.</p>
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Cappuccino_with_latte_art_202606161751.jpeg" alt="Cappuccino" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Cappuccino</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">L'équilibre parfait entre espresso, lait vapeur et une mousse de lait onctueuse.</p>
                     <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">55 MAD</div>
                 </div>
 
+                <!-- Latte -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Café_latte_tall_glass_art_202606161751.jpeg" alt="Latte" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Caffè Latte</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso avec une grande proportion de lait chaud pour une douceur infinie.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">55 MAD</div>
+                </div>
+
+                <!-- Latte Macchiato -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Latte_Macchiato_in_glass_202606161751.jpeg" alt="Latte Macchiato" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Latte Macchiato</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Du lait chaud "taché" par un espresso, révélant de magnifiques strates.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">60 MAD</div>
+                </div>
+
+                <!-- Espresso Macchiato -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Espresso_Macchiato_with_milk_foam_202606161751.jpeg" alt="Espresso Macchiato" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Espresso Macchiato</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso marqué d'une simple touche de mousse de lait.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">45 MAD</div>
+                </div>
+
+                <!-- Flat White -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Flat_White_coffee_minimalist_café_202606161751.jpeg" alt="Flat White" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Flat White</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un double shot d'espresso sous une micro-mousse de lait soyeuse.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">60 MAD</div>
+                </div>
+
+                <!-- Mocha -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Mocha_coffee_with_whipped_cream_202606161751.jpeg" alt="Mocha" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Mocha Signature</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">L'alliance gourmande de l'espresso, du chocolat noir et du lait onctueux.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">65 MAD</div>
+                </div>
+
+                <!-- Cortado -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Cortado_coffee_in_glass_cup_202606161751.jpeg" alt="Cortado" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Cortado</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso "coupé" avec une quantité égale de lait chaud pour réduire l'acidité.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">50 MAD</div>
+                </div>
+
+                <!-- Affogato -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Affogato_drowned_in_espresso_202606161751.jpeg" alt="Affogato" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Affogato au Café</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un dessert divin : une boule de vanille bourbon noyée dans un espresso chaud.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">70 MAD</div>
+                </div>
+
+                <!-- Irish Coffee -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Irish_coffee_in_mug_202606161751.jpeg" alt="Irish Coffee" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Irish Coffee Atlas</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café chaud, whisky irlandais et crème fouettée, un classique réchauffant.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">95 MAD</div>
+                </div>
+
+                <!-- Café au Lait -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Café_au_Lait_breakfast_table_202606161751.jpeg" alt="Café au Lait" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Café au Lait</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un café filtre riche mélangé à parts égales de lait chaud.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">50 MAD</div>
+                </div>
+
+                <!-- Turkish Coffee -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="turkish_coffee_luxury.png" alt="Turkish Coffee" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Turkish Coffee</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café finement moulu, bouilli dans un cezve, servi noir avec un délice turc.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">55 MAD</div>
+                </div>
+
+                <!-- Arabic Coffee -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="arabic_coffee_luxury.png" alt="Arabic Coffee" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Arabic Coffee (Qahwa)</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café infusé à la cardamome et au safran, symbole de l'accueil marocain.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">60 MAD</div>
+                </div>
+
+                <!-- Cold Brew -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Cold_brew_coffee_in_glass_202606161751.jpeg" alt="Cold Brew" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Cold Brew Atlas</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café infusé à froid pendant 12h, pour une douceur incomparable et zero amertume.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">65 MAD</div>
+                </div>
+
                 <!-- Iced Coffee -->
-                <div style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
                     <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&q=85" alt="Atlas Glacé" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
                     <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Atlas Glacé Premium</h3>
-                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Notre café frappé signature, rafraîchissant et énergisant pour les après-midis ensoleillés.</p>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Notre café frappé rafraîchissant, parfait pour les après-midis ensoleillés.</p>
                     <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">65 MAD</div>
+                </div>
+
+                <!-- Frappé -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&q=85" alt="Frappé" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Frappé Signature</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Café instantané monté en mousse avec du sucre et de l'eau, ultra rafraîchissant.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">65 MAD</div>
+                </div>
+
+                <!-- Café Viennois -->
+                <div class="menu-card" style="background:var(--bg-cream); text-align:center; padding:25px; border-radius:12px; border:1px solid #eaeaea; box-shadow:0 15px 45px rgba(0,0,0,0.03); transition:transform 0.3s;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <img src="assets/cafe/Mocha_coffee_with_whipped_cream_202606161751_2.jpeg" alt="Café Viennois" style="width:100%; height:320px; object-fit:cover; margin-bottom:20px; border-radius:8px;">
+                    <h3 style="font-family:var(--font-heading); color:var(--gold); margin-bottom:10px; font-size:1.6rem;">Café Viennois</h3>
+                    <p style="font-size:0.95rem; color:#666; margin-bottom:15px; line-height:1.6;">Un espresso double allongé, surmonté d'une montagne de crème chantilly maison.</p>
+                    <div style="font-weight:600; font-size:1.4rem; color:#222; letter-spacing:1px;">70 MAD</div>
+                </div>
+
+            </div>
             </div>
         </div>
     </section>

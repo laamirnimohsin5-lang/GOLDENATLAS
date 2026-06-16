@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -103,10 +104,10 @@
 
     <section class="section-pad text-center reveal">
         <div class="container-sm">
-            <span class="surtitle">Le Fitness</span>
-            <h2 class="title-lg">Équilibre & Performance</h2>
+            <span class="surtitle" data-i18n="menu_gym">Performance & Vitalité</span>
+            <h2 class="title-lg" data-i18n="gym_intro_title">Équilibre & Performance</h2>
             <div class="separator"></div>
-            <p class="body-text">Entièrement équipée des dernières technologies Technogym, la salle de sport du Golden Atlas offre un cadre exceptionnel pour vos entraînements. Entre lumière naturelle et équipements de pointe, atteignez vos objectifs dans un environnement luxueux.</p>
+            <p class="body-text" data-i18n="gym_intro_text">Entièrement équipée des dernières technologies Technogym, la salle de sport du Golden Atlas offre un cadre exceptionnel.</p>
         </div>
     </section>
 
@@ -118,9 +119,9 @@
                         <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800" alt="Cardio Training">
                     </div>
                     <div class="service-content">
-                        <h3>Zone Cardio</h3>
-                        <p>Tapis de course, vélos et elliptiques de haute performance avec écrans tactiles intégrés et programmes personnalisés.</p>
-                        <button class="btn-gold" data-room="Zone Cardio">Découvrir</button>
+                        <h3 data-i18n="gym_cardio_title">Zone Cardio</h3>
+                        <p data-i18n="gym_cardio_desc">Tapis de course, vélos et elliptiques de haute performance.</p>
+                        <button class="btn-gold" data-room="Zone Cardio" data-i18n="discover">Découvrir</button>
                     </div>
                 </div>
                 <div class="service-card" data-room="Musculation">
@@ -128,9 +129,9 @@
                         <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800" alt="Performance">
                     </div>
                     <div class="service-content">
-                        <h3>Force & Musculation</h3>
-                        <p>Appareils à charge guidée et poids libres pour un renforcement musculaire complet et sécurisé.</p>
-                        <button class="btn-gold" data-room="Musculation">Découvrir</button>
+                        <h3 data-i18n="gym_strength_title">Force & Musculation</h3>
+                        <p data-i18n="gym_strength_desc">Appareils à charge guidée et poids libres.</p>
+                        <button class="btn-gold" data-room="Musculation" data-i18n="discover">Découvrir</button>
                     </div>
                 </div>
                 <div class="service-card" data-room="Studio Yoga">
@@ -138,9 +139,9 @@
                         <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=800" alt="Yoga Studio">
                     </div>
                     <div class="service-content">
-                        <h3>Studio Yoga</h3>
-                        <p>Un espace paisible dédié au yoga, au Pilates et aux étirements, avec tout le matériel nécessaire à votre disposition.</p>
-                        <button class="btn-gold" data-room="Studio Yoga">Découvrir</button>
+                        <h3 data-i18n="gym_yoga_title">Studio Yoga</h3>
+                        <p data-i18n="gym_yoga_desc">Un espace paisible dédié au yoga et au Pilates.</p>
+                        <button class="btn-gold" data-room="Studio Yoga" data-i18n="discover">Découvrir</button>
                     </div>
                 </div>
             </div>

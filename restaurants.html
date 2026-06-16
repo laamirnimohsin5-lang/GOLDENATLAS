@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -105,10 +106,10 @@
     <!-- INTRO -->
     <section class="section-pad text-center reveal" id="intro">
         <div class="container-sm">
-            <span class="surtitle">Gastronomie</span>
-            <h2 class="title-lg">L'Excellence Culinaire</h2>
+            <span class="surtitle" data-i18n="menu_dining">Gastronomie</span>
+            <h2 class="title-lg" data-i18n="resto_intro_title">L'Excellence Culinaire</h2>
             <div class="separator"></div>
-            <p class="body-text">Quatre restaurants signés par des chefs de renommée mondiale, quatre bars aux personnalités distinctes et deux salons de thé d'exception signés Pierre Hermé. À Golden Atlas, chaque repas est une invitation au voyage.</p>
+            <p class="body-text" data-i18n="resto_intro_text">Quatre restaurants signés par des chefs de renommée mondiale.</p>
         </div>
     </section>
 
@@ -121,14 +122,11 @@
                     <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80" alt="L'Asiatique">
                 </div>
                 <div class="resto-card-body">
-                    <span class="surtitle">Restaurant</span>
-                    <h3>L'Asiatique</h3>
-                    <p class="resto-chef">par Jean-Georges Vongerichten</p>
-                    <p class="resto-desc">Saveurs asiatiques d'une finesse inouïe, entre traditions japonaises, chinoises et thaïlandaises réinterprétées par un maestro de la gastronomie mondiale.</p>
-                    <div class="resto-meta">
-                        <span>🕯️ Dîner</span><span>🍾 Sommelier</span><span>⭐ Chef Étoilé</span>
-                    </div>
-                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Asiatique">Voir Détails</button>
+                    <span class="surtitle" data-i18n="discover">Restaurant</span>
+                    <h3 data-i18n="resto_asian_title">L'Asiatique</h3>
+                    <p class="resto-chef" data-i18n="resto_chef_jg">par Jean-Georges Vongerichten</p>
+                    <p class="resto-desc" data-i18n="resto_asian_desc">Saveurs asiatiques d'une finesse inouïe.</p>
+                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Asiatique" data-i18n="discover">Voir Détails</button>
                 </div>
             </div>
 
@@ -137,14 +135,11 @@
                     <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80" alt="L'Italien">
                 </div>
                 <div class="resto-card-body">
-                    <span class="surtitle">Restaurant</span>
-                    <h3>L'Italien</h3>
-                    <p class="resto-chef">par Simone Zanoni</p>
-                    <p class="resto-desc">La dolce vita dans toute sa splendeur. Une cuisine italienne moderne et lumineuse, portée par la passion d'un chef qui a fait ses armes dans les plus grandes maisons.</p>
-                    <div class="resto-meta">
-                        <span>🕯️ Déjeuner & Dîner</span><span>🍝 Pasta Maison</span><span>🌿 Bio</span>
-                    </div>
-                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Italien">Voir Détails</button>
+                    <span class="surtitle" data-i18n="discover">Restaurant</span>
+                    <h3 data-i18n="resto_italian_title">L'Italien</h3>
+                    <p class="resto-chef" data-i18n="resto_chef_simone">par Simone Zanoni</p>
+                    <p class="resto-desc" data-i18n="resto_italian_desc">La dolce vita dans toute sa splendeur.</p>
+                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Italien" data-i18n="discover">Voir Détails</button>
                 </div>
             </div>
 

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <style>
         :root {
             --gold-accent: #a38953;
@@ -330,8 +331,11 @@
             border-radius: 2px;
         }
     </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 <header id="main-header" class="header-dark">
@@ -409,7 +413,34 @@
     <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
 
+<!-- LIGHTBOX FOR IMAGES -->
+<div id="image-viewer" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:5000; cursor:zoom-out; display:none; align-items:center; justify-content:center; padding:40px;">
+    <button id="viewer-close" style="position:fixed; top:30px; right:30px; background:none; border:none; color:#fff; font-size:3rem; cursor:pointer;">×</button>
+    <img id="viewer-img" src="" style="max-width:90%; max-height:90%; object-fit:contain; border-radius:4px; box-shadow:0 0 50px rgba(0,0,0,0.5);">
+</div>
+
 <div class="modal-overlay" id="modal-overlay"></div>
+
+<!-- BOOKING MODAL -->
+<div class="reservation-modal" id="reservation-modal">
+    <button class="modal-close-btn" id="modal-close">×</button>
+    <p class="modal-title">Réserver votre séjour</p>
+    <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+    <p class="modal-room" id="modal-room-name" style="color:var(--gold-accent); font-size: 1.2rem; margin-bottom: 20px; font-weight: 600;"></p>
+    <form id="booking-form">
+        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+        <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
+        <div class="form-group"><label>Voyageurs</label>
+            <select id="booking-guests" required>
+                <option value="" disabled selected>Sélectionner</option>
+                <option>1 Adulte</option><option>2 Adultes</option>
+                <option>2 Adultes + 1 Enfant</option><option>Famille (4+)</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
+    </form>
+</div>
 
     <main class="vip-container">
         
@@ -423,7 +454,7 @@
                 </div>
             </div>
 
-            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85" alt="Luxury Super Delux Main" class="vip-main-img">
+            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=1200&q=80" alt="Luxury Super Delux Main" class="vip-main-img">
 
             <div class="vip-stats-strip">
                 <div class="vip-stat-item">
@@ -449,7 +480,13 @@
                 Bipor incididunt ut labore et dolore magna liqu Ut enim ad teros ut bione bore et dolore magna aliqua. Ut enim ad conm dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
             </p>
 
-            <h2 class="vip-section-title">Facilities</h2>
+            <h2 class="vip-section-title">Video Presentation</h2>
+            <div style="width:100%; height:450px; background:#000; border-radius:12px; overflow:hidden; box-shadow:0 15px 35px rgba(0,0,0,0.2); margin-bottom:40px;">
+                <video controls autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
+                    <source src="assets/chembre_vip/presentation_vip.mp4" type="video/mp4">
+                    Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+            </div>
             <div class="facilities-grid">
                 <div class="facility-item">
                     <svg viewBox="0 0 24 24"><path d="M3 12h18v8H3z M3 12V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5"/></svg>
@@ -487,10 +524,10 @@
 
             <h2 class="vip-section-title">Gallery</h2>
             <div class="vip-gallery">
-                <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=85" alt="Gallery Image 1">
-                <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800&q=85" alt="Gallery Image 2">
-                <img src="https://images.unsplash.com/photo-1582719478250-c89402bb17cb?w=800&q=85" alt="Gallery Image 3">
-                <img src="https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=800&q=85" alt="Gallery Image 4">
+                <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=800&q=80" alt="Gallery Image 1">
+                <img src="https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?auto=format&fit=crop&w=800&q=80" alt="Gallery Image 2">
+                <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80" alt="Gallery Image 3">
+                <img src="https://images.unsplash.com/photo-1600121848594-d8644e57abab?auto=format&fit=crop&w=800&q=80" alt="Gallery Image 4">
             </div>
         </div>
 
@@ -512,7 +549,7 @@
                         <input type="date" class="form-control-sb" id="check-out-vip" required>
                     </div>
                     <div class="form-group-sb">
-                        <label>GUESTS</label>
+                        <label data-i18n="form_guests">VOYAGEURS</label>
                         <select class="form-control-sb" id="guests-vip">
                             <option>01</option>
                             <option selected>02</option>
@@ -521,48 +558,69 @@
                         </select>
                     </div>
 
-                    <div class="extra-service">
-                        ADD EXTRA SERVICE <span class="plus">+</span>
+                    <div class="extra-service" data-i18n="vip_extra_service" onclick="document.getElementById('extra-options').style.display = document.getElementById('extra-options').style.display === 'none' ? 'block' : 'none';" style="position:relative;">
+                        SERVICES COMPLÉMENTAIRES <span class="plus">+</span>
+                    </div>
+                    <div id="extra-options" style="display:none; background:rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15); padding:15px; margin-bottom:20px; border-radius:4px; animation: fadeIn 0.3s ease;">
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.75rem; margin-bottom:10px; cursor:pointer; color:#444;">
+                            <input type="checkbox" style="accent-color:var(--gold-accent);"> Petit-déjeuner VIP (+500 MAD)
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.75rem; margin-bottom:10px; cursor:pointer; color:#444;">
+                            <input type="checkbox" style="accent-color:var(--gold-accent);"> Transfert Aéroport (+800 MAD)
+                        </label>
+                        <label style="display:flex; align-items:center; gap:10px; font-size:0.75rem; cursor:pointer; color:#444;">
+                            <input type="checkbox" style="accent-color:var(--gold-accent);"> Accès Spa Illimité (+1000 MAD)
+                        </label>
                     </div>
 
-                    <button type="submit" class="btn-book-now">BOOK NOW</button>
+                    <button type="submit" class="btn-book-now" data-i18n="book_now_btn">RÉSERVER MAINTENANT</button>
                     <!-- Input to hold room name for script.js capturing if needed -->
-                    <input type="hidden" id="modal-room-name" value="VIP Luxury Super Delux">
+                    <input type="hidden" id="vip-room-hidden-name" value="VIP Luxury Super Delux">
                 </form>
             </div>
 
-            <div class="help-box">
-                <div class="help-label">Booking Help</div>
-                <div class="help-phone">+212 648 120 577</div>
+            <div class="help-box" style="background: #111; border: 1px solid var(--gold-accent); padding: 30px 20px;">
+                <div class="help-label" data-i18n="help_title" style="color: var(--gold-accent); letter-spacing: 2px; margin-bottom: 15px;">BESOIN D'AIDE ?</div>
+                <div class="help-phone" style="font-size: 1.4rem; margin-bottom: 20px;">+212 648 120 577</div>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <a href="tel:+212648120577" class="btn-book-now" style="background: var(--gold-accent); display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; padding: 12px;">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79a15.15 15.15 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.27 11.72 11.72 0 003.7.59 1 1 0 011 1V20a1 1 0 01-1 1A15 15 0 013 6a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.7 1 1 0 01-.27 1.11z"/></svg>
+                        APPELER DIRECTEMENT
+                    </a>
+                    <a href="https://wa.me/212648120577" target="_blank" class="btn-book-now" style="background: #25D366; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; padding: 12px;">
+                        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-2.277 0-4.125 1.848-4.125 4.125 0 .729.189 1.412.52 2.003l-.553 2.022 2.067-.542c.563.308 1.206.485 1.891.485 2.277 0 4.125-1.848 4.125-4.125 0-2.277-1.848-4.125-4.125-4.125zM12.031 5c2.924 0 5.297 2.373 5.297 5.297 0 2.924-2.373 5.297-5.297 5.297-.88 0-1.706-.215-2.433-.594l-3.597.943 1.002-3.665c-.47-.785-.739-1.7-.739-2.68C6.264 7.373 8.637 5 11.561 5c.159 0 .315.007.47.021z"/></svg>
+                        WHATSAPP
+                    </a>
+                </div>
             </div>
 
             <div class="popular-rooms">
-                <h4>Popular Rooms</h4>
+                <h4 data-i18n="popular_rooms_title">Chambres Populaires</h4>
                 
                 <div class="pop-room-item">
-                    <img src="https://images.unsplash.com/photo-1618773928120-22c668b5cecc?w=300&q=85" class="pop-room-img" alt="Room">
+                    <img src="assets/chambre_1.png" class="pop-room-img" alt="Prestige Terrace Room">
                     <div class="pop-room-info">
-                        <h5>Super luxuray delux room</h5>
+                        <h5>Prestige Terrace Room</h5>
                         <p class="pop-room-price">Starts From 4 800 MAD</p>
-                        <button class="btn-pop-book">Book Now</button>
+                        <button class="btn-pop-book btn-room-reserver" data-room="Prestige Terrace Room" data-i18n="book_now_btn">Book Now</button>
                     </div>
                 </div>
 
                 <div class="pop-room-item">
-                    <img src="https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=300&q=85" class="pop-room-img" alt="Room">
+                    <img src="assets/chambre_2.png" class="pop-room-img" alt="Atlas View Suite">
                     <div class="pop-room-info">
-                        <h5>Super luxuray delux room</h5>
-                        <p class="pop-room-price">Starts From 3 950 MAD</p>
-                        <button class="btn-pop-book">Book Now</button>
+                        <h5>Atlas View Suite</h5>
+                        <p class="pop-room-price">Starts From 8 950 MAD</p>
+                        <button class="btn-pop-book btn-room-reserver" data-room="Atlas View Suite" data-i18n="book_now_btn">Book Now</button>
                     </div>
                 </div>
 
                 <div class="pop-room-item">
-                    <img src="https://images.unsplash.com/photo-1631049035182-249067d7618e?w=300&q=85" class="pop-room-img" alt="Room">
+                    <img src="assets/room.png" class="pop-room-img" alt="Royal Palace Suite">
                     <div class="pop-room-info">
-                        <h5>Super luxuray delux room</h5>
-                        <p class="pop-room-price">Starts From 12 000 MAD</p>
-                        <button class="btn-pop-book">Book Now</button>
+                        <h5>Royal Palace Suite</h5>
+                        <p class="pop-room-price">Starts From 15 000 MAD</p>
+                        <button class="btn-pop-book btn-room-reserver" data-room="Royal Palace Suite">Book Now</button>
                     </div>
                 </div>
 
@@ -571,12 +629,33 @@
 
     </main>
 
-    <!-- For handling form logic (alert) to match flow -->
+    <script src="script.js"></script>
     <script>
         document.getElementById("booking-form-vip").addEventListener("submit", function(e) {
             e.preventDefault();
-            alert("Redirection vers la confirmation de réservation VIP !");
-            // If the original script.js was loaded, the reservation logic handles it. 
+            if (typeof showToast === "function") {
+                showToast("Félicitations ! Redirection vers la confirmation de réservation VIP...", "var(--gold-accent)");
+            } else {
+                alert("Redirection vers la confirmation de réservation VIP !");
+            }
+        });
+
+        // LIGHTBOX LOGIC
+        const viewer = document.getElementById('image-viewer');
+        const vImg = document.getElementById('viewer-img');
+        
+        document.querySelectorAll('.vip-main-img, .vip-gallery img, .pop-room-img').forEach(img => {
+            img.style.cursor = 'zoom-in';
+            img.addEventListener('click', () => {
+                vImg.src = img.src;
+                viewer.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        viewer.addEventListener('click', () => {
+            viewer.style.display = 'none';
+            document.body.style.overflow = '';
         });
     </script>
 </body>

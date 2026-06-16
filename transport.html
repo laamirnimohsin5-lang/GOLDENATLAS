@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -245,27 +246,27 @@
         </div>
     </div>
     <div class="footer-bottom">
-        <p>© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
+        <p data-i18n="footer_rights">© 2026 Golden Atlas Errachidia. Tous droits réservés.</p>
     </div>
 </footer>
 
 <div class="reservation-modal" id="reservation-modal">
     <button class="modal-close-btn" id="modal-close">×</button>
-    <p class="modal-title">Réserver votre séjour</p>
-    <p class="modal-sub">Golden Atlas Errachidia</p>
+    <p class="modal-title" data-i18n="booking_title">Réserver votre séjour</p>
+    <p class="modal-sub" data-i18n="hotel_name">Golden Atlas Errachidia</p>
     <p class="modal-room" id="modal-room-name"></p>
     <form id="booking-form">
-        <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
-        <div class="form-group"><label>Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
-        <div class="form-group"><label>Date de départ</label><input type="date" id="booking-departure" required></div>
-        <div class="form-group"><label>Voyageurs</label>
+        <div class="form-group"><label data-i18n="form_name">Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+        <div class="form-group"><label data-i18n="form_arrival">Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+        <div class="form-group"><label data-i18n="form_departure">Date de départ</label><input type="date" id="booking-departure" required></div>
+        <div class="form-group"><label data-i18n="form_guests">Voyageurs</label>
             <select id="booking-guests" required>
-                <option value="" disabled selected>Sélectionner</option>
+                <option value="" disabled selected data-i18n="discover">Sélectionner</option>
                 <option>1 Adulte</option><option>2 Adultes</option>
                 <option>2 Adultes + 1 Enfant</option><option>Famille (4+)</option>
             </select>
         </div>
-        <button type="submit" class="btn-modal-submit">CONFIRMER MA RÉSERVATION</button>
+        <button type="submit" class="btn-modal-submit" data-i18n="nav_reserve">CONFIRMER MA RÉSERVATION</button>
     </form>
 </div>
 <div class="modal-overlay" id="modal-overlay"></div>
