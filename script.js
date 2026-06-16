@@ -1107,5 +1107,134 @@ function initHeroEffect() {
 function initMenuAnimation() {
     const canvas = document.getElementById('menu-canvas');
     if (!canvas) return;
-    // ... Minimal plexus logic ...
+    
+    // Configuration luxury Golden Plexus
+    const color = 0xc5a059; // Gold
+    const numParticles = 140;
+    const maxConnectionDistance = 3.5;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+    const container = canvas.parentElement;
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth/container.clientHeight, 0.1, 100);
+    camera.position.z = 18;
+
+    const positions = new Float32Array(numParticles * 3);
+    const velocities = [];
+
+    for (let i = 0; i < numParticles; i++) {
+        positions[i*3] = (Math.random() - 0.5) * 35;
+        positions[i*3 + 1] = (Math.random() - 0.5) * 35;
+        positions[i*3 + 2] = (Math.random() - 0.5) * 15;
+
+        velocities.push({
+            x: (Math.random() - 0.5) * 0.03,
+            y: (Math.random() - 0.5) * 0.03,
+            z: (Math.random() - 0.5) * 0.03
+        });
+    }
+
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    
+    const particleMaterial = new THREE.PointsMaterial({
+        color: color,
+        size: 0.18,
+        transparent: true,
+        opacity: 0.7,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particleSystem = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particleSystem);
+
+    const lineMaterial = new THREE.LineBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.25,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const lineGeometry = new THREE.BufferGeometry();
+    // Pre-allocate large enough buffer for all possible line connections
+    const linePositions = new Float32Array(numParticles * numParticles * 6);
+    lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+    const linesMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+    scene.add(linesMesh);
+
+    let angle = 0;
+    let isActive = true;
+
+    function animate() {
+        if(isActive) requestAnimationFrame(animate);
+
+        let vertexPos = 0;
+        let numConnected = 0;
+        const posAttr = particleGeometry.attributes.position;
+        const linePosAttr = lineGeometry.attributes.position;
+
+        for (let i = 0; i < numParticles; i++) {
+            posAttr.array[i*3] += velocities[i].x;
+            posAttr.array[i*3 + 1] += velocities[i].y;
+            posAttr.array[i*3 + 2] += velocities[i].z;
+
+            // Bounce on edges
+            if (Math.abs(posAttr.array[i*3]) > 18) velocities[i].x *= -1;
+            if (Math.abs(posAttr.array[i*3 + 1]) > 18) velocities[i].y *= -1;
+            if (Math.abs(posAttr.array[i*3 + 2]) > 8) velocities[i].z *= -1;
+
+            // Connect nearest nodes
+            for (let j = i + 1; j < numParticles; j++) {
+                const dx = posAttr.array[i*3] - posAttr.array[j*3];
+                const dy = posAttr.array[i*3 + 1] - posAttr.array[j*3 + 1];
+                const dz = posAttr.array[i*3 + 2] - posAttr.array[j*3 + 2];
+                const distSq = dx*dx + dy*dy + dz*dz;
+
+                if (distSq < maxConnectionDistance * maxConnectionDistance) {
+                    linePosAttr.array[vertexPos++] = posAttr.array[i*3];
+                    linePosAttr.array[vertexPos++] = posAttr.array[i*3 + 1];
+                    linePosAttr.array[vertexPos++] = posAttr.array[i*3 + 2];
+
+                    linePosAttr.array[vertexPos++] = posAttr.array[j*3];
+                    linePosAttr.array[vertexPos++] = posAttr.array[j*3 + 1];
+                    linePosAttr.array[vertexPos++] = posAttr.array[j*3 + 2];
+                    numConnected++;
+                }
+            }
+        }
+        
+        posAttr.needsUpdate = true;
+        linePosAttr.needsUpdate = true;
+        lineGeometry.setDrawRange(0, numConnected * 2);
+
+        // Smooth cinematic floating rotation
+        angle += 0.0007;
+        scene.rotation.y = Math.sin(angle) * 0.15;
+        scene.rotation.x = Math.cos(angle) * 0.1;
+
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+
+    const megaMenu = document.getElementById('mega-menu');
+    const observer = new MutationObserver(() => {
+        if(megaMenu && megaMenu.classList.contains('active')) {
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+        }
+    });
+    
+    if(megaMenu) observer.observe(megaMenu, { attributes: true, attributeFilter: ['class'] });
+
+    window.addEventListener('resize', () => {
+        if (!megaMenu || !megaMenu.classList.contains('active')) return;
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+    });
 }
