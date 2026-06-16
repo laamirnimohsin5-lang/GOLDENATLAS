@@ -269,14 +269,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
     if (currentUser && loginBtn) {
         loginBtn.innerHTML = `
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div id="user-profile-trigger" style="display:flex; align-items:center; gap:10px; cursor:pointer; position:relative;">
                 <div style="width:32px; height:32px; background:var(--gold); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">
                     ${currentUser.name.charAt(0).toUpperCase()}
                 </div>
                 <div style="text-align:left; line-height:1.1;">
-                     <span style="display:block; font-size:0.6rem; opacity:0.6; letter-spacing:1px;">BIENVENUE</span>
-                     <span style="display:block; font-size:0.75rem; font-weight:600; letter-spacing:1px;">${currentUser.name.split(' ')[0].toUpperCase()}</span>
+                     <span style="display:block; font-size:0.6rem; opacity:0.6; letter-spacing:1px;">MOHSIN</span>
+                     <span style="display:block; font-size:0.75rem; font-weight:600; letter-spacing:1px;">BIENVENUE</span>
                 </div>
+                <ul id="user-dropdown" style="display:none; position:absolute; top:40px; right:0; background:#111; border:1px solid rgba(255,255,255,0.1); width:200px; padding:10px 0; list-style:none; z-index:2001; animation: fadeIn 0.3s ease;">
+                    <li id="show-my-res" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; cursor:pointer; transition:0.3s; border-bottom:1px solid rgba(255,255,255,0.05);">MES RÉSERVATIONS</li>
+                    <li id="client-logout" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; color:#ef4444; cursor:pointer; transition:0.3s;">DÉCONNEXION</li>
+                </ul>
             </div>
         `;
         loginBtn.removeAttribute('data-i18n');
@@ -284,7 +288,123 @@ document.addEventListener('DOMContentLoaded', () => {
         loginBtn.style.border = 'none';
         loginBtn.style.padding = '0';
         loginBtn.style.boxShadow = 'none';
+
+        // Dropdown toggle
+        const trigger = document.getElementById('user-profile-trigger');
+        const dropdown = document.getElementById('user-dropdown');
+        trigger?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+        document.addEventListener('click', () => { if (dropdown) dropdown.style.display = 'none'; });
+
+        // Logout
+        document.getElementById('client-logout')?.addEventListener('click', () => {
+            localStorage.removeItem('ga_current_user');
+            location.reload();
+        });
+
+        // Show Reservations
+        document.getElementById('show-my-res')?.addEventListener('click', async () => {
+            document.getElementById('user-reservations-modal')?.classList.add('active');
+            document.getElementById('modal-overlay')?.classList.add('active');
+            await loadUserReservations(currentUser.email);
+        });
     }
+
+    async function loadUserReservations(email) {
+        const listContainer = document.getElementById('user-res-list');
+        if (!listContainer || !window.supabaseClient) return;
+
+        const { data, error } = await window.supabaseClient
+            .from('ga_reservations')
+            .select('*')
+            .eq('user_email', email)
+            .order('created_at', { ascending: false });
+
+        if (error || !data) {
+            listContainer.innerHTML = '<p style="text-align:center; padding:20px;">Aucune donnée trouvée.</p>';
+            return;
+        }
+
+        window.localReservations = data;
+        listContainer.innerHTML = data.map(r => `
+            <div style="border:1px solid rgba(255,255,255,0.1); padding:15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h4 style="color:var(--gold); margin-bottom:5px;">${r.room}</h4>
+                    <p style="font-size:0.75rem; opacity:0.6;">${r.arrival} au ${r.departure}</p>
+                    <span style="font-size:0.6rem; padding:2px 8px; border-radius:50px; background:${r.status === 'Validée' ? 'rgba(34,197,94,0.2)' : 'rgba(201,168,76,0.2)'}; color:${r.status === 'Validée' ? '#22c55e' : '#c9a84c'}">
+                        ${r.status || 'En attente'}
+                    </span>
+                </div>
+                ${r.status === 'Validée' ? `
+                    <button class="btn-gold" style="padding:10px 15px; font-size:0.75rem;" onclick="downloadReservationPDF('${r.id}')">PDF</button>
+                ` : '<p style="font-size:0.65rem; opacity:0.4;">En cours...</p>'}
+            </div>
+        `).join('') || '<p style="text-align:center; padding:20px;">Vous n\'avez pas encore de réservations.</p>';
+    }
+
+    document.getElementById('btn-user-res-close')?.addEventListener('click', () => {
+        document.getElementById('user-reservations-modal')?.classList.remove('active');
+        document.getElementById('modal-overlay')?.classList.remove('active');
+    });
+
+    /**
+     * PDF GENERATOR
+     */
+    window.downloadReservationPDF = function(resId) {
+        const res = window.localReservations?.find(r => r.id == resId);
+        if (!res) return;
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Design PDF
+        doc.setFillColor(15, 15, 15);
+        doc.rect(0, 0, 210, 45, 'F');
+
+        doc.setTextColor(201, 168, 76);
+        doc.setFontSize(26);
+        doc.text("GOLDEN ATLAS PRESTIGE", 105, 25, { align: 'center' });
+        doc.setFontSize(10);
+        doc.text("ERRACHIDIA - TAFILALET - LUXE & PATRIMOINE", 105, 33, { align: 'center' });
+
+        doc.setTextColor(40, 40, 40);
+        doc.setFontSize(18);
+        doc.text("BON DE RÉSERVATION", 20, 65);
+        
+        doc.setDrawColor(201, 168, 76);
+        doc.setLineWidth(1);
+        doc.line(20, 70, 190, 70);
+
+        doc.setFontSize(11);
+        doc.text(`Confirmation N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
+        doc.text(`Statut : VALIDÉE`, 190, 80, { align: 'right' });
+
+        const drawInfo = (label, data, y) => {
+            doc.setFontSize(11);
+            doc.setTextColor(150, 150, 150);
+            doc.text(label, 20, y);
+            doc.setTextColor(0, 0, 0);
+            doc.text(data, 70, y);
+        };
+
+        drawInfo("CLIENT", res.name.toUpperCase(), 100);
+        drawInfo("HÉBERGEMENT", res.room.toUpperCase(), 110);
+        drawInfo("ARRIVÉE", res.arrival, 120);
+        drawInfo("DÉPART", res.departure, 130);
+        drawInfo("GUESTS", res.guests + " Personnes", 140);
+        
+        doc.setDrawColor(240, 240, 240);
+        doc.line(20, 155, 190, 155);
+
+        doc.setFontSize(9);
+        doc.setTextColor(120, 120, 120);
+        doc.text("Ce document est une confirmation officielle de votre séjour.", 105, 175, { align: 'center' });
+        doc.text("Pour toute assistance, appelez le +212 555-0123-456", 105, 185, { align: 'center' });
+
+        doc.save(`Confirmation_GoldenAtlas_${res.id.slice(0,8)}.pdf`);
+    };
 
     // 2. SCROLL EFFECTS (Header & Revelations)
     const header = document.getElementById('main-header');
