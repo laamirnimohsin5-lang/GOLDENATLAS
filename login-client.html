@@ -205,9 +205,21 @@
                 <div class="account-meta">
                     <h2 id="display-user-name">CHARGEMENT...</h2>
                     <p id="display-user-email"></p>
-                    <span class="status-badge pending" id="display-user-status">En attente</span>
+                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+                        <span class="status-badge pending" id="display-user-status">En attente</span>
+                        <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">⭐ 0 POINTS</span>
+                    </div>
                 </div>
             </div>
+
+            <!-- Loyalty Offer Message -->
+            <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
+                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">🎉 FÉLICITATIONS ! VOUS AVEZ 10 POINTS.</p>
+                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
+            </div>
+            <style>
+                @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(201, 168, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); } }
+            </style>
 
             <div class="btn-row">
                 <button class="btn-submit" id="btn-logout" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem;">SE DÉCONNECTER</button>
@@ -256,7 +268,7 @@ function simToast(msg, bg = 'var(--gold)') {
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
-function showAccountDashboard(user) {
+async function showAccountDashboard(user) {
     document.querySelector('.login-wrapper').classList.add('wide');
     document.getElementById('display-user-name').textContent = user.name || '';
     document.getElementById('display-user-email').textContent = user.email || '';
@@ -265,6 +277,22 @@ function showAccountDashboard(user) {
     const st = user.status || 'En attente';
     statusEl.textContent = st;
     statusEl.className = 'status-badge ' + (st.includes('Valid') ? 'approved' : st.includes('Refus') ? 'rejected' : 'pending');
+
+    // Calculate Loyalty Points (1 point per reservation)
+    const { count } = await window.supabaseClient.from('ga_reservations')
+        .select('*', { count: 'exact', head: true })
+        .or(`user_email.eq.${user.email},name.ilike.%${(user.name || '').split(' ')[0]}%`);
+    
+    const points = count || 0;
+    const pointsEl = document.getElementById('loyalty-points');
+    if (pointsEl) {
+        pointsEl.textContent = `⭐ ${points} POINT${points > 1 ? 'S' : ''}`;
+    }
+    
+    const offerEl = document.getElementById('loyalty-offer');
+    if (offerEl && points >= 10) {
+        offerEl.style.display = 'block';
+    }
 
     document.getElementById('login-view').style.display = 'none';
     document.getElementById('register-view').style.display = 'none';
