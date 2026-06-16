@@ -474,7 +474,7 @@ h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; line-height
 /* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 3000; visibility: hidden; opacity: 0; transition: all 0.35s; backdrop-filter: blur(6px); }
 .modal-overlay.active { visibility: visible; opacity: 1; }
-.reservation-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(560px, 92vw); background: var(--cream); padding: 50px 40px; z-index: 3001; visibility: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 30px 80px rgba(0,0,0,0.25); max-height: 95vh; overflow-y: auto; }
+.reservation-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(650px, 94vw); background: #fff; padding: 0; z-index: 3001; visibility: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 40px 120px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; overflow-x: hidden; border-radius: 4px; }
 .reservation-modal.active { visibility: visible; opacity: 1; }
 .modal-close-btn { position: absolute; top: 18px; right: 22px; font-size: 1.8rem; line-height: 1; background: none; border: none; cursor: pointer; color: #777; transition: 0.3s; }
 .modal-title { font-size: 2rem; font-style: italic; text-align: center; color: var(--gold); margin-bottom: 5px; }
