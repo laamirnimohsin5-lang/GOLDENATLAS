@@ -111,23 +111,23 @@
             const text = chatInput.value.trim();
             if(!text) return;
             
-            chatBox.insertAdjacentHTML('beforeend', \`
+            chatBox.insertAdjacentHTML('beforeend', `
                 <div class="c-msg user">
                     <div class="avatar">VS</div>
-                    <div class="c-text">\${text}</div>
+                    <div class="c-text">${text}</div>
                 </div>
-            \`);
+            `);
             chatInput.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
             chatHistory.push({ role: "user", content: text });
 
             const loadingId = "load-" + Date.now();
-            chatBox.insertAdjacentHTML('beforeend', \`
-                <div class="c-msg bot" id="\${loadingId}">
+            chatBox.insertAdjacentHTML('beforeend', `
+                <div class="c-msg bot" id="${loadingId}">
                     <div class="avatar">GA</div>
                     <div class="c-text typing-indicator"><span></span><span></span><span></span></div>
                 </div>
-            \`);
+            `);
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
@@ -152,24 +152,24 @@
                 document.getElementById(loadingId).remove();
                 
                 // Formater la réponse pour du HTML (retours à la ligne)
-                const formattedReply = botReply.replace(/\\n/g, '<br>').replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+                const formattedReply = botReply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 
-                chatBox.insertAdjacentHTML('beforeend', \`
+                chatBox.insertAdjacentHTML('beforeend', `
                     <div class="c-msg bot">
                         <div class="avatar">GA</div>
-                        <div class="c-text">\${formattedReply}</div>
+                        <div class="c-text">${formattedReply}</div>
                     </div>
-                \`);
+                `);
                 
                 chatHistory.push({ role: "assistant", content: botReply });
             } catch(err) {
                 document.getElementById(loadingId).remove();
-                chatBox.insertAdjacentHTML('beforeend', \`
+                chatBox.insertAdjacentHTML('beforeend', `
                     <div class="c-msg bot">
                         <div class="avatar">GA</div>
-                        <div class="c-text" style="color:#ef4444;">Veuillez nous excuser, mes services sont momentanément indisponibles. Erreur: \${err.message}</div>
+                        <div class="c-text" style="color:#ef4444;">Veuillez nous excuser, mes services sont momentanément indisponibles. Erreur: ${err.message}</div>
                     </div>
-                \`);
+                `);
             }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
