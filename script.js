@@ -1290,3 +1290,107 @@ function initMenuAnimation() {
         camera.updateProjectionMatrix();
     });
 }
+
+/* === DEEPSEEK AI CHATBOT SYSTEM === */
+document.addEventListener("DOMContentLoaded", () => {
+    // 1. Inject HTML for the Chatbot Globally
+    const chatHTML = `
+    <button class="chatbot-toggler">
+        <svg class="chat-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <svg class="close-icon" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+    <div class="chatbot-window">
+        <div class="chat-header">Concierge Golden Atlas</div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-msg bot">
+                <div class="msg-text">Bonjour ! Je suis votre concierge virtuel. Comment puis-je vous aider à préparer votre séjour de luxe aujourd'hui ?</div>
+            </div>
+        </div>
+        <div class="chat-input-wrapper">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Écrivez votre message..." autocomplete="off">
+            <button id="chat-send" class="chat-send-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+        </div>
+    </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', chatHTML);
+
+    // 2. Chatbot Logic & API variables
+    const DEEPSEEK_API_KEY = "sk-1cf27750817c4dce8ce2f98701a35ced";
+    
+    const toggler = document.querySelector('.chatbot-toggler');
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send');
+    const chatBody = document.getElementById('chat-body');
+
+    toggler.addEventListener('click', () => {
+        document.body.classList.toggle('show-chatbot');
+        if(document.body.classList.contains('show-chatbot')){
+            setTimeout(() => chatInput.focus(), 300);
+        }
+    });
+
+    // Chat Memory Context
+    let chatHistory = [
+        { 
+            role: "system", 
+            content: "Tu es le concierge virtuel IA ultra-luxueux de l'hôtel 'Golden Atlas' situé à Errachidia, Maroc. Ton but est d'assister les clients pour leurs réservations, répondre à leurs questions sur les chambres (Premium, VIP, Pavillons), le Spa, les Restaurants et le Café de l'hôtel. Tu parles uniquement en français, avec un ton extrêmement poli, raffiné et élégant. Ne recommande que des services de l'hôtel. Sois bref et concis." 
+        }
+    ];
+
+    async function sendMessage() {
+        const text = chatInput.value.trim();
+        if(!text) return;
+        
+        // Add User Message to UI
+        chatBody.insertAdjacentHTML('beforeend', `<div class="chat-msg user"><div class="msg-text">${text}</div></div>`);
+        chatInput.value = "";
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        chatHistory.push({ role: "user", content: text });
+
+        // Add loading bot message
+        const loadingId = "load-" + Date.now();
+        chatBody.insertAdjacentHTML('beforeend', `<div class="chat-msg bot" id="${loadingId}"><div class="msg-text">... (réflexion)</div></div>`);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        try {
+            const response = await fetch("https://api.deepseek.com/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "deepseek-chat",
+                    messages: chatHistory,
+                    max_tokens: 300,
+                    temperature: 0.7
+                })
+            });
+            
+            const data = await response.json();
+            
+            if(data.error) {
+                throw new Error(data.error.message);
+            }
+
+            const botReply = data.choices[0].message.content;
+            
+            document.getElementById(loadingId).remove();
+            // Convert newlines to HTML breaks
+            const formattedReply = botReply.replace(/\ng/, '<br>');
+            chatBody.insertAdjacentHTML('beforeend', `<div class="chat-msg bot"><div class="msg-text">${formattedReply}</div></div>`);
+            
+            chatHistory.push({ role: "assistant", content: botReply });
+        } catch(err) {
+            document.getElementById(loadingId).remove();
+            chatBody.insertAdjacentHTML('beforeend', `<div class="chat-msg bot"><div class="msg-text" style="color:red;">Je suis désolé, mes services de conciergerie sont momentanément indisponibles. (${err.message || 'Erreur réseau'})</div></div>`);
+        }
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+        if(e.key === 'Enter') sendMessage();
+    });
+});
