@@ -309,9 +309,9 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload();
         });
 
-        // Show Reservations (Redirect to Client Dashboard)
+        // Show Reservations (Redirect to Dedicated Page)
         document.getElementById('show-my-res')?.addEventListener('click', () => {
-            window.location.href = 'login-client.html';
+            window.location.href = 'mes-reservations.html';
         });
     }
 
