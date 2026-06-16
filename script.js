@@ -329,19 +329,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.localReservations = data;
         listContainer.innerHTML = data.map(r => `
-            <div style="border:1px solid rgba(255,255,255,0.1); padding:15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="border:1px solid rgba(255,255,255,0.1); padding:15px; margin-bottom:10px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02);">
                 <div>
                     <h4 style="color:var(--gold); margin-bottom:5px;">${r.room}</h4>
-                    <p style="font-size:0.75rem; opacity:0.6;">${r.arrival} au ${r.departure}</p>
-                    <span style="font-size:0.6rem; padding:2px 8px; border-radius:50px; background:${r.status === 'Validée' ? 'rgba(34,197,94,0.2)' : 'rgba(201,168,76,0.2)'}; color:${r.status === 'Validée' ? '#22c55e' : '#c9a84c'}">
-                        ${r.status || 'En attente'}
-                    </span>
+                    <p style="font-size:0.7rem; opacity:0.6; margin-bottom:4px;">Réf: #GA-${r.id.slice(0,8).toUpperCase()}</p>
+                    <p style="font-size:0.75rem; opacity:0.8;">${r.arrival} — ${r.departure}</p>
+                    <div style="margin-top:8px;">
+                        <span style="font-size:0.6rem; padding:3px 10px; border-radius:50px; background:${r.status === 'Validée' ? 'rgba(34,197,94,0.15)' : 'rgba(201,168,76,0.15)'}; color:${r.status === 'Validée' ? '#22c55e' : '#c9a84c'}; font-weight:600; text-transform:uppercase; letter-spacing:1px;">
+                            ${r.status || 'En attente'}
+                        </span>
+                    </div>
                 </div>
+                <div style="text-align:right;">
                 ${r.status === 'Validée' ? `
-                    <button class="btn-gold" style="padding:10px 15px; font-size:0.75rem;" onclick="downloadReservationPDF('${r.id}')">PDF</button>
-                ` : '<p style="font-size:0.65rem; opacity:0.4;">En cours...</p>'}
+                    <button class="btn-gold" style="padding:10px 18px; font-size:0.7rem; letter-spacing:1px; font-weight:600;" onclick="downloadReservationPDF('${r.id}')">TÉLÉCHARGER PDF</button>
+                ` : '<p style="font-size:0.65rem; opacity:0.4; letter-spacing:1px;">VALIDATION EN COURS</p>'}
+                </div>
             </div>
-        `).join('') || '<p style="text-align:center; padding:20px;">Vous n\'avez pas encore de réservations.</p>';
+        `).join('') || '<p style="text-align:center; padding:20px; opacity:0.5;">Vous n\'avez pas encore effectué de réservation.</p>';
     }
 
     document.getElementById('btn-user-res-close')?.addEventListener('click', () => {
@@ -370,40 +375,43 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.text("ERRACHIDIA - TAFILALET - LUXE & PATRIMOINE", 105, 33, { align: 'center' });
 
         doc.setTextColor(40, 40, 40);
-        doc.setFontSize(18);
-        doc.text("BON DE RÉSERVATION", 20, 65);
+        doc.setFontSize(16);
+        doc.text("CONFIRMATION DE SÉJOUR", 20, 65);
         
         doc.setDrawColor(201, 168, 76);
-        doc.setLineWidth(1);
+        doc.setLineWidth(0.5);
         doc.line(20, 70, 190, 70);
 
-        doc.setFontSize(11);
-        doc.text(`Confirmation N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
-        doc.text(`Statut : VALIDÉE`, 190, 80, { align: 'right' });
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Dossier N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
+        doc.text(`Émis le : ${new Date().toLocaleDateString('fr-FR')}`, 190, 80, { align: 'right' });
 
         const drawInfo = (label, data, y) => {
-            doc.setFontSize(11);
-            doc.setTextColor(150, 150, 150);
+            doc.setFontSize(10);
+            doc.setTextColor(120, 120, 120);
             doc.text(label, 20, y);
             doc.setTextColor(0, 0, 0);
-            doc.text(data, 70, y);
+            doc.setFontSize(11);
+            doc.text(data, 75, y);
         };
 
-        drawInfo("CLIENT", res.name.toUpperCase(), 100);
-        drawInfo("HÉBERGEMENT", res.room.toUpperCase(), 110);
-        drawInfo("ARRIVÉE", res.arrival, 120);
-        drawInfo("DÉPART", res.departure, 130);
-        drawInfo("GUESTS", res.guests + " Personnes", 140);
+        drawInfo("NOM DU CLIENT", res.name.toUpperCase(), 100);
+        drawInfo("HÉBERGEMENT / N°", res.room.toUpperCase(), 110);
+        drawInfo("DATE D'ARRIVÉE", res.arrival, 125);
+        drawInfo("DATE DE DÉPART", res.departure, 135);
+        drawInfo("NB. DE PERSONNES", res.guests + " Personne(s)", 145);
+        drawInfo("TYPE DE SÉJOUR", "PRESTIGE & DÉTENTE", 155);
         
-        doc.setDrawColor(240, 240, 240);
-        doc.line(20, 155, 190, 155);
+        doc.setDrawColor(230, 230, 230);
+        doc.line(20, 165, 190, 165);
 
         doc.setFontSize(9);
         doc.setTextColor(120, 120, 120);
-        doc.text("Ce document est une confirmation officielle de votre séjour.", 105, 175, { align: 'center' });
-        doc.text("Pour toute assistance, appelez le +212 555-0123-456", 105, 185, { align: 'center' });
+        doc.text("Ce document doit être présenté à la réception dès votre arrivée.", 105, 185, { align: 'center' });
+        doc.text("Contact Conciergerie : +212 (0) 555-987-654 | contact@goldenatlas.com", 105, 192, { align: 'center' });
 
-        doc.save(`Confirmation_GoldenAtlas_${res.id.slice(0,8)}.pdf`);
+        doc.save(`Confirmation_GA_${res.id.slice(0,8).toUpperCase()}.pdf`);
     };
 
     // 2. SCROLL EFFECTS (Header & Revelations)
