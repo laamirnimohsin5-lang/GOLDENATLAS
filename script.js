@@ -309,11 +309,9 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload();
         });
 
-        // Show Reservations
-        document.getElementById('show-my-res')?.addEventListener('click', async () => {
-            document.getElementById('user-reservations-modal')?.classList.add('active');
-            document.getElementById('modal-overlay')?.classList.add('active');
-            await loadUserReservations(currentUser.email);
+        // Show Reservations (Redirect to Client Dashboard)
+        document.getElementById('show-my-res')?.addEventListener('click', () => {
+            window.location.href = 'login-client.html';
         });
     }
 
