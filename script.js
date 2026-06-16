@@ -30,6 +30,7 @@ const translations = {
         menu_dining: "Gastronomie",
         menu_bar: "Le bar",
         menu_pool: "La piscine",
+        menu_mosquee: "LA MOSQUÉE",
         menu_events: "Salle de fête",
         menu_rest: "Le restaurant",
         menu_gym: "Salle de sport",
@@ -86,6 +87,7 @@ const translations = {
         menu_dining: "Gastronomy",
         menu_bar: "The Bar",
         menu_pool: "The Pool",
+        menu_mosquee: "THE MOSQUE",
         menu_events: "Ballroom",
         menu_rest: "Restaurant",
         menu_gym: "Gym",
@@ -177,6 +179,7 @@ const translations = {
         menu_dining: "المطاعم",
         menu_bar: "البار",
         menu_pool: "المسبح",
+        menu_mosquee: "المسجد الكبير",
         menu_events: "قاعة الأفراح",
         menu_rest: "المطعم",
         menu_gym: "قاعة الرياضة",
@@ -259,8 +262,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
     if (currentUser && loginBtn) {
-        loginBtn.textContent = currentUser.name.split(' ')[0].toUpperCase();
+        loginBtn.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; background:var(--gold); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">
+                    ${currentUser.name.charAt(0).toUpperCase()}
+                </div>
+                <div style="text-align:left; line-height:1.1;">
+                     <span style="display:block; font-size:0.6rem; opacity:0.6; letter-spacing:1px;">BIENVENUE</span>
+                     <span style="display:block; font-size:0.75rem; font-weight:600; letter-spacing:1px;">${currentUser.name.split(' ')[0].toUpperCase()}</span>
+                </div>
+            </div>
+        `;
         loginBtn.removeAttribute('data-i18n');
+        loginBtn.style.background = 'none';
+        loginBtn.style.border = 'none';
+        loginBtn.style.padding = '0';
+        loginBtn.style.boxShadow = 'none';
     }
 
     // 2. SCROLL EFFECTS (Header & Revelations)
