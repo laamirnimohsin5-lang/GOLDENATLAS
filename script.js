@@ -26,6 +26,7 @@ const translations = {
         menu_pavillon: "Le Pavillon",
         menu_massage: "Les massages",
         menu_hammam: "Le hammam",
+        menu_spa: "SPA & BIEN-ÊTRE",
         menu_dining: "Gastronomie",
         menu_bar: "Le bar",
         menu_pool: "La piscine",
@@ -81,6 +82,7 @@ const translations = {
         menu_pavillon: "The Pavilion",
         menu_massage: "Massages",
         menu_hammam: "Hammam",
+        menu_spa: "SPA & WELLNESS",
         menu_dining: "Gastronomy",
         menu_bar: "The Bar",
         menu_pool: "The Pool",
@@ -125,6 +127,7 @@ const translations = {
         menu_vip: "Habitaciones VIP",
         menu_riads: "Los Riads",
         menu_pavillon: "El Pabellón",
+        menu_spa: "SPA Y BIENESTAR",
         menu_dining: "Gastronomía",
         menu_transport: "SERVICIO DE TRANSPORTE",
         footer_contact_title: "Contáctenos",
@@ -170,6 +173,7 @@ const translations = {
         menu_pavillon: "الجناح",
         menu_massage: "التدليك",
         menu_hammam: "الحمام",
+        menu_spa: "السبا والرفاهية",
         menu_dining: "المطاعم",
         menu_bar: "البار",
         menu_pool: "المسبح",
@@ -537,7 +541,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (resvModal) {
                 resvModal.classList.add('active');
-                resvModal.style.transform = 'translate(-50%, -55%)';
             }
             if (overlay) overlay.classList.add('active');
             document.body.style.overflow = 'hidden';

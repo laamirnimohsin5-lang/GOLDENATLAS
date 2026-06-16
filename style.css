@@ -474,8 +474,8 @@ h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; line-height
 /* MODAL */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 3000; visibility: hidden; opacity: 0; transition: all 0.35s; backdrop-filter: blur(6px); }
 .modal-overlay.active { visibility: visible; opacity: 1; }
-.reservation-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -55%); width: min(560px, 92vw); background: var(--cream); padding: 50px; z-index: 3001; visibility: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 30px 80px rgba(0,0,0,0.25); }
-.reservation-modal.active { transform: translate(-50%, -50%); visibility: visible; opacity: 1; }
+.reservation-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(560px, 92vw); background: var(--cream); padding: 50px 40px; z-index: 3001; visibility: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.16,1,0.3,1); box-shadow: 0 30px 80px rgba(0,0,0,0.25); max-height: 95vh; overflow-y: auto; }
+.reservation-modal.active { visibility: visible; opacity: 1; }
 .modal-close-btn { position: absolute; top: 18px; right: 22px; font-size: 1.8rem; line-height: 1; background: none; border: none; cursor: pointer; color: #777; transition: 0.3s; }
 .modal-title { font-size: 2rem; font-style: italic; text-align: center; color: var(--gold); margin-bottom: 5px; }
 .modal-sub { font-size: 0.7rem; text-align: center; text-transform: uppercase; letter-spacing: 2px; color: #aaa; margin-bottom: 8px; }
@@ -536,6 +536,7 @@ body.dark-mode #auth-modal .form-group select { background: #1a1a1a; border-colo
     .grid-4 { grid-template-columns: 1fr; }
     .hero-content h1 { font-size: 3rem; letter-spacing: 5px; }
     .footer-grid { grid-template-columns: 1fr; }
+    .reservation-modal { padding: 40px 25px; }
 }
 
 /* === VERTICAL ROOMS SECTION === */

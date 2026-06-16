@@ -205,8 +205,8 @@ body.dark-mode .header-dark .burger-icon .line {
     padding: 0;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    max-height: 85vh;
+    overflow-y: auto;
+    max-height: 95vh;
 }
 
 #modal-details-view {
