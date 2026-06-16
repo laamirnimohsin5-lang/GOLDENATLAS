@@ -342,6 +342,31 @@ h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; line-height
     font-size: 1.4rem;
 }
 
+/* Menu Specific Logo */
+.menu-logo-item .logo-img {
+    height: 75px;
+    filter: brightness(0.1);
+    transition: 0.3s;
+}
+
+.menu-logo-item .logo-title {
+    color: var(--text-dark);
+    font-size: 1.6rem;
+}
+
+.menu-logo-item .logo-subtitle {
+    color: var(--gold-dark);
+    opacity: 1;
+}
+
+body.dark-mode .menu-logo-item .logo-img {
+    filter: brightness(1);
+}
+
+body.dark-mode .menu-logo-item .logo-title {
+    color: #fff;
+}
+
 .menu-btn {
     background: none; border: none; color: inherit;
     display: flex; align-items: center; gap: 14px;
