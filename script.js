@@ -1166,6 +1166,44 @@ function initMenuAnimation() {
     scene.add(linesMesh);
 
     let angle = 0;
+    
+    // Mouse Interaction Variables
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+    const megaMenu = document.getElementById('mega-menu');
+
+    document.addEventListener('mousemove', (event) => {
+        if (!megaMenu || !megaMenu.classList.contains('active')) return;
+        const windowHalfX = container.clientWidth / 2;
+        const windowHalfY = container.clientHeight / 2;
+        // Calculate normalized mouse coordinates (-1 to +1 scale roughly)
+        mouseX = (event.clientX - windowHalfX) * 0.02;
+        mouseY = (event.clientY - windowHalfY) * 0.02;
+    });
+
+    // Link Hover Interaction (Burst effect)
+    const menuLinks = document.querySelectorAll('.sub-links a');
+    menuLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            // Accelerate particles momentarily
+            for (let i = 0; i < numParticles; i++) {
+                velocities[i].x *= 1.8;
+                velocities[i].y *= 1.8;
+                velocities[i].z *= 1.8;
+            }
+            // Flash the lines to a stronger golden glow
+            lineMaterial.opacity = 0.55;
+            lineMaterial.color.setHex(0xffffff); // Flash white-gold
+            setTimeout(() => lineMaterial.color.setHex(color), 300);
+        });
+        link.addEventListener('mouseleave', () => {
+            // Restore normal opacity
+            lineMaterial.opacity = 0.25;
+        });
+    });
+
     let isActive = true;
 
     function animate() {
@@ -1176,15 +1214,22 @@ function initMenuAnimation() {
         const posAttr = particleGeometry.attributes.position;
         const linePosAttr = lineGeometry.attributes.position;
 
+        // Apply friction to restore normal speed after burst
         for (let i = 0; i < numParticles; i++) {
+            // Base speed limits
+            const speedLimit = 0.04;
+            if(Math.abs(velocities[i].x) > speedLimit) velocities[i].x *= 0.95;
+            if(Math.abs(velocities[i].y) > speedLimit) velocities[i].y *= 0.95;
+            if(Math.abs(velocities[i].z) > speedLimit) velocities[i].z *= 0.95;
+
             posAttr.array[i*3] += velocities[i].x;
             posAttr.array[i*3 + 1] += velocities[i].y;
             posAttr.array[i*3 + 2] += velocities[i].z;
 
             // Bounce on edges
-            if (Math.abs(posAttr.array[i*3]) > 18) velocities[i].x *= -1;
-            if (Math.abs(posAttr.array[i*3 + 1]) > 18) velocities[i].y *= -1;
-            if (Math.abs(posAttr.array[i*3 + 2]) > 8) velocities[i].z *= -1;
+            if (Math.abs(posAttr.array[i*3]) > 20) velocities[i].x *= -1;
+            if (Math.abs(posAttr.array[i*3 + 1]) > 20) velocities[i].y *= -1;
+            if (Math.abs(posAttr.array[i*3 + 2]) > 10) velocities[i].z *= -1;
 
             // Connect nearest nodes
             for (let j = i + 1; j < numParticles; j++) {
@@ -1210,17 +1255,24 @@ function initMenuAnimation() {
         linePosAttr.needsUpdate = true;
         lineGeometry.setDrawRange(0, numConnected * 2);
 
-        // Smooth cinematic floating rotation
-        angle += 0.0007;
-        scene.rotation.y = Math.sin(angle) * 0.15;
-        scene.rotation.x = Math.cos(angle) * 0.1;
+        // Smooth Mouse Parallax Lerping
+        targetX = mouseX;
+        targetY = mouseY;
+        scene.rotation.y += 0.05 * (targetX - scene.rotation.y);
+        scene.rotation.x += 0.05 * (targetY - scene.rotation.x);
+
+        // Continuous Cinematic Rotation added internally to the meshes
+        angle += 0.001;
+        particleSystem.rotation.y = Math.sin(angle) * 0.1;
+        particleSystem.rotation.x = Math.cos(angle) * 0.1;
+        linesMesh.rotation.y = Math.sin(angle) * 0.1;
+        linesMesh.rotation.x = Math.cos(angle) * 0.1;
 
         renderer.render(scene, camera);
     }
     
     animate();
 
-    const megaMenu = document.getElementById('mega-menu');
     const observer = new MutationObserver(() => {
         if(megaMenu && megaMenu.classList.contains('active')) {
             renderer.setSize(container.clientWidth, container.clientHeight);
