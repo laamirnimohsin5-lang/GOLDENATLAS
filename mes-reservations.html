@@ -209,16 +209,81 @@
             if (!res) return;
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            doc.setFillColor(15, 15, 15); doc.rect(0, 0, 210, 45, 'F');
-            doc.setTextColor(201, 168, 76); doc.setFontSize(26); doc.text("GOLDEN ATLAS PRESTIGE", 105, 25, { align: 'center' });
-            doc.setTextColor(40,40,40); doc.setFontSize(16); doc.text("CONFIRMATION DE SÉJOUR", 20, 65);
-            doc.setDrawColor(201, 168, 76); doc.line(20, 70, 190, 70);
-            doc.setFontSize(10); doc.text(`Dossier N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
-            const draw = (l, d, y) => { doc.setTextColor(120); doc.text(l, 20, y); doc.setTextColor(0); doc.text(d, 75, y); };
-            draw("NOM DU CLIENT", res.name.toUpperCase(), 100);
-            draw("HÉBERGEMENT", res.room.toUpperCase(), 110);
-            draw("DATES", res.arrival + " au " + res.departure, 120);
-            doc.save("Reservation_GA.pdf");
+            
+            // Header: Elegant Black Bar & Gold Title
+            doc.setFillColor(15, 15, 15);
+            doc.rect(0, 0, 210, 50, 'F');
+            doc.setTextColor(201, 168, 76);
+            doc.setFontSize(28);
+            doc.text("GOLDEN ATLAS", 105, 25, { align: 'center' });
+            doc.setFontSize(10);
+            doc.setTextColor(150, 110, 50);
+            doc.text("P A L A C E  ·  E R R A C H I D I A", 105, 33, { align: 'center' });
+            doc.text("DEPUIS 1923", 105, 38, { align: 'center' });
+
+            // Document Title
+            doc.setTextColor(40, 40, 40);
+            doc.setFontSize(20);
+            doc.text("BON DE SÉJOUR", 20, 70);
+            doc.setDrawColor(201, 168, 76);
+            doc.setLineWidth(1);
+            doc.line(20, 75, 190, 75);
+
+            // Left Column: Client & Stay Details
+            doc.setFontSize(9);
+            doc.setTextColor(120, 120, 120);
+            doc.text("INFORMATIONS CLIENT", 20, 88);
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.text("Nom : " + res.name.toUpperCase(), 20, 95);
+            doc.text("Email : " + (res.user_email || 'Non renseigné'), 20, 102);
+            doc.text("Réf. Réservation : #GA-" + res.id.slice(0,8).toUpperCase(), 20, 109);
+
+            // Right Column: Reference & Dates
+            doc.setFontSize(9);
+            doc.setTextColor(120, 120, 120);
+            doc.text("DÉTAILS DU SÉJOUR", 120, 88);
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.text("Arrivée : " + res.arrival, 120, 95);
+            doc.text("Départ : " + res.departure, 120, 102);
+            doc.text("Hébergement : " + res.room.toUpperCase(), 120, 109);
+
+            // Summary Table Style
+            doc.setFillColor(248, 245, 240);
+            doc.rect(20, 125, 170, 60, 'F');
+            doc.setDrawColor(201, 168, 76);
+            doc.rect(20, 125, 170, 60, 'S');
+
+            doc.setFontSize(10);
+            doc.setTextColor(150, 110, 50);
+            doc.text("RÉSUMÉ DE LA RÉSERVATION", 30, 140);
+            
+            doc.setTextColor(60, 60, 60);
+            doc.text("Chambre / Suite :", 30, 155);
+            doc.text(res.room, 100, 155);
+            
+            doc.text("Nombre de Voyageurs :", 30, 165);
+            doc.text((res.guests || "1") + " Adulte(s)", 100, 165);
+            
+            doc.text("Statut du Paiement :", 30, 175);
+            doc.text("PAIEMENT À L'ARRIVÉE", 100, 175);
+
+            // Bottom Footer with contact
+            doc.setDrawColor(230, 230, 230);
+            doc.line(20, 260, 190, 260);
+            doc.setFontSize(8);
+            doc.setTextColor(150, 150, 150);
+            doc.text("Golden Atlas Errachidia - Avenue Mohammed V, Errachidia, Maroc", 105, 270, { align: 'center' });
+            doc.text("Contact : +212 (0) 535-123-456 | reservation@goldenatlas.com", 105, 275, { align: 'center' });
+            doc.text("Le Palais décline toute responsabilité en cas de perte de ce document.", 105, 280, { align: 'center' });
+
+            // Gold Leaf Decoration
+            doc.setDrawColor(201, 168, 76);
+            doc.setLineWidth(5);
+            doc.line(0, 290, 210, 290);
+
+            doc.save("Confirmation_GoldenAtlas_" + res.name.replace(' ','_') + ".pdf");
         };
     </script>
 </body>
