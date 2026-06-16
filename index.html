@@ -43,8 +43,11 @@
         </div>
     </div>
     <div class="header-center">
-        <a href="index.html" class="logo">Golden Atlas</a>
-        <span class="logo-subtitle">Errachidia</span>
+        <a href="index.html" class="logo-wrapper">
+            <img src="assets/logo.png" alt="Golden Atlas Logo" class="logo-img">
+            <span class="logo-title">Golden Atlas</span>
+            <span class="logo-subtitle">Errachidia</span>
+        </a>
     </div>
     <div class="header-right" style="gap: 15px;">
         <button class="btn-reserver" id="btn-top-login" data-i18n="nav_login" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(197,160,89,0.3); color: #fff;">S'IDENTIFIER</button>
@@ -57,7 +60,13 @@
         <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
         <div class="menu-header" style="position:relative; z-index:1;">
             <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
+            <div class="menu-logo-wrapper">
+                <a href="index.html" class="logo-wrapper">
+                    <img src="assets/logo.png" alt="Golden Atlas Logo" class="logo-img" style="filter: brightness(0) saturate(100%) invert(0%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(0%) contrast(100%);">
+                    <span class="logo-title" style="color: var(--text-dark);">Golden Atlas</span>
+                    <span class="logo-subtitle" style="color: var(--text-dark);">Errachidia</span>
+                </a>
+            </div>
         </div>
         <div class="menu-links-container" style="position:relative; z-index:1;">
             <div class="menu-column">
@@ -282,7 +291,10 @@
     <div class="container">
         <div class="footer-grid">
             <div class="footer-logo-col">
-                <span class="logo">Golden Atlas</span>
+                <a href="index.html" class="logo-wrapper" style="align-items: flex-start; margin-bottom: 20px;">
+                    <img src="assets/logo.png" alt="Golden Atlas Logo" class="logo-img" style="height: 50px; margin-bottom: 5px;">
+                    <span class="logo-title" style="font-size: 1.4rem; color: var(--gold);">Golden Atlas</span>
+                </a>
                 <p>Avenue Bab Jdid<br>40040 Errachidia, Maroc</p>
                 <a href="tel:+212648120577">+212 648 120 577</a>
                 <a href="mailto:laamirnimohsin5@gmail.com">laamirnimohsin5@gmail.com</a>
