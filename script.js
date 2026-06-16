@@ -326,6 +326,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     });
     
+    // Highlight Current Menu Page
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('#mega-menu .sub-links a').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPath || (currentPath === '' && href === 'index.html')) {
+            link.style.color = 'var(--gold)';
+        }
+    });
+    
     // Theme Toggle
     const themeToggle = document.getElementById('theme-toggle');
     const savedTheme = localStorage.getItem('ga_theme') || 'light';

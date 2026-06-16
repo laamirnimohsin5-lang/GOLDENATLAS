@@ -45,66 +45,80 @@
     </div>
 </header>
 
+<!-- Mega Menu -->
 <nav id="mega-menu" class="mega-menu">
-    <div class="menu-left-pane">
-        <div class="menu-header">
+    <div class="menu-left-pane" style="position:relative; overflow:hidden;">
+        <canvas id="menu-canvas" style="position:absolute; inset:0; z-index:0; pointer-events:none;"></canvas>
+        <div class="menu-header" style="position:relative; z-index:1;">
             <button class="close-btn"><svg viewBox="0 0 40 40" width="32"><path d="M10,10L30,30M30,10L10,30" stroke="#000" stroke-width="1.5" stroke-linecap="round"/></svg></button>
-            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a></div>
+            <div class="menu-logo-wrapper"><a href="index.html" class="logo menu-logo">Golden Atlas</a><span class="logo-subtitle menu-logo-subtitle">Errachidia</span></div>
         </div>
-        <div class="menu-links-container">
+        <div class="menu-links-container" style="position:relative; z-index:1;">
             <div class="menu-column">
-                <ul class="sub-links">
+                <ul class="sub-links pt-0">
                     <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
                     <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
+                    <li><a href="riads.html" data-i18n="menu_riads">LES RIADS</a></li>
                     <li><a href="spa.html" data-i18n="menu_spa">SPA & BIEN-ÊTRE</a></li>
                 </ul>
             </div>
             <div class="menu-column">
-                <ul class="sub-links">
+                <ul class="sub-links pt-0">
                     <li><a href="restaurants.html" data-i18n="menu_dining">GASTRONOMIE</a></li>
+                    <li><a href="bar-majorelle.html" data-i18n="menu_bar">LE BAR</a></li>
                     <li><a href="piscine.html" data-i18n="menu_pool">LA PISCINE</a></li>
-                    <li><a href="mosquee.html" data-i18n="menu_mosquee" style="color:var(--gold);">LA MOSQUÉE</a></li>
+                    <li><a href="mosquee.html" data-i18n="menu_mosquee">LA MOSQUÉE</a></li>
+                    <li><a href="salle-fetes.html" data-i18n="menu_events">SALLE DE FÊTE</a></li>
+                    <li><a href="gym.html" data-i18n="menu_gym">SALLE DE SPORT</a></li>
+                    <li><a href="cafe.html" data-i18n="menu_cafe">LE CAFÉ</a></li>
+                    <li><a href="transport.html" data-i18n="menu_transport">TRANSPORT</a></li>
                 </ul>
             </div>
         </div>
+        <div class="menu-bottom-footer" style="position:relative; z-index:1;">
+            <a href="#" data-i18n="menu_footer_century">UN SIÈCLE D'EXCELLENCE</a><span class="sep">|</span>
+            <a href="#" data-i18n="menu_footer_contact">CONTACT</a>
+        </div>
     </div>
+    <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
 
 <main>
     <section class="sub-hero">
-        <div class="sub-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1548013146-72479768bada?w=1600&q=85');"></div>
+        <div class="sub-hero-bg" style="background-image:url('luxury_palace_mosque_internal_1781568664709.png');"></div>
         <div class="sub-hero-overlay"></div>
         <div class="sub-hero-content">
             <span class="surtitle" data-i18n="mosque_surtitle">Patrimoine & Spiritualité</span>
             <h1 class="title-xl text-white" data-i18n="mosque_title">La Grande Mosquée</h1>
-            <p class="text-white" style="letter-spacing:5px;text-transform:uppercase;font-size:0.85rem;margin-top:1rem;">Un joyau architectural au cœur d'Errachidia</p>
+            <p class="text-white" style="letter-spacing:5px;text-transform:uppercase;font-size:0.85rem;margin-top:1rem;">Un joyau privé au cœur du Palace</p>
         </div>
     </section>
 
     <section class="section-pad text-center reveal">
         <div class="container-sm">
             <span class="surtitle">Sacré & Intemporel</span>
-            <h2 class="title-lg">Un havre de paix</h2>
+            <h2 class="title-lg">Un havre de paix intérieur</h2>
             <div class="separator"></div>
-            <p class="body-text">Située dans les jardins privés du Golden Atlas, notre mosquée est un sanctuaire de paix réservé à nos hôtes. Ce joyau de l'architecture marocaine permet de vivre des moments de spiritualité et de recueillement sans quitter le confort du palace.</p>
+            <p class="body-text">Nichée au sein des jardins secrets du Golden Atlas, notre mosquée privée est un chef-d'œuvre de l'art islamique. Réservée exclusivement à nos hôtes, elle offre un espace de recueillement d'une sérénité absolue, loin de l'effervescence du monde extérieur.</p>
         </div>
     </section>
 
     <section class="block-split reveal">
         <div class="split-img">
-            <img src="https://images.unsplash.com/photo-1564507592333-c60657eaa0ae?w=900&q=85" alt="Architecture Mosquée">
+            <img src="luxury_mosque_details_palace_1781568679434.png" alt="Détails Mosquée">
         </div>
         <div class="split-body">
-            <span class="surtitle">L'Art Islamique</span>
-            <h2 class="title-lg">L'Excellence du Zellige</h2>
-            <p>Admirez le travail minutieux des maîtres artisans marocains. Les motifs géométriques complexes en zellige, les plafonds en bois de cèdre sculpté et l'harmonie des volumes font de cet édifice une étape incontournable lors de votre séjour.</p>
-            <p>La mosquée du Palace est un témoignage vivant de l'histoire et de la culture de la région du Tafilalet, offrant une atmosphère d'une sérénité rare.</p>
+            <span class="surtitle">L'Art du Détail</span>
+            <h2 class="title-lg">L'Héritage des Maîtres Artisans</h2>
+            <p>Chaque coin de cet espace sacré témoigne d'un savoir-faire ancestral. Des stucs ciselés à la main aux plafonds en cèdre massif, l'architecture célèbre la richesse du patrimoine marocain. Les vitraux colorés projettent une lumière mystique sur les tapis de prière tissés à la main.</p>
+            <p>Ici, le luxe rencontre la spiritualité dans une harmonie parfaite, créant une expérience sensorielle et spirituelle unique au Tafilalet.</p>
         </div>
     </section>
 
     <!-- FINAL PHOTO SECTION -->
     <section class="reveal" style="line-height:0; margin-top: 50px;">
-        <img src="https://images.unsplash.com/photo-1590073844006-33379778ae09?w=1600&q=85" alt="Vue finale Mosquée" style="width: 100%; height: 600px; object-fit: cover;">
+        <img src="luxury_palace_mosque_internal_1781568664709.png" alt="Vue finale Mosquée" style="width: 100%; height: 600px; object-fit: cover;">
     </section>
 </main>
 
