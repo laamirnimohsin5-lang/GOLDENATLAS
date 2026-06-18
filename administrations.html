@@ -219,6 +219,45 @@
 
         .toast { position: fixed; bottom: 30px; right: 30px; background: var(--neon-gold); color: #000; padding: 15px 30px; border-radius: 4px; font-weight: 800; transform: translateY(100px); transition: 0.4s; z-index: 2000; }
         .toast.active { transform: translateY(0); }
+
+        /* ── Hotel Management Modals ── */
+        .modal {
+            display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; animation: fadeIn 0.3s ease; }
+        .modal-content {
+            background: #0f0f0f; border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; padding: 30px; width: 90%; max-width: 600px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6), 0 0 20px rgba(201,168,76,0.1);
+            position: relative; max-height: 90vh; overflow-y: auto;
+        }
+        .close-modal {
+            position: absolute; top: 20px; right: 20px; color: rgba(255,255,255,0.5); font-size: 1.5rem; cursor: pointer; transition: 0.3s;
+        }
+        .close-modal:hover { color: var(--primary); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .form-grid.full { grid-template-columns: 1fr; }
+        .form-input {
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            color: #fff; border-radius: 8px; outline: none; font-family: inherit; font-size: 0.8rem; transition: 0.3s;
+        }
+        .form-input:focus { border-color: var(--primary); background: rgba(255,255,255,0.06); }
+        .form-label { display: block; font-size: 0.7rem; color: var(--primary); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-title { font-family: 'Playfair Display', serif; color: var(--primary); font-size: 1.4rem; margin-bottom: 20px; }
+        .btn-gold {
+            background: linear-gradient(135deg, #8a6a20, var(--primary), #e8c97a); border: none; color: #000; padding: 10px 20px;
+            font-weight: 700; border-radius: 8px; cursor: pointer; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-gold:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--primary-glow); }
+        .search-bar { display: flex; gap: 10px; flex-grow: 1; max-width: 300px; }
+        .search-bar input { flex-grow: 1; padding: 10px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; outline: none; }
+        .search-bar input:focus { border-color: var(--primary); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px; flex-wrap: wrap; }
+        .img-preview { width: 100px; height: 60px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(201,168,76,0.3); }
+        .sub-tabs { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .sub-tab { cursor: pointer; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
+        .sub-tab.active { color: var(--primary); font-weight: 700; }
+        .sub-tab:hover { color: #fff; }
     </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -259,6 +298,7 @@
             <div class="nav-item active" data-tab="reservations"><i>📅</i> Réservations</div>
             <div class="nav-item" data-tab="customers"><i>👤</i> Clients</div>
             <div class="nav-item" data-tab="messages"><i>✉️</i> Messages</div>
+            <div class="nav-item" data-tab="hotel"><i>🏨</i> Gestion de l'Hôtel</div>
             <a href="index.html" class="nav-item" style="margin-top: 50px; text-decoration: none;"><i>🏠</i> Retour au Site</a>
             <div class="nav-item" onclick="location.reload()" style="color: #ef4444; margin-top: 10px;"><i>🔒</i> Déconnexion</div>
         </nav>
@@ -337,7 +377,187 @@
                 </table>
             </div>
         </div>
+
+        <div id="tab-hotel" class="tab-content">
+            <div class="data-card">
+                <div class="sub-tabs">
+                    <div class="sub-tab active" onclick="switchHotelTab('rooms')">Éléments Réservables</div>
+                    <div class="sub-tab" onclick="switchHotelTab('services')">Services de l'Hôtel</div>
+                </div>
+
+                <!-- Rooms Management -->
+                <div id="hotel-rooms">
+                    <div class="flex-between">
+                        <div class="search-bar">
+                            <input type="text" id="srch-room" placeholder="Rechercher un élément...">
+                        </div>
+                        <button class="btn-gold" onclick="openRoomModal()">+ Ajouter Élément</button>
+                    </div>
+
+                    <table id="rooms-table">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Catégorie</th>
+                                <th>Nom / Référence</th>
+                                <th>Prix (DH)</th>
+                                <th>Capacité</th>
+                                <th>Disponibilité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rooms-body">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Services Management -->
+                <div id="hotel-services" style="display:none;">
+                    <div class="flex-between">
+                        <div class="search-bar">
+                            <input type="text" id="srch-service" placeholder="Rechercher un service...">
+                        </div>
+                        <button class="btn-gold" onclick="openServiceModal()">+ Ajouter Service</button>
+                    </div>
+
+                    <table id="services-table">
+                        <thead>
+                            <tr>
+                                <th>Nom du Service</th>
+                                <th>Description</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="services-body">
+                            <!-- Injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
+</div>
+
+<!-- ── MODALS ── -->
+
+<!-- Room Modal -->
+<div id="modal-room" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('modal-room')">&times;</span>
+        <h2 class="modal-title" id="room-modal-title">Ajouter un Élément Réservable</h2>
+        <form id="form-room">
+            <input type="hidden" id="room-id">
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Catégorie</label>
+                    <select class="form-input" id="room-type" required>
+                        <option value="Chambre Standard">Chambre Standard</option>
+                        <option value="Chambre Deluxe">Chambre Deluxe</option>
+                        <option value="Suite">Suite</option>
+                        <option value="VIP Suite">Suite VIP Royale</option>
+                        <option value="Riad">Riad Privé</option>
+                        <option value="Pavillon">Pavillon</option>
+                        <option value="Restaurant">Table (Restaurant/Café)</option>
+                        <option value="Spa">Soin / Hammam (Spa)</option>
+                        <option value="Transport">Véhicule (Transport)</option>
+                        <option value="Événementiel">Salle des Fêtes</option>
+                        <option value="Activité">Piscine / Salle de Sport</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Nom / Numéro / Référence</label>
+                    <input type="text" class="form-input" id="room-name" required placeholder="Ex: Table 14, Limousine...">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Prix (MAD)</label>
+                    <input type="number" class="form-input" id="room-price" required min="0">
+                </div>
+                <div>
+                    <label class="form-label">Capacité (Personnes)</label>
+                    <input type="number" class="form-input" id="room-capacity" required min="1">
+                </div>
+            </div>
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label">Description Courte</label>
+                    <textarea class="form-input" id="room-desc" rows="3" required></textarea>
+                </div>
+            </div>
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label">Image Principale (Fichier Local ou URL)</label>
+                    <div style="display:flex; gap:10px; margin-bottom: 10px;">
+                        <input type="file" id="room-img-file" class="form-input" accept="image/*,video/*" style="flex:1.5; padding:9px;">
+                        <span style="display:flex; align-items:center; font-size:0.7rem; color:rgba(255,255,255,0.4); text-transform:uppercase;">OU</span>
+                        <input type="text" class="form-input" id="room-img" placeholder="URL externe https://..." style="flex:2;">
+                    </div>
+                    <div id="room-img-preview-container" style="display:none; text-align:center;">
+                        <img id="room-img-preview" style="max-height:80px; border-radius:4px; border:1px solid rgba(201,168,76,0.3); object-fit:cover;">
+                    </div>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Statut</label>
+                    <select class="form-input" id="room-status">
+                        <option value="Disponible">Disponible</option>
+                        <option value="Occupée">Occupée</option>
+                        <option value="En Maintenance">En Maintenance</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="submit" class="btn-gold">Enregistrer Élément</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Service Modal -->
+<div id="modal-service" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('modal-service')">&times;</span>
+        <h2 class="modal-title" id="service-modal-title">Ajouter un Service</h2>
+        <form id="form-service">
+            <input type="hidden" id="service-id">
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label">Nom du Service</label>
+                    <input type="text" class="form-input" id="service-name" required placeholder="Ex: Spa & Bien-être, Chauffeur privé...">
+                </div>
+                <div>
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" id="service-desc" rows="3" required></textarea>
+                </div>
+                <div>
+                    <label class="form-label">Statut</label>
+                    <select class="form-input" id="service-status">
+                        <option value="Actif">Actif</option>
+                        <option value="Inactif">Inactif</option>
+                    </select>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button type="submit" class="btn-gold">Enregistrer Service</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="modal-confirm" class="modal" style="z-index:3000;">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <h2 class="modal-title" style="color: #ef4444;">Confirmation</h2>
+        <p style="margin-bottom: 30px; font-size: 0.9rem;">Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
+        <div style="display:flex; justify-content:center; gap:15px;">
+            <button class="btn-gold" style="background:#555; color:#fff;" onclick="closeModal('modal-confirm')">Annuler</button>
+            <button class="btn-gold" style="background:#ef4444; color:#fff;" id="btn-confirm-delete">Supprimer</button>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -567,10 +787,256 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
         item.classList.add('active');
 
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
         
-        document.getElementById('tab-title').textContent = tab.charAt(0).toUpperCase() + tab.slice(1);
+        // Handle special logic if title needs remapping
+        let titleMap = {
+            'hotel': 'Gestion de l\'Hôtel'
+        };
+        const activeTab = document.getElementById('tab-' + tab);
+        if(activeTab) activeTab.classList.add('active');
+        
+        document.getElementById('tab-title').textContent = titleMap[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
     });
+});
+
+/* ── Hotel Management Logic ── */
+
+let mockRooms = [
+    { id: 1, type: 'Suite', name: 'Suite Al Mamoun', price: 15000, capacity: 4, desc: 'Luxe absolu avec vue sur les jardins.', img: 'assets/chambre_1.png', status: 'Disponible' },
+    { id: 2, type: 'Chambre Deluxe', name: 'Chambre Koutoubia', price: 4500, capacity: 2, desc: 'Élégance marocaine et confort moderne.', img: 'assets/chambre_2.png', status: 'Occupée' },
+    { id: 3, type: 'Riad', name: 'Riad Privé Atlas', price: 40000, capacity: 8, desc: 'Expérience royale avec piscine privée.', img: 'assets/riads/riad1.jpg', status: 'Disponible' }
+];
+
+let mockServices = [
+    { id: 1, name: 'Spa & Hammam Royal', desc: 'Soins traditionnels, massages relaxants et piscine couverte.', status: 'Actif' },
+    { id: 2, name: 'Transfert Aéroport', desc: 'Véhicules de luxe avec chauffeur privé 24/7.', status: 'Actif' },
+    { id: 3, name: 'Conciergerie VIP', desc: 'Organisation d\'excursions et réservations exclusives.', status: 'Actif' }
+];
+
+let deleteTarget = null;
+let deleteType = null;
+
+function switchHotelTab(view) {
+    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    if(view === 'rooms') {
+        document.getElementById('hotel-rooms').style.display = 'block';
+        document.getElementById('hotel-services').style.display = 'none';
+        renderRooms();
+    } else {
+        document.getElementById('hotel-rooms').style.display = 'none';
+        document.getElementById('hotel-services').style.display = 'block';
+        renderServices();
+    }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Room Actions
+function renderRooms() {
+    const term = document.getElementById('srch-room')?.value.toLowerCase() || '';
+    const filtered = mockRooms.filter(r => r.name.toLowerCase().includes(term) || r.type.toLowerCase().includes(term));
+    
+    document.getElementById('rooms-body').innerHTML = filtered.map(r => `
+        <tr>
+            <td><img src="${r.img}" class="img-preview" onerror="this.src='https://via.placeholder.com/100x60/0a0a0a/c9a84c?text=IMG'"></td>
+            <td>${r.type}</td>
+            <td style="font-weight:600;">${r.name}</td>
+            <td style="color:var(--primary); font-family:'Playfair Display', serif;">${r.price.toLocaleString()}</td>
+            <td>${r.capacity} pers.</td>
+            <td><span class="badge ${r.status === 'Disponible' ? 'badge-success' : r.status === 'En Maintenance' ? 'badge-danger' : 'badge-pending'}">${r.status}</span></td>
+            <td>
+                <div class="action-container">
+                    <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="editRoom(${r.id})">Éditer</button>
+                    <button class="action-btn btn-reject" onclick="promptDelete('room', ${r.id})">Sup.</button>
+                </div>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="7" style="text-align:center;">Aucun élément trouvé.</td></tr>';
+}
+
+function openRoomModal(room = null) {
+    const form = document.getElementById('form-room');
+    const previewContainer = document.getElementById('room-img-preview-container');
+    const previewImg = document.getElementById('room-img-preview');
+    
+    if(room) {
+        document.getElementById('room-modal-title').textContent = 'Modifier un Élément Réservable';
+        document.getElementById('room-id').value = room.id;
+        document.getElementById('room-type').value = room.type;
+        document.getElementById('room-name').value = room.name;
+        document.getElementById('room-price').value = room.price;
+        document.getElementById('room-capacity').value = room.capacity;
+        document.getElementById('room-desc').value = room.desc;
+        document.getElementById('room-img').value = room.img || '';
+        document.getElementById('room-img-file').value = '';
+        document.getElementById('room-status').value = room.status;
+
+        if(room.img) {
+            previewContainer.style.display = 'block';
+            previewImg.src = room.img;
+        } else {
+            previewContainer.style.display = 'none';
+            previewImg.src = '';
+        }
+    } else {
+        document.getElementById('room-modal-title').textContent = 'Ajouter un Élément Réservable';
+        form.reset();
+        document.getElementById('room-id').value = '';
+        document.getElementById('room-img-file').value = '';
+        previewContainer.style.display = 'none';
+        previewImg.src = '';
+    }
+    openModal('modal-room');
+}
+
+function editRoom(id) {
+    const room = mockRooms.find(r => r.id === id);
+    if(room) openRoomModal(room);
+}
+
+// Handle Local File Upload Convert to Base64
+document.getElementById('room-img-file').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            document.getElementById('room-img-preview-container').style.display = 'block';
+            document.getElementById('room-img-preview').src = evt.target.result;
+            document.getElementById('room-img').value = evt.target.result; // Set URL to base64
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Update Preview on URL change manually
+document.getElementById('room-img').addEventListener('input', function(e) {
+    const val = e.target.value.trim();
+    if(val) {
+        document.getElementById('room-img-preview-container').style.display = 'block';
+        document.getElementById('room-img-preview').src = val;
+    } else {
+        document.getElementById('room-img-preview-container').style.display = 'none';
+    }
+});
+
+document.getElementById('form-room').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('room-id').value;
+    const roomData = {
+        type: document.getElementById('room-type').value,
+        name: document.getElementById('room-name').value,
+        price: parseInt(document.getElementById('room-price').value),
+        capacity: parseInt(document.getElementById('room-capacity').value),
+        desc: document.getElementById('room-desc').value,
+        img: document.getElementById('room-img').value,
+        status: document.getElementById('room-status').value
+    };
+
+    if(id) {
+        const idx = mockRooms.findIndex(r => r.id == id);
+        if(idx !== -1) mockRooms[idx] = { ...mockRooms[idx], ...roomData };
+        showAdminToast('Élément modifié ✓');
+    } else {
+        mockRooms.push({ id: Date.now(), ...roomData });
+        showAdminToast('Élément ajouté ✓');
+    }
+    closeModal('modal-room');
+    renderRooms();
+});
+
+// Service Actions
+function renderServices() {
+    const term = document.getElementById('srch-service')?.value.toLowerCase() || '';
+    const filtered = mockServices.filter(s => s.name.toLowerCase().includes(term));
+    
+    document.getElementById('services-body').innerHTML = filtered.map(s => `
+        <tr>
+            <td style="font-weight:600;">${s.name}</td>
+            <td style="max-width:250px; font-size:0.75rem;">${s.desc}</td>
+            <td><span class="badge ${s.status === 'Actif' ? 'badge-success' : 'badge-danger'}">${s.status}</span></td>
+            <td>
+                <div class="action-container">
+                    <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="editService(${s.id})">Éditer</button>
+                    <button class="action-btn btn-reject" onclick="promptDelete('service', ${s.id})">Sup.</button>
+                </div>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="4" style="text-align:center;">Aucun service trouvé.</td></tr>';
+}
+
+function openServiceModal(service = null) {
+    const form = document.getElementById('form-service');
+    if(service) {
+        document.getElementById('service-modal-title').textContent = 'Modifier Service';
+        document.getElementById('service-id').value = service.id;
+        document.getElementById('service-name').value = service.name;
+        document.getElementById('service-desc').value = service.desc;
+        document.getElementById('service-status').value = service.status;
+    } else {
+        document.getElementById('service-modal-title').textContent = 'Ajouter un Service';
+        form.reset();
+        document.getElementById('service-id').value = '';
+    }
+    openModal('modal-service');
+}
+
+function editService(id) {
+    const service = mockServices.find(s => s.id === id);
+    if(service) openServiceModal(service);
+}
+
+document.getElementById('form-service').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = document.getElementById('service-id').value;
+    const serviceData = {
+        name: document.getElementById('service-name').value,
+        desc: document.getElementById('service-desc').value,
+        status: document.getElementById('service-status').value
+    };
+
+    if(id) {
+        const idx = mockServices.findIndex(s => s.id == id);
+        if(idx !== -1) mockServices[idx] = { ...mockServices[idx], ...serviceData };
+        showAdminToast('Service modifié ✓');
+    } else {
+        mockServices.push({ id: Date.now(), ...serviceData });
+        showAdminToast('Service ajouté ✓');
+    }
+    closeModal('modal-service');
+    renderServices();
+});
+
+// Deletion Logic
+function promptDelete(type, id) {
+    deleteType = type;
+    deleteTarget = id;
+    openModal('modal-confirm');
+}
+
+document.getElementById('btn-confirm-delete').addEventListener('click', () => {
+    if(deleteType === 'room') {
+        mockRooms = mockRooms.filter(r => r.id !== deleteTarget);
+        renderRooms();
+        showAdminToast('Hébergement supprimé ✓');
+    } else if(deleteType === 'service') {
+        mockServices = mockServices.filter(s => s.id !== deleteTarget);
+        renderServices();
+        showAdminToast('Service supprimé ✓');
+    }
+    closeModal('modal-confirm');
+});
+
+// Search listeners
+document.getElementById('srch-room')?.addEventListener('input', renderRooms);
+document.getElementById('srch-service')?.addEventListener('input', renderServices);
+
+// Initial renders (called when switching tabs, but good to prep)
+document.addEventListener('DOMContentLoaded', () => {
+    renderRooms();
+    renderServices();
 });
 </script>
 

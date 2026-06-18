@@ -687,14 +687,15 @@
     display: flex;
     width: 100%;
     height: 100%;
-    transition: transform 0.6s cubic-bezier(0.23,1,0.32,1);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-gallery-track img {
-    min-width: 100%;
+    flex-shrink: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
 .modal-gallery-btn {

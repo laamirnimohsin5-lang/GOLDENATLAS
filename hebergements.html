@@ -484,32 +484,91 @@
         </div>
         <div class="modal-info-content">
             <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
-            <h2 class="modal-title" id="modal-room-name"></h2>
-            <div class="modal-full-desc" id="modal-room-desc"></div>
+            <h2 class="modal-title" id="modal-room-name" style="font-family: 'Playfair Display'; font-weight: 400; font-size: 2.2rem; margin-bottom: 10px;"></h2>
+            <div class="modal-full-desc" id="modal-room-desc" style="font-family: 'Montserrat'; font-weight: 300; font-size: 0.95rem; line-height: 1.8; color: #5a4d3e; margin-bottom: 25px;"></div>
             <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;"></div>
-            <button class="btn-gold" id="btn-show-booking" style="width:100%; height: 50px; background: var(--gold); border: none; color: #fff; font-family: var(--font-body); font-size: 0.75rem; letter-spacing: 2px; cursor: pointer;">PASSER À LA RÉSERVATION</button>
+            
+            <button class="btn-gold" id="btn-show-booking" style="
+                width: 100%; 
+                height: 60px; 
+                background: linear-gradient(135deg, #c5a059 0%, #ddc07a 50%, #a67c00 100%);
+                background-size: 200% auto;
+                border: none; 
+                color: #fff; 
+                font-family: 'Montserrat';
+                font-size: 0.75rem; 
+                font-weight: 700;
+                letter-spacing: 4px; 
+                text-transform: uppercase;
+                cursor: pointer;
+                transition: 0.5s;
+                box-shadow: 0 10px 25px rgba(197,160,89,0.3);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+                margin-top: 20px;
+            ">
+                <span style="position: relative; z-index: 2;">RÉSERVER CETTE CHAMBRE</span>
+                <div class="btn-shimmer" style="position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: 0.5s;"></div>
+            </button>
+            
+            <style>
+                #btn-show-booking:hover {
+                    background-position: right center;
+                    transform: translateY(-2px);
+                    box-shadow: 0 15px 35px rgba(197,160,89,0.4);
+                }
+                #btn-show-booking:hover .btn-shimmer {
+                    left: 200%;
+                    transition: 0.8s;
+                }
+                #btn-show-booking::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    border: 1px solid rgba(255,255,255,0.2);
+                    pointer-events: none;
+                }
+            </style>
         </div>
     </div>
 
-    <div id="modal-booking-view" style="display:none; padding: 40px; padding-top: 20px;">
-        <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px; text-transform: uppercase; letter-spacing: 1px;">← Retour aux détails</button>
-        <p class="modal-title" data-i18n="booking_title">Réserver votre séjour</p>
-        <p class="modal-sub" data-i18n="hotel_name">GOLDEN ATLAS ERRACHIDIA</p>
-        <form id="booking-form">
-            <div class="form-group"><label data-i18n="form_name">Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
-            <div class="form-group row" style="display:flex; gap:15px;">
-                <div class="form-group" style="flex:1;"><label data-i18n="form_arrival">Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
-                <div class="form-group" style="flex:1;"><label data-i18n="form_departure">Date de départ</label><input type="date" id="booking-departure" required></div>
-            </div>
-            <div class="form-group"><label data-i18n="form_guests">Voyageurs</label>
-                 <select id="booking-guests" required>
-                    <option value="" disabled selected>Sélectionner</option>
-                    <option>1 Adulte</option><option selected>2 Adultes</option>
-                    <option>2 Adultes · 1 Enfant</option><option>Famille (4+)</option>
-                 </select>
-            </div>
-            <button type="submit" class="btn-modal-submit" style="width: 100%; height: 54px; margin-top: 22px; background: var(--gold); border: none; color: #fff; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer;">CONFIRMER MA RÉSERVATION</button>
-        </form>
+    <div id="modal-booking-view" style="display:none; padding: 40px; padding-top: 20px; position: relative; overflow: hidden; background: #0a0a0a;">
+        <canvas id="modal-3d-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.6; mix-blend-mode: screen;"></canvas>
+        <div style="position: relative; z-index: 1;">
+            <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px; text-transform: uppercase; letter-spacing: 1px;">← Retour aux détails</button>
+            <p class="modal-title" data-i18n="booking_title" style="color: #fff;">Réserver votre séjour</p>
+            <p class="modal-sub" data-i18n="hotel_name" style="color: rgba(197,160,89,0.8);">GOLDEN ATLAS ERRACHIDIA</p>
+            <form id="booking-form">
+                <style>
+                    #booking-form label { color: #ccc; }
+                    #booking-form input, #booking-form select { 
+                        background: rgba(255,255,255,0.05) !important; 
+                        color: #fff !important; 
+                        border: 1px solid rgba(197,160,89,0.3) !important; 
+                    }
+                    #booking-form input:focus, #booking-form select:focus {
+                        border-color: var(--gold) !important;
+                        box-shadow: 0 0 10px rgba(197,160,89,0.3) !important;
+                    }
+                </style>
+                <div class="form-group"><label data-i18n="form_name">Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
+                <div class="form-group row" style="display:flex; gap:15px;">
+                    <div class="form-group" style="flex:1;"><label data-i18n="form_arrival">Date d'arrivée</label><input type="date" id="booking-arrival" required></div>
+                    <div class="form-group" style="flex:1;"><label data-i18n="form_departure">Date de départ</label><input type="date" id="booking-departure" required></div>
+                </div>
+                <div class="form-group"><label data-i18n="form_guests">Voyageurs</label>
+                     <select id="booking-guests" required>
+                        <option value="" disabled selected style="color: #000;">Sélectionner</option>
+                        <option style="color: #000;">1 Adulte</option><option selected style="color: #000;">2 Adultes</option>
+                        <option style="color: #000;">2 Adultes · 1 Enfant</option><option style="color: #000;">Famille (4+)</option>
+                     </select>
+                </div>
+                <button type="submit" class="btn-modal-submit" style="width: 100%; height: 54px; margin-top: 22px; background: linear-gradient(135deg, #c5a059, #a67c00); border: none; color: #fff; font-family: var(--font-body); font-size: 0.78rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197,160,89,0.3);">CONFIRMER MA RÉSERVATION</button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -524,16 +583,29 @@ let hbGalleryImages = [];
 function updateGallery(idx) {
     const track = document.getElementById('modal-gallery-track');
     const dots = document.querySelectorAll('.modal-gallery-dot');
-    if (!track || hbGalleryImages.length === 0) return;
+    if (!track || !hbGalleryImages || hbGalleryImages.length === 0) return;
+    
     hbGalleryIndex = (idx + hbGalleryImages.length) % hbGalleryImages.length;
-    track.style.transform = `translateX(-${hbGalleryIndex * 100}%)`;
+    
+    // With track width firmly at 100%, translateX(-100%) shifts by exactly 1 wrapper width
+    const shift = hbGalleryIndex * 100;
+    track.style.transform = `translateX(-${shift}%)`;
+    
     dots.forEach((d, i) => d.classList.toggle('active', i === hbGalleryIndex));
 }
 
-document.getElementById('modal-prev')?.addEventListener('click', () => updateGallery(hbGalleryIndex - 1));
-document.getElementById('modal-next')?.addEventListener('click', () => updateGallery(hbGalleryIndex + 1));
+document.getElementById('modal-prev')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    updateGallery(hbGalleryIndex - 1);
+});
+document.getElementById('modal-next')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    updateGallery(hbGalleryIndex + 1);
+});
 document.getElementById('modal-gallery-dots')?.addEventListener('click', e => {
-    if (e.target.dataset.index !== undefined) updateGallery(Number(e.target.dataset.index));
+    if (e.target.dataset.index !== undefined) {
+        updateGallery(Number(e.target.dataset.index));
+    }
 });
 
 // ── Show/hide booking view ────────────────────────────────────────
@@ -551,9 +623,9 @@ const ROOM_DATA = {
     'Chambre': {
         name: 'Chambre Supérieure',
         imgs: [
-            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1000&q=85',
-            'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1000&q=85',
-            'https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?w=1000&q=85'
+            'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=85',
+            'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&q=85',
+            'https://images.unsplash.com/photo-1560448205-4d9b3e6bb6db?w=1200&q=85'
         ],
         desc: 'Vue sur les célèbres jardins andalous. Mobilier artisanal, plâtre ciselé et zellige authentique. Une invitation au rêve dans un espace de 46 à 68 m² entièrement pensé pour votre bien-être.',
         features: ['🛁 Baignoire îlot', '🌿 Vue Jardin', '👑 King Size', '✨ Plâtre ciselé', '🛋️ Salon attenant']
@@ -561,9 +633,9 @@ const ROOM_DATA = {
     'Suite': {
         name: 'Suite d\'Exception',
         imgs: [
-            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1000&q=85',
-            'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1000&q=85',
-            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1000&q=85'
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=85',
+            'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200&q=85',
+            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85'
         ],
         desc: 'La quintessence du luxe saharien. Grand salon avec cheminée, chambre indépendante et double terrasse privée surplombant les jardins historiques. Des soieries brodées à la main aux plafonds en cèdre de l\'Atlas sculpté.',
         features: ['🔥 Cheminée', '🌿 Double Terrasse', '👑 King Size', '🌟 Majordome', '♨️ Jacuzzi extérieur']
@@ -582,8 +654,8 @@ const ROOM_DATA = {
         name: 'Suite Royale Atlas',
         imgs: [
             'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=1200&q=85',
-            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1000&q=85',
-            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1000&q=85'
+            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=85',
+            'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=85'
         ],
         desc: 'L\'apothéose du luxe. Une suite de 80 m² surplombant les montagnes de l\'Atlas avec vue panoramique, literie King size ultra premium et salon privatif. Le summum de l\'art de vivre à Errachidia.',
         features: ['🏔️ Vue Atlas', '👑 King Ultra Premium', '🛁 Baignoire Marbre', '🌟 Majordome', '80 m²']
@@ -622,37 +694,17 @@ const ROOM_DATA = {
 
 function openRoomModal(roomName) {
     const data = ROOM_DATA[roomName];
-    if (!data) {
-        // Generic open for unknown rooms
-        document.getElementById('reservation-modal').classList.add('active');
-        document.getElementById('modal-overlay').classList.add('active');
-        document.getElementById('modal-details-view').style.display = 'none';
-        document.getElementById('modal-booking-view').style.display = 'block';
-        const nameEl = document.getElementById('modal-room-name');
-        if (nameEl) nameEl.textContent = roomName;
-        return;
-    }
-
-    hbGalleryImages = data.imgs;
-    hbGalleryIndex = 0;
-
-    document.getElementById('modal-room-name').textContent = data.name;
-    document.getElementById('modal-room-desc').textContent = data.desc;
-
-    const track = document.getElementById('modal-gallery-track');
-    track.innerHTML = data.imgs.map(src => `<img src="${src}" alt="${data.name}">`).join('');
-    track.style.transform = 'translateX(0)';
-
-    const featEl = document.getElementById('modal-room-features');
-    featEl.innerHTML = data.features.map(f => `<span>${f}</span>`).join('');
-
-    const dotsEl = document.getElementById('modal-gallery-dots');
-    dotsEl.innerHTML = data.imgs.map((_, i) => `<button class="modal-gallery-dot${i===0?' active':''}" data-index="${i}"></button>`).join('');
-
+    
+    // Always open modal
     document.getElementById('reservation-modal').classList.add('active');
     document.getElementById('modal-overlay').classList.add('active');
-    document.getElementById('modal-details-view').style.display = 'block';
-    document.getElementById('modal-booking-view').style.display = 'none';
+    
+    // Skip the broken gallery details view, go straight to booking form
+    document.getElementById('modal-details-view').style.display = 'none';
+    document.getElementById('modal-booking-view').style.display = 'block';
+    
+    // Optional: Add the room name to the booking form context if we want
+    // But since the form has generic 'Réserver votre séjour', it is fine
 }
 
 // ── Editorial CTA buttons ─────────────────────────────────────────
@@ -675,6 +727,80 @@ document.querySelectorAll('.btn-room-reserver').forEach(btn => {
         document.getElementById('modal-booking-view').style.display = 'block';
     });
 });
+
+// ── Three.js Modal 3D Background ────────────────────────────────
+(function initModal3D() {
+    // Wait for the global Three.js script to load if it's coming from script.js
+    const checkThree = setInterval(() => {
+        if (window.THREE) {
+            clearInterval(checkThree);
+            startModal3D();
+        }
+    }, 100);
+
+    function startModal3D() {
+        const canvas = document.getElementById('modal-3d-bg');
+        if (!canvas) return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+        camera.position.z = 8;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+
+        // A majestic, spectacular Golden Abstract Shape for the dark modal background
+        const geometry = new THREE.IcosahedronGeometry(2, 1);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xffd700, 
+            emissive: 0x4a3500,
+            roughness: 0.1, 
+            metalness: 0.9,
+            wireframe: true 
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Add 3D luxury particles around it
+        const particlesGeom = new THREE.BufferGeometry();
+        const particlesData = [];
+        for(let i=0; i<300; i++) {
+            particlesData.push(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 10
+            );
+        }
+        particlesGeom.setAttribute('position', new THREE.Float32BufferAttribute(particlesData, 3));
+        const particlesMat = new THREE.PointsMaterial({ color: 0xc5a059, size: 0.05 });
+        const particles = new THREE.Points(particlesGeom, particlesMat);
+        scene.add(particles);
+
+        const pointLight = new THREE.PointLight(0xc5a059, 2, 50);
+        pointLight.position.set(2, 2, 2);
+        scene.add(pointLight);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            mesh.rotation.x += 0.002;
+            mesh.rotation.y += 0.005;
+            particles.rotation.y -= 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        window.addEventListener('resize', () => {
+            if(canvas.clientWidth && canvas.clientHeight) {
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            }
+        });
+    }
+})();
 </script>
 </body>
 </html>

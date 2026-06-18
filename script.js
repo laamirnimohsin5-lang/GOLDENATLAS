@@ -159,7 +159,12 @@ const translations = {
         loc_title: "Situation & Accès",
         loc_surtitle: "Destination Errachidia",
         loc_text: "Situé au cœur de la ville impériale, Golden Atlas est le point de départ idéal pour explorer les trésors du Tafilalet. Un emplacement prestigieux à quelques pas des sites emblématiques.",
-        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Maroc"
+        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Maroc",
+        auth_req_title: "Connexion Requise",
+        auth_req_desc: "Vous devez créer un compte ou vous connecter avant de faire une réservation.",
+        auth_req_login: "Se connecter",
+        auth_req_signup: "S'inscrire",
+        auth_req_cancel: "Annuler"
     },
     EN: {
         nav_login: "SIGN IN",
@@ -316,7 +321,12 @@ const translations = {
         loc_title: "Location & Access",
         loc_surtitle: "Destination Errachidia",
         loc_text: "Located in the heart of the imperial city, Golden Atlas is the perfect starting point to explore the treasures of Tafilalet. A prestigious location just steps from iconic landmarks.",
-        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Morocco"
+        loc_address: "Avenue Bab Jdid, 40040 Errachidia, Morocco",
+        auth_req_title: "Login Required",
+        auth_req_desc: "You must create an account or log in before making a reservation.",
+        auth_req_login: "Login",
+        auth_req_signup: "Sign Up",
+        auth_req_cancel: "Cancel"
     },
     ES: {
         nav_login: "IDENTIFICARSE",
@@ -394,7 +404,12 @@ const translations = {
         loc_title: "Ubicación y Acceso",
         loc_surtitle: "Destino Errachidia",
         loc_text: "Situado en el corazón de la ciudad imperial, Golden Atlas es el punto de partida perfecto para explorar los tesoros del Tafilalet. Una ubicación de prestigio a pocos pasos de los lugares emblemáticos.",
-        loc_address: "Avenida Bab Jdid, 40040 Errachidia, Marruecos"
+        loc_address: "Avenida Bab Jdid, 40040 Errachidia, Marruecos",
+        auth_req_title: "Inicio de sesión requerido",
+        auth_req_desc: "Debe crear una cuenta o iniciar sesión antes de realizar una reserva.",
+        auth_req_login: "Iniciar sesión",
+        auth_req_signup: "Regístrate",
+        auth_req_cancel: "Cancelar"
     },
     AR: {
         nav_login: "تسجيل الدخول",
@@ -550,7 +565,12 @@ const translations = {
         loc_title: "الموقع والوصول",
         loc_surtitle: "وجهة الرشيدية",
         loc_text: "يقع فندق غولدن أطلس في قلب المدينة الإمبراطورية، وهو نقطة الانطلاق المثالية لاستكشاف كنوز تافيلالت. موقع مرموق على بعد خطوات قليلة من المعالم الأثرية.",
-        loc_address: "شارع باب جديد، 40040 الرشيدية، المغرب"
+        loc_address: "شارع باب جديد، 40040 الرشيدية، المغرب",
+        auth_req_title: "تسجيل الدخول مطلوب",
+        auth_req_desc: "يجب عليك إنشاء حساب أو تسجيل الدخول قبل إجراء الحجز.",
+        auth_req_login: "تسجيل الدخول",
+        auth_req_signup: "إنشاء حساب",
+        auth_req_cancel: "إلغاء"
     }
 };
 
@@ -1291,21 +1311,123 @@ function initMenuAnimation() {
     });
 }
 
-/* === ATLAS CHAT BUTTON INJECTION === */
+/* === ATLAS CHAT BUTTON INJECTION — PREMIUM ANIMATED === */
 document.addEventListener("DOMContentLoaded", () => {
+    // Inject keyframes for Atlas Chat button animations
+    const chatBtnStyles = document.createElement('style');
+    chatBtnStyles.textContent = `
+        @keyframes atlasChatPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(197,160,89,0.3), 0 0 0 0 rgba(197,160,89,0.4); }
+            50% { box-shadow: 0 6px 25px rgba(197,160,89,0.45), 0 0 0 8px rgba(197,160,89,0); }
+        }
+        @keyframes atlasChatShimmer {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+        @keyframes atlasChatDots {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-3px); }
+        }
+        #btn-atlas-chat {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #c5a059 0%, #ddc07a 40%, #a67c00 100%) !important;
+            background-size: 200% 200% !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            color: #fff !important;
+            margin-right: 15px;
+            display: inline-flex !important;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            padding: 11px 24px !important;
+            border-radius: 50px !important;
+            letter-spacing: 1.5px !important;
+            font-size: 0.68rem !important;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+            animation: atlasChatPulse 3s ease-in-out infinite, gradShift 5s ease infinite !important;
+            backdrop-filter: blur(10px);
+            text-decoration: none;
+        }
+        #btn-atlas-chat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transition: 0.5s;
+            pointer-events: none;
+        }
+        #btn-atlas-chat:hover::before {
+            animation: atlasChatShimmer 0.8s ease forwards;
+        }
+        #btn-atlas-chat:hover {
+            transform: translateY(-3px) scale(1.06) !important;
+            box-shadow: 0 12px 35px rgba(197,160,89,0.5), 0 0 0 0 rgba(197,160,89,0) !important;
+            animation: none !important;
+            background-size: 100% 100% !important;
+            border-color: rgba(255,255,255,0.3) !important;
+        }
+        #btn-atlas-chat .chat-icon-wrap {
+            display: flex;
+            align-items: center;
+            position: relative;
+            width: 22px;
+            height: 22px;
+        }
+        #btn-atlas-chat .chat-icon-wrap svg {
+            width: 20px;
+            height: 20px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+            transition: transform 0.3s;
+        }
+        #btn-atlas-chat:hover .chat-icon-wrap svg {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        #btn-atlas-chat .chat-dots {
+            position: absolute;
+            bottom: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2px;
+        }
+        #btn-atlas-chat .chat-dots span {
+            width: 3px;
+            height: 3px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            animation: atlasChatDots 1.4s ease-in-out infinite;
+        }
+        #btn-atlas-chat .chat-dots span:nth-child(2) { animation-delay: 0.15s; }
+        #btn-atlas-chat .chat-dots span:nth-child(3) { animation-delay: 0.3s; }
+        #btn-atlas-chat .btn-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-size: 0.68rem;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+    `;
+    document.head.appendChild(chatBtnStyles);
+
     const headerRight = document.querySelector('.header-right');
     if(headerRight) {
+        // Add Atlas Chat button
         const chatLink = document.createElement('a');
         chatLink.href = 'chat.html';
-        chatLink.className = 'btn-reserver';
         chatLink.id = 'btn-atlas-chat';
-        // Modern premium styling for the button
-        chatLink.style.cssText = 'background: linear-gradient(135deg, #c5a059, #a67c00); border: none; color: #fff; margin-right: 15px; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; box-shadow: 0 4px 15px rgba(197,160,89,0.3); padding: 10px 20px; transition: transform 0.3s;';
-        
-        chatLink.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM4 4h16v12H5.17L4 17.17V4zm2 7h12v2H6zm0-3h12v2H6z"/></svg> <span style="letter-spacing: 1.5px;">ATLAS CHAT</span>`;
-        
-        chatLink.onmouseenter = () => chatLink.style.transform = 'scale(1.05)';
-        chatLink.onmouseleave = () => chatLink.style.transform = 'scale(1)';
+        chatLink.innerHTML = `
+            <div class="chat-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                <div class="chat-dots"><span></span><span></span><span></span></div>
+            </div>
+            <span class="btn-text">Atlas Chat</span>
+        `;
 
         const loginBtn = document.getElementById('btn-top-login');
         if(loginBtn) {
@@ -1315,3 +1437,200 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+// ── GLOBAL THREE.JS LUXURY GOLDEN DUST ANIMATION ────────────────────────────
+(function initLuxuryGoldDust() {
+    // Only run on non-mobile devices for performance, and check if not already loaded
+    if (window.innerWidth < 768 || document.getElementById('luxury-dust-canvas')) return;
+
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    script.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'luxury-dust-canvas';
+        Object.assign(canvas.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100vw',
+            height: '100vh',
+            zIndex: '9999', // Very high, but below modals potentially
+            pointerEvents: 'none',
+            mixBlendMode: 'screen',
+            opacity: '0.6'
+        });
+        document.body.appendChild(canvas);
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 2000);
+        camera.position.z = 1000;
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const particleCount = 400; // Number of floating gold dust 
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const velocities = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 3000;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 3000;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 1500;
+            velocities.push({
+                y: Math.random() * 0.5 + 0.1,
+                x: (Math.random() - 0.5) * 0.2
+            });
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+        // Create a soft glowing gold material
+        const canvasTexture = document.createElement('canvas');
+        canvasTexture.width = 16;
+        canvasTexture.height = 16;
+        const ctx = canvasTexture.getContext('2d');
+        const gradient = ctx.createRadialGradient(8, 8, 0, 8, 8, 8);
+        gradient.addColorStop(0, 'rgba(255, 230, 150, 1)');
+        gradient.addColorStop(0.2, 'rgba(221, 192, 122, 0.8)');
+        gradient.addColorStop(0.5, 'rgba(197, 160, 89, 0.4)');
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 16, 16);
+
+        const material = new THREE.PointsMaterial({
+            size: 20,
+            map: new THREE.CanvasTexture(canvasTexture),
+            blending: THREE.AdditiveBlending,
+            depthWrite: false,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particleSystem = new THREE.Points(particles, material);
+        scene.add(particleSystem);
+
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX) * 0.5;
+            mouseY = (event.clientY - windowHalfY) * 0.5;
+        }, { passive: true });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }, { passive: true });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            targetX = mouseX * 0.05;
+            targetY = mouseY * 0.05;
+            
+            // Soft camera movement interacting with mouse
+            camera.position.x += (mouseX * 0.2 - camera.position.x) * 0.02;
+            camera.position.y += (-mouseY * 0.2 - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+
+            const positions = particleSystem.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                // Drift upwards
+                positions[i * 3 + 1] += velocities[i].y;
+                positions[i * 3] += velocities[i].x;
+
+                // Reset particle to bottom if it goes too high
+                if (positions[i * 3 + 1] > 1500) {
+                    positions[i * 3 + 1] = -1500;
+                    positions[i * 3] = (Math.random() - 0.5) * 3000;
+                }
+            }
+            particleSystem.geometry.attributes.position.needsUpdate = true;
+            particleSystem.rotation.y += 0.001;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    };
+    document.head.appendChild(script);
+})();
+
+// ── GLOBAL AUTH CHECK FOR RESERVATIONS ────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    // Inject the luxury auth modal into the body
+    const modalHTML = `
+        <div id="luxury-auth-modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); align-items:center; justify-content:center; opacity:0; transition:opacity 0.4s ease;">
+            <div style="background: linear-gradient(145deg, #05070a, #0a0e17); border: 1px solid rgba(197,160,89,0.3); border-radius: 20px; padding: 45px 35px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 40px rgba(197,160,89,0.15); transform: scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+                <div style="width:70px; height:70px; margin: 0 auto 25px; border-radius: 50%; background: rgba(197,160,89,0.05); display:flex; align-items:center; justify-content:center; border: 1px solid rgba(197,160,89,0.4); box-shadow: inset 0 0 20px rgba(197,160,89,0.1);">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #c5a059)" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg>
+                </div>
+                <h2 style="font-family: 'Playfair Display', serif; color: var(--primary, #c5a059); font-size: 1.8rem; margin-bottom: 12px; letter-spacing: 1px;" data-i18n="auth_req_title">Login Required</h2>
+                <p style="font-family: 'Montserrat', sans-serif; color: #a1a1aa; font-size: 0.9rem; line-height: 1.6; margin-bottom: 35px;" data-i18n="auth_req_desc">You must create an account or log in before making a reservation.</p>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <button id="auth-modal-login-btn" style="background: linear-gradient(135deg, #c5a059, #a67c00); border: none; color: #fff; padding: 16px; font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197,160,89,0.3);" data-i18n="auth_req_login">Login</button>
+                    <button id="auth-modal-signup-btn" style="background: transparent; border: 1px solid var(--primary, #c5a059); color: var(--primary, #c5a059); padding: 16px; font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.3s;" data-i18n="auth_req_signup">Sign Up</button>
+                    <button id="auth-modal-cancel-btn" style="background: transparent; border: none; color: #71717a; padding: 12px; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: 0.3s; margin-top: 5px;" data-i18n="auth_req_cancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    const authModal = document.getElementById('luxury-auth-modal');
+    const authModalContent = authModal.firstElementChild;
+    const btnLogin = document.getElementById('auth-modal-login-btn');
+    const btnSignup = document.getElementById('auth-modal-signup-btn');
+    const btnCancel = document.getElementById('auth-modal-cancel-btn');
+
+    function showAuthModal() {
+        authModal.style.display = 'flex';
+        setTimeout(() => {
+            authModal.style.opacity = '1';
+            authModalContent.style.transform = 'scale(1)';
+        }, 10);
+    }
+
+    function closeAuthModal() {
+        authModal.style.opacity = '0';
+        authModalContent.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            authModal.style.display = 'none';
+        }, 400);
+    }
+
+    btnLogin.addEventListener('mouseenter', () => { btnLogin.style.transform = 'translateY(-2px)'; btnLogin.style.boxShadow = '0 15px 30px rgba(197,160,89,0.4)'; });
+    btnLogin.addEventListener('mouseleave', () => { btnLogin.style.transform = 'translateY(0)'; btnLogin.style.boxShadow = '0 10px 20px rgba(197,160,89,0.3)'; });
+
+    btnSignup.addEventListener('mouseenter', () => { btnSignup.style.background = 'rgba(197,160,89,0.05)'; });
+    btnSignup.addEventListener('mouseleave', () => { btnSignup.style.background = 'transparent'; });
+
+    btnCancel.addEventListener('mouseenter', () => { btnCancel.style.color = '#fff'; });
+    btnCancel.addEventListener('mouseleave', () => { btnCancel.style.color = '#71717a'; });
+
+    btnLogin.addEventListener('click', () => window.location.href = 'login-client.html');
+    btnSignup.addEventListener('click', () => window.location.href = 'creer-compte.html');
+    btnCancel.addEventListener('click', closeAuthModal);
+    
+    // Intercept clicks
+    document.addEventListener('click', function(e) {
+        const target = e.target;
+        const isBookingBtn = target.closest('.btn-room-reserver, .btn-ed-gold, #btn-pq-reserver, #btn-banner-reserver, #btn-show-booking, #btn-top-reserver2, .btn-riad, .card-cta');
+        
+        if(isBookingBtn) {
+            const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+            if(!currentUser) {
+                // User not logged in, stop the event and show our auth modal
+                e.preventDefault();
+                e.stopPropagation();
+                showAuthModal();
+            }
+        }
+    }, true); // useCapture = true is critical here to fire before regular bubbling events!
+});
+

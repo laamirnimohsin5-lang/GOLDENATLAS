@@ -136,12 +136,20 @@
         <div id="login-view">
             <form id="login-client-form">
                 <div class="form-group">
-                    <label>Nom Complet</label>
-                    <input type="text" id="login-name" placeholder="Votre nom" required>
+                    <label>Adresse Email</label>
+                    <input type="email" id="login-email" placeholder="votre@email.com" required>
                 </div>
                 <div class="form-group">
-                    <label>N° CIN</label>
-                    <input type="text" id="login-cin" placeholder="Votre CIN" required>
+                    <label>Mot de passe</label>
+                    <div style="position: relative;">
+                        <input type="password" id="login-pwd" placeholder="Votre mot de passe" required style="padding-right: 45px;">
+                        <span class="toggle-pwd" data-target="login-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                    </div>
+                </div>
+                <div style="text-align: right; margin-bottom: 20px;">
+                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oublié ?</a>
                 </div>
                 <button type="submit" class="btn-submit">SE CONNECTER</button>
             </form>
@@ -171,6 +179,15 @@
                 <div class="form-group">
                     <label>Email</label>
                     <input type="email" id="reg-email" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <div style="position: relative;">
+                        <input type="password" id="reg-pwd" placeholder="Créer votre mot de passe" required style="padding-right: 45px;">
+                        <span class="toggle-pwd" data-target="reg-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>N° CIN / Passport</label>
@@ -228,6 +245,36 @@
             <div class="btn-row">
                 <a href="index.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem; background: transparent; border: 1px solid var(--gold); color: var(--gold);">↩ RETOUR AU SITE</a>
             </div>
+        </div>
+
+        <div id="forgot-view" style="display: none;">
+            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+            <form id="forgot-form">
+                <div class="form-group">
+                    <label>Adresse Email</label>
+                    <input type="email" id="forgot-email" placeholder="votre@email.com" required>
+                </div>
+                <button type="submit" class="btn-submit">ENVOYER LE LIEN</button>
+            </form>
+            <div class="register-footer" style="margin-top: 20px;">
+                <a href="#" id="back-to-login-forgot">← Retour à la connexion</a>
+            </div>
+        </div>
+
+        <div id="reset-pwd-view" style="display: none;">
+            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Veuillez entrer votre nouveau mot de passe.</p>
+            <form id="reset-pwd-form">
+                <div class="form-group">
+                    <label>Nouveau mot de passe</label>
+                    <div style="position: relative;">
+                        <input type="password" id="reset-new-pwd" placeholder="Créer votre nouveau mot de passe" required style="padding-right: 45px;">
+                        <span class="toggle-pwd" data-target="reset-new-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        </span>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">METTRE À JOUR</button>
+            </form>
         </div>
     </div>
 </div>
@@ -314,22 +361,140 @@ document.getElementById('show-login').addEventListener('click', (e) => {
     document.getElementById('form-title').textContent = "Espace Client";
 });
 
+document.getElementById('forgot-pwd')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('login-view').style.display = 'none';
+    document.getElementById('forgot-view').style.display = 'block';
+    document.getElementById('form-title').textContent = "Mot de passe oublié";
+});
+
+document.getElementById('back-to-login-forgot')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('forgot-view').style.display = 'none';
+    document.getElementById('login-view').style.display = 'block';
+    document.getElementById('form-title').textContent = "Espace Client";
+});
+
+// Password Toggle Logic
+document.querySelectorAll('.toggle-pwd').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const target = document.getElementById(this.getAttribute('data-target'));
+        if (target.type === 'password') {
+            target.type = 'text';
+            this.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"></path></svg>';
+            this.style.color = 'var(--gold)';
+        } else {
+            target.type = 'password';
+            this.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+            this.style.color = 'rgba(255,255,255,0.4)';
+        }
+    });
+});
+
 document.getElementById('login-client-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = this.querySelector('.btn-submit');
     btn.textContent = 'VÉRIFICATION...';
-    const name = document.getElementById('login-name').value.trim();
-    const cin = document.getElementById('login-cin').value.trim();
-    const { data: users } = await window.supabaseClient.from('ga_users').select('*').ilike('name', `%${name}%`).ilike('cin', `%${cin}%`);
-    const user = users && users.length > 0 ? users[0] : null;
-    if (user) {
-        if (user.status === 'En attente') simToast("⏳ Compte en attente.", '#fb923c');
-        else {
+    
+    const email = document.getElementById('login-email').value.trim();
+    const pwd = document.getElementById('login-pwd').value;
+    
+    // Auth Supabase
+    const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
+        email: email,
+        password: pwd
+    });
+
+    if (authError || !authData.user) {
+        simToast("❌ Email ou mot de passe incorrect.", '#ef4444');
+    } else {
+        // Fetch from custom table to see status
+        const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
+        const user = users && users.length > 0 ? users[0] : { 
+            name: authData.user.user_metadata.full_name || email.split('@')[0], 
+            email: email, 
+            status: 'Validée' 
+        };
+
+        if (user.status === 'En attente') {
+            simToast("⏳ Compte en attente d'approbation.", '#fb923c');
+        } else {
             localStorage.setItem('ga_current_user', JSON.stringify(user));
             showAccountDashboard(user);
         }
-    } else simToast("❌ Identifiants incorrects.", '#ef4444');
+    }
     btn.textContent = 'SE CONNECTER';
+});
+
+document.getElementById('forgot-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    const email = document.getElementById('forgot-email').value.trim();
+    if(!email) return;
+    btn.textContent = 'ENVOI EN COURS...';
+    
+    const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+    });
+    
+    if(error) {
+        console.error("Supabase Reset Error:", error);
+        simToast("❌ " + error.message, '#ef4444');
+    } else {
+        simToast("✅ Lien de réinitialisation envoyé.", 'var(--gold)');
+        setTimeout(() => document.getElementById('back-to-login-forgot').click(), 2000);
+    }
+    btn.textContent = 'ENVOYER LE LIEN';
+});
+
+document.getElementById('reset-pwd-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    const pwd = document.getElementById('reset-new-pwd').value;
+    btn.textContent = 'MISE À JOUR...';
+    
+    const { error } = await window.supabaseClient.auth.updateUser({ password: pwd });
+    
+    if(error) {
+        simToast("❌ Erreur lors de la mise à jour.", '#ef4444');
+    } else {
+        simToast("✅ Mot de passe mis à jour avec succès !", 'var(--gold)');
+        setTimeout(() => {
+            window.location.hash = '';
+            location.reload();
+        }, 1500);
+    }
+    btn.textContent = 'METTRE À JOUR';
+});
+
+document.getElementById('register-client-form')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    btn.textContent = 'CRÉATION...';
+    
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pwd = document.getElementById('reg-pwd').value;
+    const cin = document.getElementById('reg-cin').value.trim();
+    const phone = document.getElementById('reg-phone').value.trim();
+
+    const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+        email: email,
+        password: pwd,
+        options: {
+            data: { full_name: name, cin: cin, phone: phone }
+        }
+    });
+
+    if (authError) {
+        simToast("❌ " + authError.message, '#ef4444');
+    } else {
+        const newUser = { name: name, email: email, cin: cin, status: 'Validée' };
+        await window.supabaseClient.from('ga_users').insert([newUser]);
+        simToast("✅ Compte créé avec succès ! Connectez-vous.", 'var(--gold)');
+        setTimeout(() => document.getElementById('show-login').click(), 1000);
+    }
+    btn.textContent = 'CRÉER MON COMPTE';
 });
 
 document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -352,6 +517,22 @@ document.getElementById('btn-google-register')?.addEventListener('click', async 
 });
 
 window.addEventListener('load', async () => {
+    const hash = window.location.hash;
+    if (hash.includes('error=')) {
+        setTimeout(() => simToast("❌ Lien invalide ou expiré. Veuillez réessayer.", '#ef4444'), 1000);
+        window.history.replaceState(null, null, window.location.pathname);
+    } else if (hash.includes('type=recovery')) {
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('register-view').style.display = 'none';
+        document.getElementById('account-view').style.display = 'none';
+        
+        const forgotView = document.getElementById('forgot-view');
+        if(forgotView) forgotView.style.display = 'none';
+        
+        document.getElementById('reset-pwd-view').style.display = 'block';
+        document.getElementById('form-title').textContent = "Nouveau mot de passe";
+    }
+
     setTimeout(async () => {
         if (!window.supabaseClient) return;
         
