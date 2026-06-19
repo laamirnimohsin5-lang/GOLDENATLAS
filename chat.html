@@ -652,10 +652,33 @@
         const chatBox = document.getElementById('page-chat-box');
         let msgCount = 0;
 
+        const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+        const userCtx = currentUser ? `Le client connecté s'appelle ${currentUser.name} (email: ${currentUser.email}).` : "Le client n'est PAS connecté.";
+
         let chatHistory = [
             { 
                 role: "system", 
-                content: "Tu es 'Atlas Chat', le concierge virtuel IA ultra-luxueux de l'hôtel 'Golden Atlas' situé à Errachidia, Maroc. Ton but est d'assister les clients pour leurs réservations, répondre à leurs questions sur les chambres (Premium, VIP, Pavillons), le Spa, les Restaurants et le Café de l'hôtel. Tu parles uniquement en français, avec un ton extrêmement poli, raffiné et élégant. Ne recommande que des services de l'hôtel. Sois bref, clair, et extrêmement chaleureux, en utilisant parfois le terme 'Marhaba' ou d'autres mots subtils de l'hospitalité marocaine." 
+                content: `Tu es 'Atlas Chat', le concierge IA ultra-luxueux de l'hôtel 'Golden Atlas' à Errachidia, Maroc.
+${userCtx}
+
+Ton rôle : Répondre en français élégant et aider les clients pour les réservations et informations sur l'hôtel.
+
+HÉBERGEMENTS DISPONIBLES:
+1 — Chambre Premium · 1200 DH/nuit
+2 — Suite Royale · 2500 DH/nuit
+3 — Riad Privé · 5000 DH/nuit
+4 — Pavillon de Luxe · 3800 DH/nuit
+
+RÈGLES IMPORTANTES:
+- Si le client veut réserver ET que tu as collecté (chambre + date_arrivée + date_départ) dans la conversation, ajoute OBLIGATOIREMENT à la FIN de ta réponse ce tag EXACTEMENT (sans espace, sur une nouvelle ligne) :
+[RESERVE:NomChambre|YYYY-MM-DD|YYYY-MM-DD|TotalDH]
+
+Exemple : [RESERVE:Suite Royale|2025-06-24|2025-06-27|7500]
+
+- Le tag doit être INVISIBLE pour l'utilisateur (tu ne le mentionnes pas dans ton texte).
+- Si une info manque (date, chambre), demande-la poliment avant d'émettre le tag.
+- Si le client n'est PAS connecté et veut réserver, dis-lui qu'il doit se connecter sur login-client.html.
+- Utilise parfois 'Marhaba', sois chaleureux et raffiné. Ne recommande que des services de l'hôtel.` 
             }
         ];
 
@@ -676,7 +699,7 @@
             msgCount++;
             chatBox.insertAdjacentHTML('beforeend', `
                 <div class="c-msg user" style="animation-delay: ${msgCount * 0.05}s;">
-                    <div class="avatar">VS</div>
+                    <div class="avatar">${currentUser ? currentUser.name.charAt(0).toUpperCase() : 'VS'}</div>
                     <div>
                         <div class="c-text">${text}</div>
                         <div class="msg-time">${getTimeStr()}</div>
@@ -686,12 +709,12 @@
             chatInput.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
-            // Check reservation flow first
+            // Reservation flow (buttons only)
             const handled = await handleReservationFlow(text);
             if (handled) return;
 
+            // Send to DeepSeek AI
             chatHistory.push({ role: "user", content: text });
-
             const loadingId = "load-" + Date.now();
             chatBox.insertAdjacentHTML('beforeend', `
                 <div class="c-msg bot" id="${loadingId}">
@@ -701,6 +724,7 @@
             `);
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            let botReply = null;
             try {
                 const response = await fetch("https://api.deepseek.com/chat/completions", {
                     method: "POST",
@@ -711,32 +735,52 @@
                     body: JSON.stringify({
                         model: "deepseek-chat",
                         messages: chatHistory,
-                        max_tokens: 500,
+                        max_tokens: 600,
                         temperature: 0.7
                     })
                 });
-                
                 const data = await response.json();
-                if(data.error) {
-                    if (data.error.message.includes("balance") || data.error.message.includes("Insufficient")) {
-                        const fallbackReply = getFallbackResponse(text);
-                        document.getElementById(loadingId).remove();
-                        addBotMessage(fallbackReply);
-                        chatHistory.push({ role: "assistant", content: fallbackReply });
-                        return;
-                    }
-                    throw new Error(data.error.message);
+                if (data.choices && data.choices[0]) {
+                    botReply = data.choices[0].message.content;
+                } else {
+                    throw new Error(data.error?.message || 'API error');
                 }
-
-                const botReply = data.choices[0].message.content;
-                document.getElementById(loadingId).remove();
-                addBotMessage(botReply);
-                chatHistory.push({ role: "assistant", content: botReply });
             } catch(err) {
-                console.error("Chat Error:", err);
-                document.getElementById(loadingId).remove();
-                const fallbackReply = getFallbackResponse(text);
-                addBotMessage(fallbackReply);
+                console.warn("DeepSeek fallback:", err.message);
+                botReply = getFallbackResponse(text);
+            }
+
+            document.getElementById(loadingId)?.remove();
+
+            // Check for reservation tag [RESERVE:room|checkin|checkout|total]
+            const reserveMatch = botReply.match(/\[RESERVE:([^|]+)\|(\d{4}-\d{2}-\d{2})\|(\d{4}-\d{2}-\d{2})\|(\d+)\]/);
+            const cleanReply = botReply.replace(/\[RESERVE:[^\]]+\]/g, '').trim();
+
+            addBotMessage(cleanReply);
+            chatHistory.push({ role: "assistant", content: botReply });
+
+            if (reserveMatch) {
+                const [, roomName, checkin, checkout, total] = reserveMatch;
+                if (!currentUser) {
+                    addBotMessage("🔐 Veuillez vous **[connecter](login-client.html)** pour finaliser la réservation.");
+                    return;
+                }
+                // Show confirm buttons
+                resvData = {
+                    userName: currentUser.name, userEmail: currentUser.email,
+                    room: { name: roomName, type: 'Standard' },
+                    checkin, checkout,
+                    nights: Math.round((new Date(checkout) - new Date(checkin)) / 86400000),
+                    total: parseInt(total)
+                };
+                resvState = 'ask_confirm';
+                addBotMessage(
+                    `✨ **Récapitulatif :**\n🏨 **${roomName}**\n📅 ${checkin} → ${checkout}\n💰 **${parseInt(total).toLocaleString()} DH**\n\nConfirmez-vous ?`,
+                    [
+                        { label: '✅ Confirmer', value: 'oui' },
+                        { label: '❌ Annuler', value: 'non' },
+                    ]
+                );
             }
         }
 
