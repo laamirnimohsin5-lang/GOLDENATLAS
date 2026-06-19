@@ -476,6 +476,71 @@
             transform: translateY(-2px);
         }
 
+        /* --- In-chat Choice Buttons --- */
+        .chat-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .chat-choice-btn {
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: 1px solid rgba(197,160,89,0.35);
+            background: rgba(197,160,89,0.08);
+            color: var(--gold);
+            font-size: 0.78rem;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .chat-choice-btn:hover {
+            background: rgba(197,160,89,0.2);
+            border-color: var(--gold);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 14px rgba(197,160,89,0.2);
+        }
+        .chat-choice-btn.selected {
+            background: linear-gradient(135deg, var(--gold), #a67c00);
+            color: #fff;
+            border-color: transparent;
+            pointer-events: none;
+        }
+
+        /* --- Date Picker in chat --- */
+        .chat-date-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .chat-date-input input[type=date] {
+            padding: 8px 14px;
+            border-radius: 30px;
+            border: 1px solid rgba(197,160,89,0.35);
+            background: rgba(197,160,89,0.06);
+            color: var(--gold);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.82rem;
+            outline: none;
+            cursor: pointer;
+        }
+        .chat-date-input button {
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: none;
+            background: linear-gradient(135deg, var(--gold), #a67c00);
+            color: #fff;
+            font-size: 0.78rem;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .chat-date-input button:hover { opacity: 0.85; transform: translateY(-1px); }
+
         /* --- Timestamp --- */
         .msg-time {
             font-size: 0.6rem;
@@ -675,19 +740,52 @@
             }
         }
 
-        function addBotMessage(content) {
+        function addBotMessage(content, choices = null, dateMode = null) {
             msgCount++;
-            const formattedReply = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            const formattedReply = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color:var(--gold);">$1</a>');
+            const choicesId = 'choices-' + Date.now();
+            let choicesHtml = '';
+            if (choices) {
+                choicesHtml = `<div class="chat-choices" id="${choicesId}">` +
+                    choices.map(c => `<button class="chat-choice-btn" onclick="choiceClick(this,'${c.value}','${choicesId}')">${c.label}</button>`).join('') +
+                    `</div>`;
+            }
+            if (dateMode) {
+                const today = new Date().toISOString().split('T')[0];
+                choicesHtml = `<div class="chat-date-input" id="${choicesId}">
+                    <input type="date" id="date-pick-${choicesId}" min="${today}">
+                    <button onclick="datePickClick('${choicesId}')">Confirmer →</button>
+                </div>`;
+            }
             chatBox.insertAdjacentHTML('beforeend', `
                 <div class="c-msg bot" style="animation-delay: ${msgCount * 0.05}s;">
                     <div class="avatar">GA</div>
                     <div>
-                        <div class="c-text">${formattedReply}</div>
+                        <div class="c-text">${formattedReply}${choicesHtml}</div>
                         <div class="msg-time">Concierge IA · ${getTimeStr()}</div>
                     </div>
                 </div>
             `);
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function choiceClick(btn, value, groupId) {
+            document.querySelectorAll(`#${groupId} .chat-choice-btn`).forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            setTimeout(() => {
+                chatInput.value = value;
+                sendMessage();
+            }, 250);
+        }
+
+        function datePickClick(groupId) {
+            const input = document.getElementById('date-pick-' + groupId);
+            if (!input || !input.value) return;
+            const [y, m, d] = input.value.split('-');
+            chatInput.value = `${d}/${m}/${y}`;
+            document.getElementById(groupId).style.opacity = '0.4';
+            document.getElementById(groupId).style.pointerEvents = 'none';
+            sendMessage();
         }
 
         function getFallbackResponse(input) {
@@ -777,46 +875,61 @@
                 }
                 resvState = 'ask_room';
                 resvData = { userName: user.name, userEmail: user.email };
-                addBotMessage(`Marhaba ${user.name} ! 🏨 Avec plaisir, je vais vous aider à réserver.\n\nVoici nos hébergements disponibles :\n\n**1** — Chambre Premium · 1 200 DH/nuit\n**2** — Suite Royale · 2 500 DH/nuit\n**3** — Riad Privé · 5 000 DH/nuit\n**4** — Pavillon de Luxe · 3 800 DH/nuit\n\nQuel hébergement souhaitez-vous réserver ? (tapez le numéro ou le nom)`);
+                addBotMessage(
+                    `Marhaba **${user.name}** ! 🏨 Avec plaisir, je vais vous aider à réserver.\n\nQuel hébergement souhaitez-vous ?`,
+                    [
+                        { label: '🛏️ Chambre Premium · 1 200 DH', value: '1' },
+                        { label: '👑 Suite Royale · 2 500 DH', value: '2' },
+                        { label: '🏡 Riad Privé · 5 000 DH', value: '3' },
+                        { label: '✨ Pavillon de Luxe · 3 800 DH', value: '4' },
+                    ]
+                );
                 return true;
             }
 
             if (resvState === 'ask_room') {
                 const room = getRoomByInput(text);
                 if (!room) {
-                    addBotMessage("Je n'ai pas bien compris. Tapez le **numéro** ou le **nom** de l'hébergement svp.\n(ex: 1, 2, Suite, Riad...)");
+                    addBotMessage("Je n'ai pas bien compris. Choisissez votre hébergement :",
+                        [
+                            { label: '🛏️ Premium', value: '1' },
+                            { label: '👑 Suite', value: '2' },
+                            { label: '🏡 Riad', value: '3' },
+                            { label: '✨ Pavillon', value: '4' },
+                        ]
+                    );
                     return true;
                 }
                 resvData.room = room;
                 resvState = 'ask_checkin';
-                addBotMessage(`✅ Excellent choix ! **${room.name}** à **${room.price} DH/nuit**.\n\nQuelle est votre date d'arrivée ?\n(format : JJ/MM/AAAA ou AAAA-MM-JJ)`);
+                addBotMessage(`✅ Excellent choix ! **${room.name}** à **${room.price} DH/nuit**.\n\nQuelle est votre date d'arrivée ?`, null, 'checkin');
                 return true;
             }
 
             if (resvState === 'ask_checkin') {
                 const date = parseDate(text);
                 if (!date) {
-                    addBotMessage("Format de date non reconnu. Exemple : **24/06/2025** ou **2025-06-24**");
+                    addBotMessage("Format de date non reconnu. Sélectionnez votre date d'arrivée :", null, 'checkin');
                     return true;
                 }
                 if (new Date(date) < new Date()) {
-                    addBotMessage("⚠️ La date d'arrivée ne peut pas être dans le passé. Veuillez entrer une date valide.");
+                    addBotMessage("⚠️ La date d'arrivée ne peut pas être dans le passé.", null, 'checkin');
                     return true;
                 }
                 resvData.checkin = date;
                 resvState = 'ask_checkout';
-                addBotMessage(`📅 Arrivée : **${date}**\n\nEt quelle est votre date de départ ?`);
+                addBotMessage(`📅 Arrivée : **${date}**\n\nEt quelle est votre date de départ ?`, null, 'checkout');
                 return true;
             }
 
             if (resvState === 'ask_checkout') {
                 const date = parseDate(text);
                 if (!date) {
-                    addBotMessage("Format de date non reconnu. Exemple : **27/06/2025**");
+                    addBotMessage("Format de date non reconnu. Sélectionnez votre date de départ :", null, 'checkout');
                     return true;
                 }
                 if (new Date(date) <= new Date(resvData.checkin)) {
-                    addBotMessage("⚠️ La date de départ doit être après la date d'arrivée.");
+                    addBotMessage("⚠️ La date de départ doit être après la date d'arrivée.", null, 'checkout');
                     return true;
                 }
                 resvData.checkout = date;
@@ -824,7 +937,13 @@
                 resvData.nights = nights;
                 resvData.total = nights * resvData.room.price;
                 resvState = 'ask_confirm';
-                addBotMessage(`✨ **Récapitulatif de votre réservation :**\n\n🏨 **${resvData.room.name}**\n👤 **${resvData.userName}**\n📅 Arrivée : ${resvData.checkin}\n📅 Départ : ${resvData.checkout}\n🌙 **${nights} nuit(s)**\n💰 **Total : ${resvData.total.toLocaleString()} DH**\n\nConfirmez-vous cette réservation ? (**oui** / **non**)`);
+                addBotMessage(
+                    `✨ **Récapitulatif de votre réservation :**\n\n🏨 **${resvData.room.name}**\n👤 **${resvData.userName}**\n📅 Arrivée : **${resvData.checkin}**\n📅 Départ : **${resvData.checkout}**\n🌙 **${nights} nuit(s)**\n💰 **Total : ${resvData.total.toLocaleString()} DH**\n\nConfirmez-vous cette réservation ?`,
+                    [
+                        { label: '✅ Confirmer', value: 'oui' },
+                        { label: '❌ Annuler', value: 'non' },
+                    ]
+                );
                 return true;
             }
 
@@ -860,7 +979,12 @@
                     addBotMessage("Réservation annulée. Je reste à votre disposition pour toute autre demande. ✨");
                     return true;
                 } else {
-                    addBotMessage("Veuillez répondre par **oui** pour confirmer ou **non** pour annuler.");
+                    addBotMessage("Veuillez choisir :",
+                        [
+                            { label: '✅ Confirmer', value: 'oui' },
+                            { label: '❌ Annuler', value: 'non' },
+                        ]
+                    );
                     return true;
                 }
             }
