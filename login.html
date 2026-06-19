@@ -1,15 +1,16 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S'identifier | Golden Atlas Palace</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>S'identifier | Golden Atlas Palace</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;family=Playfair+Display:wght@700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<style>
         :root {
             --primary: #00f2ff;
             --secondary: #b100ff;
@@ -246,47 +247,39 @@
 <script src="supabase-init.js"></script>
 </head>
 <body>
-
-    <div class="neon-glow glow-1"></div>
-    <div class="neon-glow glow-2"></div>
-
-    <div id="canvas-container"></div>
-
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>GOLDEN ATLAS</h1>
-                <p>Administration Portal</p>
-            </div>
-
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <div class="input-container">
-                        <input type="text" id="username" placeholder="Enter your username" required autocomplete="off">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <div class="input-container">
-                        <input type="password" id="password" placeholder="••••••••" required style="padding-right: 45px;">
-                        <span class="toggle-pwd" data-target="password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim); display: flex;">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-login" id="submitBtn">Login</button>
-            </form>
-
-            <div class="footer-links">
+<div class="neon-glow glow-1"></div>
+<div class="neon-glow glow-2"></div>
+<div id="canvas-container"></div>
+<div class="login-wrapper">
+<div class="login-card">
+<div class="login-header">
+<h1 data-i18n="ag_login_479">GOLDEN ATLAS</h1>
+<p data-i18n="ag_login_480">Administration Portal</p>
+</div>
+<form id="loginForm">
+<div class="form-group">
+<label for="username">Username</label>
+<div class="input-container">
+<input autocomplete="off" id="username" placeholder="Enter your username" required="" type="text"/>
+</div>
+</div>
+<div class="form-group">
+<label for="password">Password</label>
+<div class="input-container">
+<input id="password" placeholder="••••••••" required="" style="padding-right: 45px;" type="password"/>
+<span class="toggle-pwd" data-target="password" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-dim); display: flex;">
+<svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</span>
+</div>
+</div>
+<button class="btn-login" data-i18n="ag_login_481" id="submitBtn" type="submit">Login</button>
+</form>
+<div class="footer-links">
                 Forgot password? <a href="#">Reset here</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
+</div>
+</div>
+</div>
+<script>
         // --- THREE.JS SCENE CONFIG ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -490,4 +483,3 @@
     </script>
 </body>
 </html>
-

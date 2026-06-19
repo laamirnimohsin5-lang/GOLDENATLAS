@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administration · Golden Atlas Prestige</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Administration · Golden Atlas Prestige</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&amp;family=Montserrat:wght@300;400;500;600;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
         :root {
             --primary: #c9a84c; /* Neon gold */
             --primary-glow: rgba(201, 168, 76, 0.4);
@@ -263,303 +264,283 @@
 <script src="supabase-init.js"></script>
 </head>
 <body>
-
-<div id="toast" class="toast">ACTION EFFECTUÉE ✓</div>
-
+<div class="toast" id="toast">ACTION EFFECTUÉE ✓</div>
 <!-- ── LOGIN VIEW ── -->
 <div id="login-view">
-    <canvas id="world-canvas"></canvas>
-    <div class="login-card">
-        <div class="logo-box"><span>GA</span></div>
-        <h1 style="font-family:'Playfair Display', serif; font-size: 1.8rem; color: #fff; margin-bottom: 5px;">Administration</h1>
-        <p style="font-size: 0.65rem; color: var(--primary); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 35px;">Système de Prestige</p>
-
-        <form id="login-form">
-            <div class="form-group">
-                <label>NOM D'UTILISATEUR</label>
-                <input type="text" id="admin-user" placeholder=" goldenatlas " required>
-            </div>
-            <div class="form-group">
-                <label>MOT DE PASSE</label>
-                <input type="password" id="admin-pass" placeholder=" •••••••• " required>
-            </div>
-            <button type="submit" class="btn-cyber">Connexion Sécurisée</button>
-        </form>
-
-        <a href="index.html" style="display:block; margin-top:20px; font-size:0.7rem; color:rgba(255,255,255,0.3); text-decoration:none;">← Revenir au Site</a>
-    </div>
+<canvas id="world-canvas"></canvas>
+<div class="login-card">
+<div class="logo-box"><span data-i18n="ag_administrations_1">GA</span></div>
+<h1 data-i18n="ag_administrations_2" style="font-family:'Playfair Display', serif; font-size: 1.8rem; color: #fff; margin-bottom: 5px;">Administration</h1>
+<p data-i18n="ag_administrations_3" style="font-size: 0.65rem; color: var(--primary); letter-spacing: 5px; text-transform: uppercase; margin-bottom: 35px;">Système de Prestige</p>
+<form id="login-form">
+<div class="form-group">
+<label>NOM D'UTILISATEUR</label>
+<input id="admin-user" placeholder=" goldenatlas " required="" type="text"/>
 </div>
-
+<div class="form-group">
+<label>MOT DE PASSE</label>
+<input id="admin-pass" placeholder=" •••••••• " required="" type="password"/>
+</div>
+<button class="btn-cyber" data-i18n="ag_administrations_4" type="submit">Connexion Sécurisée</button>
+</form>
+<a href="index.html" style="display:block; margin-top:20px; font-size:0.7rem; color:rgba(255,255,255,0.3); text-decoration:none;">← Revenir au Site</a>
+</div>
+</div>
 <!-- ── DASHBOARD VIEW ── -->
 <div id="admin-dashboard">
-    <aside class="sidebar">
-        <div class="sidebar-logo">GOLDEN ATLAS</div>
-        <nav>
-            <div class="nav-item active" data-tab="reservations"><i>📅</i> Réservations</div>
-            <div class="nav-item" data-tab="customers"><i>👤</i> Clients</div>
-            <div class="nav-item" data-tab="messages"><i>✉️</i> Messages</div>
-            <div class="nav-item" data-tab="hotel"><i>🏨</i> Gestion de l'Hôtel</div>
-            <a href="index.html" class="nav-item" style="margin-top: 50px; text-decoration: none;"><i>🏠</i> Retour au Site</a>
-            <div class="nav-item" onclick="location.reload()" style="color: #ef4444; margin-top: 10px;"><i>🔒</i> Déconnexion</div>
-        </nav>
-    </aside>
-
-    <main class="main-content">
-        <div class="header-bar">
-            <h1 id="tab-title">Réservations</h1>
-            <div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Panel d'Administration Direct</div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-box"><span class="stat-num" id="stat-res">0</span><span class="stat-label">Réservations</span></div>
-            <div class="stat-box"><span class="stat-num" id="stat-users">0</span><span class="stat-label">Utilisateurs</span></div>
-            <div class="stat-box"><span class="stat-num" id="stat-msg">0</span><span class="stat-label">Messages</span></div>
-            <div class="stat-box"><span class="stat-num" id="stat-status">OK</span><span class="stat-label">État Système</span></div>
-        </div>
-
-        <!-- TABS -->
-        <div id="tab-reservations" class="tab-content active">
-            <div class="data-card">
-                <h3>Vérification des demandes de séjour</h3>
-                <table id="res-table">
-                    <thead>
-                        <tr>
-                            <th>Client</th>
-                            <th>Hébergement</th>
-                            <th>Arrivée</th>
-                            <th>Départ</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="res-body">
-                        <!-- Data will be injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="tab-customers" class="tab-content">
-            <div class="data-card">
-                <h3>Base de données clients inscrits</h3>
-                <table id="cust-table">
-                    <thead>
-                        <tr>
-                            <th>Nom & Prénom</th>
-                            <th>Email</th>
-                            <th>CIN / Passport</th>
-                            <th>Téléphone</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cust-body">
-                        <!-- Data will be injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="tab-messages" class="tab-content">
-            <div class="data-card">
-                <h3>Feedback et Messages du footer</h3>
-                <table id="msg-table">
-                    <thead>
-                        <tr>
-                            <th>Expéditeur</th>
-                            <th>Message</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="msg-body">
-                        <!-- Data will be injected here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="tab-hotel" class="tab-content">
-            <div class="data-card">
-                <div class="sub-tabs">
-                    <div class="sub-tab active" onclick="switchHotelTab('rooms')">Éléments Réservables</div>
-                    <div class="sub-tab" onclick="switchHotelTab('services')">Services de l'Hôtel</div>
-                </div>
-
-                <!-- Rooms Management -->
-                <div id="hotel-rooms">
-                    <div class="flex-between">
-                        <div class="search-bar">
-                            <input type="text" id="srch-room" placeholder="Rechercher un élément...">
-                        </div>
-                        <button class="btn-gold" onclick="openRoomModal()">+ Ajouter Élément</button>
-                    </div>
-
-                    <table id="rooms-table">
-                        <thead>
-                            <tr>
-                                <th>Photo</th>
-                                <th>Catégorie</th>
-                                <th>Nom / Référence</th>
-                                <th>Prix (DH)</th>
-                                <th>Capacité</th>
-                                <th>Disponibilité</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rooms-body">
-                            <!-- Injected -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Services Management -->
-                <div id="hotel-services" style="display:none;">
-                    <div class="flex-between">
-                        <div class="search-bar">
-                            <input type="text" id="srch-service" placeholder="Rechercher un service...">
-                        </div>
-                        <button class="btn-gold" onclick="openServiceModal()">+ Ajouter Service</button>
-                    </div>
-
-                    <table id="services-table">
-                        <thead>
-                            <tr>
-                                <th>Nom du Service</th>
-                                <th>Description</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="services-body">
-                            <!-- Injected -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </main>
+<aside class="sidebar">
+<div class="sidebar-logo">GOLDEN ATLAS</div>
+<nav>
+<div class="nav-item active" data-tab="reservations"><i>📅</i> Réservations</div>
+<div class="nav-item" data-tab="customers"><i>👤</i> Clients</div>
+<div class="nav-item" data-tab="messages"><i>✉️</i> Messages</div>
+<div class="nav-item" data-tab="hotel"><i>🏨</i> Gestion de l'Hôtel</div>
+<a class="nav-item" href="index.html" style="margin-top: 50px; text-decoration: none;"><i>🏠</i> Retour au Site</a>
+<div class="nav-item" onclick="location.reload()" style="color: #ef4444; margin-top: 10px;"><i>🔒</i> Déconnexion</div>
+</nav>
+</aside>
+<main class="main-content">
+<div class="header-bar">
+<h1 data-i18n="ag_administrations_7" id="tab-title">Réservations</h1>
+<div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Panel d'Administration Direct</div>
 </div>
-
+<div class="stats-grid">
+<div class="stat-box"><span class="stat-num" id="stat-res">0</span><span class="stat-label" data-i18n="ag_administrations_8">Réservations</span></div>
+<div class="stat-box"><span class="stat-num" id="stat-users">0</span><span class="stat-label" data-i18n="ag_administrations_9">Utilisateurs</span></div>
+<div class="stat-box"><span class="stat-num" id="stat-msg">0</span><span class="stat-label" data-i18n="ag_administrations_10">Messages</span></div>
+<div class="stat-box"><span class="stat-num" data-i18n="ag_administrations_11" id="stat-status">OK</span><span class="stat-label" data-i18n="ag_administrations_12">État Système</span></div>
+</div>
+<!-- TABS -->
+<div class="tab-content active" id="tab-reservations">
+<div class="data-card">
+<h3 data-i18n="ag_administrations_13">Vérification des demandes de séjour</h3>
+<table id="res-table">
+<thead>
+<tr>
+<th>Client</th>
+<th>Hébergement</th>
+<th>Arrivée</th>
+<th>Départ</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="res-body">
+<!-- Data will be injected here -->
+</tbody>
+</table>
+</div>
+</div>
+<div class="tab-content" id="tab-customers">
+<div class="data-card">
+<h3 data-i18n="ag_administrations_14">Base de données clients inscrits</h3>
+<table id="cust-table">
+<thead>
+<tr>
+<th>Nom &amp; Prénom</th>
+<th>Email</th>
+<th>CIN / Passport</th>
+<th>Téléphone</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="cust-body">
+<!-- Data will be injected here -->
+</tbody>
+</table>
+</div>
+</div>
+<div class="tab-content" id="tab-messages">
+<div class="data-card">
+<h3 data-i18n="ag_administrations_15">Feedback et Messages du footer</h3>
+<table id="msg-table">
+<thead>
+<tr>
+<th>Expéditeur</th>
+<th>Message</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody id="msg-body">
+<!-- Data will be injected here -->
+</tbody>
+</table>
+</div>
+</div>
+<div class="tab-content" id="tab-hotel">
+<div class="data-card">
+<div class="sub-tabs">
+<div class="sub-tab active" onclick="switchHotelTab('rooms')">Éléments Réservables</div>
+<div class="sub-tab" onclick="switchHotelTab('services')">Services de l'Hôtel</div>
+</div>
+<!-- Rooms Management -->
+<div id="hotel-rooms">
+<div class="flex-between">
+<div class="search-bar">
+<input id="srch-room" placeholder="Rechercher un élément..." type="text"/>
+</div>
+<button class="btn-gold" data-i18n="ag_administrations_16" onclick="openRoomModal()">+ Ajouter Élément</button>
+</div>
+<table id="rooms-table">
+<thead>
+<tr>
+<th>Photo</th>
+<th>Catégorie</th>
+<th>Nom / Référence</th>
+<th>Prix (DH)</th>
+<th>Capacité</th>
+<th>Disponibilité</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="rooms-body">
+<!-- Injected -->
+</tbody>
+</table>
+</div>
+<!-- Services Management -->
+<div id="hotel-services" style="display:none;">
+<div class="flex-between">
+<div class="search-bar">
+<input id="srch-service" placeholder="Rechercher un service..." type="text"/>
+</div>
+<button class="btn-gold" data-i18n="ag_administrations_17" onclick="openServiceModal()">+ Ajouter Service</button>
+</div>
+<table id="services-table">
+<thead>
+<tr>
+<th>Nom du Service</th>
+<th>Description</th>
+<th>Statut</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="services-body">
+<!-- Injected -->
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
 <!-- ── MODALS ── -->
-
 <!-- Room Modal -->
-<div id="modal-room" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('modal-room')">&times;</span>
-        <h2 class="modal-title" id="room-modal-title">Ajouter un Élément Réservable</h2>
-        <form id="form-room">
-            <input type="hidden" id="room-id">
-            <div class="form-grid">
-                <div>
-                    <label class="form-label">Catégorie</label>
-                    <select class="form-input" id="room-type" required>
-                        <option value="Chambre Standard">Chambre Standard</option>
-                        <option value="Chambre Deluxe">Chambre Deluxe</option>
-                        <option value="Suite">Suite</option>
-                        <option value="VIP Suite">Suite VIP Royale</option>
-                        <option value="Riad">Riad Privé</option>
-                        <option value="Pavillon">Pavillon</option>
-                        <option value="Restaurant">Table (Restaurant/Café)</option>
-                        <option value="Spa">Soin / Hammam (Spa)</option>
-                        <option value="Transport">Véhicule (Transport)</option>
-                        <option value="Événementiel">Salle des Fêtes</option>
-                        <option value="Activité">Piscine / Salle de Sport</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="form-label">Nom / Numéro / Référence</label>
-                    <input type="text" class="form-input" id="room-name" required placeholder="Ex: Table 14, Limousine...">
-                </div>
-            </div>
-            <div class="form-grid">
-                <div>
-                    <label class="form-label">Prix (MAD)</label>
-                    <input type="number" class="form-input" id="room-price" required min="0">
-                </div>
-                <div>
-                    <label class="form-label">Capacité (Personnes)</label>
-                    <input type="number" class="form-input" id="room-capacity" required min="1">
-                </div>
-            </div>
-            <div class="form-grid full">
-                <div>
-                    <label class="form-label">Description Courte</label>
-                    <textarea class="form-input" id="room-desc" rows="3" required></textarea>
-                </div>
-            </div>
-            <div class="form-grid full">
-                <div>
-                    <label class="form-label">Image Principale (Fichier Local ou URL)</label>
-                    <div style="display:flex; gap:10px; margin-bottom: 10px;">
-                        <input type="file" id="room-img-file" class="form-input" accept="image/*,video/*" style="flex:1.5; padding:9px;">
-                        <span style="display:flex; align-items:center; font-size:0.7rem; color:rgba(255,255,255,0.4); text-transform:uppercase;">OU</span>
-                        <input type="text" class="form-input" id="room-img" placeholder="URL externe https://..." style="flex:2;">
-                    </div>
-                    <div id="room-img-preview-container" style="display:none; text-align:center;">
-                        <img id="room-img-preview" style="max-height:80px; border-radius:4px; border:1px solid rgba(201,168,76,0.3); object-fit:cover;">
-                    </div>
-                </div>
-            </div>
-            <div class="form-grid">
-                <div>
-                    <label class="form-label">Statut</label>
-                    <select class="form-input" id="room-status">
-                        <option value="Disponible">Disponible</option>
-                        <option value="Occupée">Occupée</option>
-                        <option value="En Maintenance">En Maintenance</option>
-                    </select>
-                </div>
-            </div>
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="submit" class="btn-gold">Enregistrer Élément</button>
-            </div>
-        </form>
-    </div>
+<div class="modal" id="modal-room">
+<div class="modal-content">
+<span class="close-modal" onclick="closeModal('modal-room')">×</span>
+<h2 class="modal-title" data-i18n="ag_administrations_18" id="room-modal-title">Ajouter un Élément Réservable</h2>
+<form id="form-room">
+<input id="room-id" type="hidden"/>
+<div class="form-grid">
+<div>
+<label class="form-label">Catégorie</label>
+<select class="form-input" id="room-type" required="">
+<option value="Chambre Standard">Chambre Standard</option>
+<option value="Chambre Deluxe">Chambre Deluxe</option>
+<option value="Suite">Suite</option>
+<option value="VIP Suite">Suite VIP Royale</option>
+<option value="Riad">Riad Privé</option>
+<option value="Pavillon">Pavillon</option>
+<option value="Restaurant">Table (Restaurant/Café)</option>
+<option value="Spa">Soin / Hammam (Spa)</option>
+<option value="Transport">Véhicule (Transport)</option>
+<option value="Événementiel">Salle des Fêtes</option>
+<option value="Activité">Piscine / Salle de Sport</option>
+</select>
 </div>
-
+<div>
+<label class="form-label">Nom / Numéro / Référence</label>
+<input class="form-input" id="room-name" placeholder="Ex: Table 14, Limousine..." required="" type="text"/>
+</div>
+</div>
+<div class="form-grid">
+<div>
+<label class="form-label">Prix (MAD)</label>
+<input class="form-input" id="room-price" min="0" required="" type="number"/>
+</div>
+<div>
+<label class="form-label">Capacité (Personnes)</label>
+<input class="form-input" id="room-capacity" min="1" required="" type="number"/>
+</div>
+</div>
+<div class="form-grid full">
+<div>
+<label class="form-label">Description Courte</label>
+<textarea class="form-input" id="room-desc" required="" rows="3"></textarea>
+</div>
+</div>
+<div class="form-grid full">
+<div>
+<label class="form-label">Image Principale (Fichier Local ou URL)</label>
+<div style="display:flex; gap:10px; margin-bottom: 10px;">
+<input accept="image/*,video/*" class="form-input" id="room-img-file" style="flex:1.5; padding:9px;" type="file"/>
+<span data-i18n="ag_administrations_19" style="display:flex; align-items:center; font-size:0.7rem; color:rgba(255,255,255,0.4); text-transform:uppercase;">OU</span>
+<input class="form-input" id="room-img" placeholder="URL externe https://..." style="flex:2;" type="text"/>
+</div>
+<div id="room-img-preview-container" style="display:none; text-align:center;">
+<img id="room-img-preview" style="max-height:80px; border-radius:4px; border:1px solid rgba(201,168,76,0.3); object-fit:cover;"/>
+</div>
+</div>
+</div>
+<div class="form-grid">
+<div>
+<label class="form-label">Statut</label>
+<select class="form-input" id="room-status">
+<option value="Disponible">Disponible</option>
+<option value="Occupée">Occupée</option>
+<option value="En Maintenance">En Maintenance</option>
+</select>
+</div>
+</div>
+<div style="text-align: right; margin-top: 20px;">
+<button class="btn-gold" data-i18n="ag_administrations_20" type="submit">Enregistrer Élément</button>
+</div>
+</form>
+</div>
+</div>
 <!-- Service Modal -->
-<div id="modal-service" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeModal('modal-service')">&times;</span>
-        <h2 class="modal-title" id="service-modal-title">Ajouter un Service</h2>
-        <form id="form-service">
-            <input type="hidden" id="service-id">
-            <div class="form-grid full">
-                <div>
-                    <label class="form-label">Nom du Service</label>
-                    <input type="text" class="form-input" id="service-name" required placeholder="Ex: Spa & Bien-être, Chauffeur privé...">
-                </div>
-                <div>
-                    <label class="form-label">Description</label>
-                    <textarea class="form-input" id="service-desc" rows="3" required></textarea>
-                </div>
-                <div>
-                    <label class="form-label">Statut</label>
-                    <select class="form-input" id="service-status">
-                        <option value="Actif">Actif</option>
-                        <option value="Inactif">Inactif</option>
-                    </select>
-                </div>
-            </div>
-            <div style="text-align: right; margin-top: 20px;">
-                <button type="submit" class="btn-gold">Enregistrer Service</button>
-            </div>
-        </form>
-    </div>
+<div class="modal" id="modal-service">
+<div class="modal-content">
+<span class="close-modal" onclick="closeModal('modal-service')">×</span>
+<h2 class="modal-title" data-i18n="ag_administrations_21" id="service-modal-title">Ajouter un Service</h2>
+<form id="form-service">
+<input id="service-id" type="hidden"/>
+<div class="form-grid full">
+<div>
+<label class="form-label">Nom du Service</label>
+<input class="form-input" id="service-name" placeholder="Ex: Spa &amp; Bien-être, Chauffeur privé..." required="" type="text"/>
 </div>
-
+<div>
+<label class="form-label">Description</label>
+<textarea class="form-input" id="service-desc" required="" rows="3"></textarea>
+</div>
+<div>
+<label class="form-label">Statut</label>
+<select class="form-input" id="service-status">
+<option value="Actif">Actif</option>
+<option value="Inactif">Inactif</option>
+</select>
+</div>
+</div>
+<div style="text-align: right; margin-top: 20px;">
+<button class="btn-gold" data-i18n="ag_administrations_22" type="submit">Enregistrer Service</button>
+</div>
+</form>
+</div>
+</div>
 <!-- Confirmation Modal -->
-<div id="modal-confirm" class="modal" style="z-index:3000;">
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <h2 class="modal-title" style="color: #ef4444;">Confirmation</h2>
-        <p style="margin-bottom: 30px; font-size: 0.9rem;">Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
-        <div style="display:flex; justify-content:center; gap:15px;">
-            <button class="btn-gold" style="background:#555; color:#fff;" onclick="closeModal('modal-confirm')">Annuler</button>
-            <button class="btn-gold" style="background:#ef4444; color:#fff;" id="btn-confirm-delete">Supprimer</button>
-        </div>
-    </div>
+<div class="modal" id="modal-confirm" style="z-index:3000;">
+<div class="modal-content" style="max-width: 400px; text-align: center;">
+<h2 class="modal-title" data-i18n="ag_administrations_23" style="color: #ef4444;">Confirmation</h2>
+<p data-i18n="ag_administrations_24" style="margin-bottom: 30px; font-size: 0.9rem;">Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.</p>
+<div style="display:flex; justify-content:center; gap:15px;">
+<button class="btn-gold" data-i18n="ag_administrations_25" onclick="closeModal('modal-confirm')" style="background:#555; color:#fff;">Annuler</button>
+<button class="btn-gold" data-i18n="ag_administrations_26" id="btn-confirm-delete" style="background:#ef4444; color:#fff;">Supprimer</button>
 </div>
-
+</div>
+</div>
 <script>
 /* ── 3D Scene Initialization (Login) ── */
 (function() {
@@ -1039,7 +1020,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderServices();
 });
 </script>
-
 </body>
 </html>
-

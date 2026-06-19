@@ -707,3 +707,36 @@ body.dark-mode #auth-modal .form-group select { background: #1a1a1a; border-colo
         margin: 1.8rem auto;
     }
 }
+
+/* ===================================
+   JMIR ANIMATION (EMBER GLOW FOR RESERVE BUTTONS)
+   =================================== */
+@keyframes jmirGlow {
+    0% {
+        box-shadow: 0 0 8px rgba(255, 69, 0, 0.5), inset 0 0 5px rgba(255, 30, 0, 0.4);
+        background-color: var(--gold);
+    }
+    50% {
+        box-shadow: 0 0 25px rgba(255, 50, 0, 0.9), 0 0 45px rgba(255, 100, 0, 0.6), inset 0 0 15px rgba(255, 50, 0, 0.7);
+        background-color: #d13000;
+        border-color: #ff4500;
+    }
+    100% {
+        box-shadow: 0 0 8px rgba(255, 69, 0, 0.5), inset 0 0 5px rgba(255, 30, 0, 0.4);
+        background-color: var(--gold);
+    }
+}
+
+.btn-modal-submit, .btn-room-reserver, .btn-pop-book {
+    animation: jmirGlow 2.5s infinite alternate cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid rgba(255, 69, 0, 0.4);
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 0 5px rgba(255,255,255,0.4);
+    transition: transform 0.3s ease;
+}
+
+.btn-modal-submit:hover, .btn-room-reserver:hover, .btn-pop-book:hover {
+    transform: translateY(-2px) scale(1.02);
+    animation: jmirGlow 1.2s infinite alternate cubic-bezier(0.4, 0, 0.2, 1) !important;
+}

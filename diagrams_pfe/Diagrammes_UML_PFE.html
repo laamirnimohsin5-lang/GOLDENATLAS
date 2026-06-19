@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrammes UML — Golden Atlas PFE</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-light: #e0c97f;
+            --dark: #0d0d1a;
+            --dark-2: #111120;
+            --dark-3: #16213e;
+            --border: #2a2a4a;
+            --text: #e8e0cc;
+            --muted: #7a7a9a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--dark);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* ── PRINT BUTTON ── */
+        .print-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: linear-gradient(135deg, #c9a84c, #e0c97f);
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px #c9a84c55;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+        .print-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px #c9a84c88;
+        }
+
+        /* ── WRAPPER ── */
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 30px 60px;
+        }
+
+        /* ── PAGE DE COUVERTURE ── */
+        .cover {
+            text-align: center;
+            padding: 70px 40px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+            border: 1px solid #e0c97f33;
+            border-radius: 20px;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 40%, #e0c97f08 0%, transparent 50%),
+                        radial-gradient(circle at 70% 60%, #7c3aed08 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .cover-logo {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+        }
+        .cover h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            color: var(--gold-light);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        .cover .tagline {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1rem;
+            color: #a89b6e;
+            margin-bottom: 30px;
+        }
+        .cover-divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 20px auto;
+        }
+        .cover-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .cover-info-item {
+            text-align: center;
+        }
+        .cover-info-item .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+        .cover-info-item .value {
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            font-weight: 600;
+        }
+        .cover-badges {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            display: inline-block;
+            background: #e0c97f18;
+            border: 1px solid #e0c97f44;
+            color: #e0c97f;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* ── TOC ── */
+        .toc {
+            background: var(--dark-2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px 35px;
+            margin-bottom: 50px;
+        }
+        .toc h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: var(--gold-light);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .toc-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .toc-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.85rem;
+            color: #c0b89e;
+        }
+        .toc-num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--gold), #a07830);
+            color: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ── SECTION ── */
+        .section {
+            background: var(--dark-2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 40px;
+            page-break-inside: avoid;
+        }
+        .section-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-num {
+            background: linear-gradient(135deg, var(--gold), #a07830);
+            color: #1a1a2e;
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--gold-light);
+            line-height: 1.3;
+        }
+        .section-subtitle {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* ── MERMAID ── */
+        .diagram-box {
+            background: #08080f;
+            border: 1px solid #1a1a30;
+            border-radius: 12px;
+            padding: 25px 15px;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            min-height: 200px;
+            align-items: center;
+        }
+        .mermaid { width: 100%; }
+        .mermaid svg { max-width: 100%; height: auto; }
+
+        /* ── DESCRIPTION ── */
+        .desc {
+            margin-top: 18px;
+            background: #1a1a2e;
+            border-left: 3px solid var(--gold);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.82rem;
+            color: #b0a88a;
+            line-height: 1.7;
+        }
+        .desc strong { color: var(--gold-light); }
+
+        /* ── SUMMARY TABLE ── */
+        .summary-section {
+            background: var(--dark-2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px;
+            margin-bottom: 40px;
+        }
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #e0c97f18;
+            color: var(--gold-light);
+            padding: 11px 14px;
+            text-align: left;
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 11px 14px;
+            border: 1px solid var(--border);
+            font-size: 0.82rem;
+            color: #c0b89e;
+            vertical-align: top;
+        }
+        tr:nth-child(even) td { background: #0f0f1e; }
+        td strong { color: var(--gold-light); }
+
+        /* ── TECH STACK ── */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .tech-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1a2e;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 0.78rem;
+            color: #c0b89e;
+        }
+        .tech-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+        .footer span { color: var(--gold); }
+
+        /* ── DOWNLOAD BUTTON ── */
+        .dl-btn {
+            margin-left: auto;
+            background: #1a1a2e;
+            border: 1px solid var(--gold);
+            color: var(--gold-light);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dl-btn:hover {
+            background: var(--gold);
+            color: #1a1a2e;
+        }
+
+        /* ── PRINT STYLES ── */
+        @media print {
+            body { background: #fff; color: #1a1a2e; }
+            .print-btn, .dl-btn { display: none !important; }
+            .wrapper { padding: 20px; max-width: 100%; }
+            .cover { background: linear-gradient(135deg, #1a1a2e, #0f3460); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .section, .summary-section, .toc { -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #333; }
+            .section { page-break-inside: avoid; margin-bottom: 30px; }
+            .diagram-box { page-break-inside: avoid; }
+            @page { margin: 15mm; size: A4; }
+        }
+    </style>
+</head>
+<body>
+
+<button class="print-btn" onclick="window.print()">
+    🖨️ Enregistrer en PDF
+</button>
+
+<div class="wrapper">
+
+    <!-- ── COUVERTURE ── -->
+    <div class="cover">
+        <div class="cover-logo">🏛️</div>
+        <h1>Golden Atlas</h1>
+        <p class="tagline">Portail Hôtelier de Luxe — Marrakech</p>
+        <div class="cover-divider"></div>
+        <p style="font-size:1.1rem;color:#e0c97f;font-weight:600;letter-spacing:1px;">DIAGRAMMES UML</p>
+        <p style="font-size:0.85rem;color:#a89b6e;margin-top:6px;">Rapport de Projet de Fin d'Études</p>
+        <div class="cover-info">
+            <div class="cover-info-item">
+                <div class="label">Filière</div>
+                <div class="value">Développement Web</div>
+            </div>
+            <div class="cover-info-item">
+                <div class="label">Année</div>
+                <div class="value">2025 — 2026</div>
+            </div>
+            <div class="cover-info-item">
+                <div class="label">Type</div>
+                <div class="value">Projet de Fin d'Études</div>
+            </div>
+        </div>
+        <div class="cover-badges">
+            <span class="badge">Use Case</span>
+            <span class="badge">Diagramme de Classes</span>
+            <span class="badge">Séquence</span>
+            <span class="badge">Activité</span>
+            <span class="badge">Déploiement</span>
+        </div>
+    </div>
+
+    <!-- ── TABLE DES MATIÈRES ── -->
+    <div class="toc">
+        <h2>📋 Table des Matières</h2>
+        <ul class="toc-list">
+            <li><span class="toc-num">1</span> Diagramme de Cas d'Utilisation</li>
+            <li><span class="toc-num">2</span> Diagramme de Classes</li>
+            <li><span class="toc-num">3</span> Diagramme de Séquence — Réservation</li>
+            <li><span class="toc-num">4</span> Diagramme de Séquence — Atlas Chat IA</li>
+            <li><span class="toc-num">5</span> Diagramme d'Activité</li>
+            <li><span class="toc-num">6</span> Diagramme de Déploiement</li>
+        </ul>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 1 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">1</div>
+            <div>
+                <div class="section-title">Diagramme de Cas d'Utilisation</div>
+                <div class="section-subtitle">Acteurs, cas d'utilisation et relations include / extend</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en PNG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+flowchart TD
+    Visiteur(["👤 Visiteur non inscrit"])
+    Client(["👤 Client inscrit"])
+    Admin(["🛡️ Administrateur"])
+    IA(["🤖 Atlas Chat AI — DeepSeek API"])
+    DB(["🗄️ Base de données Supabase"])
+
+    UC1["UC01 — Parcourir le contenu du site"]
+    UC2["UC02 — Changer la langue\nFR / EN / AR / ES"]
+    UC3["UC03 — Créer un compte"]
+    UC4["UC04 — Se connecter\nEmail ou Google OAuth"]
+    UC5["UC05 — Réserver une chambre ou un service"]
+    UC6["UC06 — Consulter mes réservations"]
+    UC7["UC07 — Annuler une réservation"]
+    UC8["UC08 — Utiliser les points de fidélité"]
+    UC9["UC09 — Discuter avec Atlas Chat"]
+    UC10["UC10 — Parcourir les menus et galeries"]
+    UC11["UC11 — Gérer toutes les réservations"]
+    UC12["UC12 — Gérer les utilisateurs"]
+    UC13["UC13 — Gérer le contenu du site"]
+
+    Visiteur --> UC1
+    Visiteur --> UC2
+    Visiteur --> UC3
+    Visiteur --> UC4
+    Client --> UC1
+    Client --> UC2
+    Client --> UC5
+    Client --> UC6
+    Client --> UC7
+    Client --> UC8
+    Client --> UC9
+    Client --> UC10
+    Admin --> UC11
+    Admin --> UC12
+    Admin --> UC13
+    UC5 -.->|"«include»"| DB
+    UC6 -.->|"«include»"| DB
+    UC9 -.->|"«include»"| IA
+    UC4 -.->|"«extend»"| UC5
+    UC8 -.->|"«extend»"| UC5
+
+    style Visiteur fill:#1a1a2e,color:#e0c97f,stroke:#e0c97f,stroke-width:2px
+    style Client fill:#16213e,color:#e0c97f,stroke:#e0c97f,stroke-width:2px
+    style Admin fill:#0f3460,color:#e0c97f,stroke:#e0c97f,stroke-width:2px
+    style IA fill:#533483,color:#fff,stroke:#a78bfa,stroke-width:2px
+    style DB fill:#1a3c2e,color:#4ade80,stroke:#4ade80,stroke-width:2px
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> Ce diagramme présente les trois acteurs principaux (Visiteur, Client inscrit, Administrateur) et deux acteurs secondaires (DeepSeek AI et Supabase). Il illustre les 13 cas d'utilisation identifiés avec les relations d'inclusion (<em>include</em>) et d'extension (<em>extend</em>).
+        </div>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 2 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">2</div>
+            <div>
+                <div class="section-title">Diagramme de Classes</div>
+                <div class="section-subtitle">Structure des données, héritage et associations</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en PNG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+classDiagram
+    direction TB
+    class Utilisateur {
+        +String id
+        +String nom
+        +String email
+        +String motDePasse
+        +String role
+        +Date dateInscription
+        +seConnecter()
+        +seDeconnecter()
+        +modifierProfil()
+    }
+    class Client {
+        +int pointsFidelite
+        +List reservations
+        +faireReservation(service)
+        +annulerReservation(id)
+        +appliquerReduction()
+    }
+    class Administrateur {
+        +gererReservations()
+        +gererUtilisateurs()
+        +gererContenu()
+        +voirTableauDeBord()
+    }
+    class Reservation {
+        +String id
+        +Date dateArrivee
+        +Date dateDepart
+        +String statut
+        +float prixTotal
+        +String typePaiement
+        +confirmer()
+        +annuler()
+        +calculerPrix()
+    }
+    class Chambre {
+        +String id
+        +String nom
+        +String type
+        +float prixParNuit
+        +int capacite
+        +boolean disponible
+        +verifierDisponibilite(dates)
+    }
+    class Service {
+        +String id
+        +String nom
+        +String categorie
+        +float prix
+        +estDisponible()
+    }
+    class Restaurant {
+        +String typeCuisine
+        +String horaires
+        +afficherMenu()
+    }
+    class Spa {
+        +List soins
+        +reserverSoin(soin, date)
+    }
+    class SalleFetes {
+        +int capaciteMax
+        +verifierDisponibilite(date)
+    }
+    class Plat {
+        +String nom
+        +float prix
+        +String categorie
+    }
+    class AtlasChat {
+        +String cleAPI
+        +List historique
+        +String langue
+        +envoyerMessage(texte)
+        +recevoirReponse()
+    }
+    class Message {
+        +String contenu
+        +String role
+        +Date horodatage
+    }
+    class SystemeI18n {
+        +String langueActive
+        +changerLangue(lang)
+        +traduire(cle)
+    }
+    Utilisateur <|-- Client
+    Utilisateur <|-- Administrateur
+    Client "1" --> "0..*" Reservation : effectue
+    Reservation "1" --> "1" Chambre : concerne
+    Reservation "1" --> "0..1" Service : inclut
+    Service <|-- Restaurant
+    Service <|-- Spa
+    Service <|-- SalleFetes
+    Restaurant "1" --> "0..*" Plat : propose
+    Client "1" --> "0..1" AtlasChat : utilise
+    AtlasChat "1" --> "0..*" Message : contient
+    SystemeI18n ..> Utilisateur : supporte
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> 12 classes modélisent la structure statique du système. La hiérarchie d'héritage (Utilisateur → Client / Administrateur), la composition (AtlasChat contient des Messages) et la spécialisation polymorphe (Service → Restaurant, Spa, SalleFetes) sont clairement représentées.
+        </div>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 3 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">3</div>
+            <div>
+                <div class="section-title">Diagramme de Séquence — Réservation</div>
+                <div class="section-subtitle">Scénario : un client connecté réserve une chambre</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en PNG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+sequenceDiagram
+    actor C as Client
+    participant UI as Interface Web
+    participant JS as script.js
+    participant SB as Supabase
+    participant EM as Email
+
+    C->>UI: Ouvre la page Hébergements
+    UI->>JS: Chargement + vérification de session
+    JS->>SB: getSession()
+    SB-->>JS: Données du client connecté
+    JS-->>UI: Affichage des chambres disponibles
+    C->>UI: Clique sur Détails d'une chambre
+    UI->>JS: openRoomModal(roomId)
+    JS-->>UI: Modale détails (photos, prix, description)
+    C->>UI: Clique sur RÉSERVER
+    UI->>JS: openBookingModal(roomId)
+    JS-->>UI: Formulaire de réservation
+    C->>UI: Remplit dates + nombre de personnes
+    C->>UI: Confirme la réservation
+    UI->>JS: submitReservation(data)
+    JS->>JS: validateDates() + calculatePrice()
+
+    alt Données valides
+        JS->>SB: INSERT INTO reservations
+        SB-->>JS: id + statut confirmé
+        JS->>SB: UPDATE points_fidelite += X
+        SB-->>JS: Mise à jour OK
+        JS-->>UI: Message de succès ✅
+        JS->>EM: Email de confirmation
+    else Données invalides
+        JS-->>UI: Message d'erreur ❌
+    end
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> Ce diagramme décrit le flux de réservation d'une chambre de bout en bout. Il met en évidence les interactions entre l'interface web, la logique JavaScript (script.js) et le backend Supabase, incluant la gestion des erreurs et la mise à jour automatique des points de fidélité.
+        </div>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 4 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">4</div>
+            <div>
+                <div class="section-title">Diagramme de Séquence — Atlas Chat IA</div>
+                <div class="section-subtitle">Scénario : conversation avec le concierge IA DeepSeek</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en PNG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+sequenceDiagram
+    actor C as Client
+    participant CH as chat.html
+    participant JS as AtlasChat JS
+    participant DS as DeepSeek API
+    participant SB as Supabase
+
+    C->>CH: Ouvre la page Atlas Chat
+    CH->>JS: initAtlasChat()
+    JS->>SB: getSession()
+    SB-->>JS: Données utilisateur + langue préférée
+    JS-->>CH: Message de bienvenue
+
+    loop Conversation interactive
+        C->>CH: Saisit un message
+        CH->>JS: sendMessage(texte)
+        JS->>JS: Construction du system prompt
+        JS->>DS: POST /v1/chat/completions
+        DS-->>JS: Réponse du modèle
+        JS-->>CH: Affichage avec effet de frappe
+    end
+
+    C->>CH: Clique sur Réserver maintenant
+    CH->>JS: redirectToBooking()
+    JS-->>CH: Redirection vers hebergements.html
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> Ce diagramme illustre le fonctionnement du concierge IA Atlas Chat. Les messages du client sont transmis à l'API DeepSeek via des requêtes HTTP sécurisées. Le contexte système (system prompt) est construit dynamiquement selon la langue de l'utilisateur récupérée via Supabase.
+        </div>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 5 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">5</div>
+            <div>
+                <div class="section-title">Diagramme d'Activité</div>
+                <div class="section-subtitle">Flux complet : Connexion → Navigation → Réservation → Confirmation</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en PNG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+flowchart TD
+    Debut(["▶ Début"]) --> A["Ouvrir le portail Golden Atlas"]
+    A --> B{"Client connecté ?"}
+    B -- Non --> C["Page de connexion"]
+    C --> D{"Méthode de connexion"}
+    D -- "Email + Mot de passe" --> E["Saisir les identifiants"]
+    D -- "Google OAuth" --> F["Authentification Google"]
+    E --> G["Supabase Auth"]
+    F --> G
+    G --> H{"Identifiants valides ?"}
+    H -- Non --> I["Message d'erreur"] --> C
+    H -- Oui --> J["Tableau de bord client"]
+    B -- Oui --> J
+    J --> K["Choisir un service"]
+    K --> L{"Type de service"}
+    L --> M["Hébergements"]
+    L --> N["Restaurants"]
+    L --> O["Spa / Piscine"]
+    L --> P["Atlas Chat"]
+    M --> Q["Sélectionner une chambre"]
+    Q --> R["Consulter les détails"]
+    R --> S["Cliquer sur RÉSERVER"]
+    S --> T["Remplir le formulaire"]
+    T --> U{"Données valides ?"}
+    U -- Non --> V["Message d'erreur"] --> T
+    U -- Oui --> W["Calculer le prix total"]
+    W --> X{"Utiliser les points fidélité ?"}
+    X -- Oui --> Y["Appliquer la réduction"]
+    X -- Non --> Z["Prix sans réduction"]
+    Y --> AA["Enregistrer dans Supabase"]
+    Z --> AA
+    AA --> AB["Créditer les points fidélité"]
+    AB --> AC["Envoyer email de confirmation"]
+    AC --> Fin(["⏹ Fin"])
+
+    style Debut fill:#e0c97f,color:#1a1a2e,stroke:#e0c97f,stroke-width:2px
+    style Fin fill:#e0c97f,color:#1a1a2e,stroke:#e0c97f,stroke-width:2px
+    style G fill:#1a3c2e,color:#4ade80,stroke:#4ade80
+    style AA fill:#1a3c2e,color:#4ade80,stroke:#4ade80
+    style I fill:#3c1a1a,color:#f87171,stroke:#f87171
+    style V fill:#3c1a1a,color:#f87171,stroke:#f87171
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> Ce diagramme couvre l'intégralité du parcours utilisateur : de l'ouverture du portail à la confirmation finale de réservation. Il modélise les points de décision critiques (authentification, validation, points de fidélité) et les chemins alternatifs en cas d'erreur.
+        </div>
+    </div>
+
+    <!-- ──────────────── DIAGRAMME 6 ──────────────── -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-num">6</div>
+            <div>
+                <div class="section-title">Diagramme de Déploiement</div>
+                <div class="section-subtitle">Infrastructure technique : Netlify + Supabase + DeepSeek + Google</div>
+            </div>
+            <button class="dl-btn" onclick="downloadDiagram(this)" title="Télécharger en SVG">
+                ⬇️ Télécharger
+            </button>
+        </div>
+        <div class="diagram-box">
+            <div class="mermaid">
+flowchart TD
+    subgraph CLIENT["💻 Côté Client"]
+        Nav["🌐 Navigateur Web\nChrome / Firefox / Safari\n─────────────────\nHTML5 + CSS3 + Vanilla JS\nMoteur I18n FR/EN/AR/ES"]
+    end
+    subgraph NETLIFY["☁️ Netlify — Hébergement Statique"]
+        Files["📁 Fichiers Statiques\nindex.html / hebergements.html\nchat.html / style.css / script.js"]
+        CDN["🌍 CDN — HTTPS / TLS\nDistribution mondiale"]
+    end
+    subgraph SUPABASE["🗄️ Supabase — Backend as a Service"]
+        Auth["🔐 Auth Service\nEmail + Google OAuth 2.0"]
+        DB["🐘 PostgreSQL\nutilisateurs / reservations\nchambres / services"]
+        API["🔌 REST API\nRow Level Security"]
+    end
+    subgraph DEEPSEEK["🤖 DeepSeek — API IA"]
+        LLM["🧠 deepseek-chat\nLLM Multilingue\nSystem Prompt Hôtelier"]
+    end
+    subgraph GOOGLE["🔑 Google Services"]
+        OAuth["Google OAuth 2.0"]
+        Fonts["Google Fonts"]
+    end
+
+    Nav -->|"HTTPS GET"| CDN
+    CDN --> Files --> Nav
+    Nav -->|"Supabase JS Client"| API
+    API --> Auth
+    API --> DB
+    Auth --> OAuth --> Auth
+    Nav -->|"fetch POST Bearer Token"| LLM
+    Nav -->|"CSS Import"| Fonts
+
+    style CLIENT fill:#1a1a2e,color:#e0c97f,stroke:#e0c97f,stroke-width:2px
+    style NETLIFY fill:#00435a,color:#fff,stroke:#38bdf8,stroke-width:2px
+    style SUPABASE fill:#1a3c2e,color:#4ade80,stroke:#4ade80,stroke-width:2px
+    style DEEPSEEK fill:#2d1b69,color:#a78bfa,stroke:#7c3aed,stroke-width:2px
+    style GOOGLE fill:#3c2400,color:#fbbf24,stroke:#f59e0b,stroke-width:2px
+            </div>
+        </div>
+        <div class="desc">
+            <strong>Description :</strong> Ce diagramme représente l'architecture de déploiement complète. Les fichiers statiques sont hébergés sur Netlify via un CDN mondial. Le backend repose entièrement sur Supabase (PostgreSQL + Auth + API REST). L'IA conversationnelle est fournie par l'API DeepSeek, et l'authentification sociale par Google OAuth 2.0.
+        </div>
+    </div>
+
+    <!-- ──────────────── TABLEAU RÉCAP ──────────────── -->
+    <div class="summary-section">
+        <div class="summary-title">📊 Tableau Récapitulatif</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Diagramme</th>
+                    <th>Objectif</th>
+                    <th>Éléments clés</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1</strong></td>
+                    <td><strong>Cas d'Utilisation</strong></td>
+                    <td>Rôles des acteurs et interactions système</td>
+                    <td>3 acteurs, 13 cas, include / extend</td>
+                </tr>
+                <tr>
+                    <td><strong>2</strong></td>
+                    <td><strong>Classes</strong></td>
+                    <td>Structure des données et relations</td>
+                    <td>12 classes, héritage, associations, dépendances</td>
+                </tr>
+                <tr>
+                    <td><strong>3</strong></td>
+                    <td><strong>Séquence — Réservation</strong></td>
+                    <td>Flux de réservation étape par étape</td>
+                    <td>Client → UI → script.js → Supabase</td>
+                </tr>
+                <tr>
+                    <td><strong>4</strong></td>
+                    <td><strong>Séquence — Atlas Chat</strong></td>
+                    <td>Flux de conversation avec l'IA</td>
+                    <td>Client → DeepSeek API → Réponse multilingue</td>
+                </tr>
+                <tr>
+                    <td><strong>5</strong></td>
+                    <td><strong>Activité</strong></td>
+                    <td>Logique métier et points de décision</td>
+                    <td>Login → Navigation → Réservation → Confirmation</td>
+                </tr>
+                <tr>
+                    <td><strong>6</strong></td>
+                    <td><strong>Déploiement</strong></td>
+                    <td>Infrastructure et hébergement</td>
+                    <td>Netlify + Supabase + DeepSeek + Google</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top:24px;">
+            <div style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">Stack Technologique</div>
+            <div class="tech-stack">
+                <div class="tech-item"><span class="tech-dot" style="background:#38bdf8"></span>HTML5 + CSS3 + Vanilla JS</div>
+                <div class="tech-item"><span class="tech-dot" style="background:#38bdf8"></span>Netlify CDN</div>
+                <div class="tech-item"><span class="tech-dot" style="background:#4ade80"></span>Supabase (PostgreSQL + Auth)</div>
+                <div class="tech-item"><span class="tech-dot" style="background:#a78bfa"></span>DeepSeek API (IA)</div>
+                <div class="tech-item"><span class="tech-dot" style="background:#fbbf24"></span>Google OAuth 2.0</div>
+                <div class="tech-item"><span class="tech-dot" style="background:#e0c97f"></span>I18n — FR / EN / AR / ES</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── FOOTER ── -->
+    <div class="footer">
+        Projet de Fin d'Études &nbsp;|&nbsp; <span>Golden Atlas</span> — Portail Hôtelier de Luxe &nbsp;|&nbsp; 2025–2026
+    </div>
+
+</div>
+
+<script>
+mermaid.initialize({
+    startOnLoad: true,
+    theme: 'dark',
+    themeVariables: {
+        primaryColor: '#1a1a2e',
+        primaryTextColor: '#e0c97f',
+        primaryBorderColor: '#e0c97f',
+        lineColor: '#a89b6e',
+        secondaryColor: '#16213e',
+        tertiaryColor: '#0f3460',
+        background: '#08080f',
+        mainBkg: '#111120',
+        nodeBorder: '#c9a84c',
+        clusterBkg: '#1a1a2e',
+        titleColor: '#e0c97f',
+        edgeLabelBackground: '#1a1a2e',
+        actorBkg: '#1a1a2e',
+        actorBorder: '#c9a84c',
+        actorTextColor: '#e0c97f',
+        actorLineColor: '#a89b6e',
+        signalColor: '#a89b6e',
+        signalTextColor: '#e8e0cc',
+        labelBoxBkgColor: '#16213e',
+        labelBoxBorderColor: '#c9a84c',
+        labelTextColor: '#e0c97f',
+        loopTextColor: '#e0c97f',
+        noteBorderColor: '#c9a84c',
+        noteBkgColor: '#0f3460',
+        noteTextColor: '#e8e0cc',
+        classText: '#e0c97f',
+    },
+    flowchart: { curve: 'basis', padding: 20, htmlLabels: true },
+    sequence: { actorMargin: 60, width: 140, height: 50, boxMargin: 8, mirrorActors: false },
+    classDiagram: { diagramPadding: 20 }
+});
+</script>
+<script>
+function downloadDiagram(btn) {
+    const section = btn.closest('.section');
+    const svg = section.querySelector('.mermaid svg');
+    if (!svg) {
+        alert("Le diagramme n'est pas encore généré !");
+        return;
+    }
+    
+    // Récupération des dimensions réelles du SVG
+    const rect = svg.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    
+    // Clonage pour pouvoir injecter le fond de couleur sans modifier la page
+    const cloneSvg = svg.cloneNode(true);
+    cloneSvg.setAttribute('width', width);
+    cloneSvg.setAttribute('height', height);
+    
+    // Ajout d'un rectangle de fond sombre (couleur du projet)
+    const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    bgRect.setAttribute("width", "100%");
+    bgRect.setAttribute("height", "100%");
+    bgRect.setAttribute("fill", "#08080f"); // Couleur de fond .diagram-box
+    cloneSvg.insertBefore(bgRect, cloneSvg.firstChild);
+    
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(cloneSvg);
+    
+    if(!source.match(/^<\?xml[^>]+>/)){
+        source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
+    }
+    if(!source.match(/^<svg[^>]+"http\:\/\/www\.w3\.org\/2000\/svg"/)){
+        source = source.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    
+    // Encodage en URI
+    const svgUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
+    
+    // Préparation du Canvas pour la conversion
+    const canvas = document.createElement('canvas');
+    // Mettre l'échelle à 2 ou 3 pour avoir un PNG en très haute qualité sans pixelisation !
+    const scale = 3; 
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const ctx = canvas.getContext('2d');
+    
+    const img = new Image();
+    img.onload = function() {
+        ctx.scale(scale, scale);
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Extraction en PNG
+        const pngUrl = canvas.toDataURL("image/png");
+        
+        const a = document.createElement("a");
+        a.href = pngUrl;
+        
+        const titleElement = section.querySelector('.section-title');
+        const title = titleElement ? titleElement.innerText.replace(/\s+/g, '_').replace(/[^\w-]/g, '') : 'Diagramme';
+        a.download = title + '.png'; // Extension PNG
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Optionnel : donner un retour visuel sur le bouton
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "✅ Enregistré !";
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+    };
+    img.src = svgUrl;
+}
+</script>
+</body>
+</html>

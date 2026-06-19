@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Diagramme de Déploiement — Golden Atlas</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0d1a;color:#e8e0cc;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.print-btn{position:fixed;top:18px;right:18px;z-index:999;background:linear-gradient(135deg,#c9a84c,#e0c97f);color:#1a1a2e;border:none;padding:11px 26px;border-radius:30px;font-family:'Inter',sans-serif;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 4px 20px #c9a84c55;letter-spacing:.5px}
+.page{max-width:960px;margin:0 auto;padding:40px 30px;flex:1}
+.header{text-align:center;padding:50px 30px 40px;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);border:1px solid #e0c97f33;border-radius:18px;margin-bottom:36px}
+.header .icon{font-size:2.8rem;margin-bottom:12px}
+.header h1{font-family:'Playfair Display',serif;font-size:2rem;color:#e0c97f;margin-bottom:6px}
+.header .sub{font-size:.85rem;color:#a89b6e;margin-bottom:20px}
+.badge{display:inline-block;background:#e0c97f18;border:1px solid #e0c97f44;color:#e0c97f;padding:5px 18px;border-radius:20px;font-size:.75rem;font-weight:600;margin:3px}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#c9a84c,transparent);margin:18px auto}
+.diagram-box{background:#08080f;border:1px solid #1a1a30;border-radius:12px;padding:24px 16px;overflow-x:auto;display:flex;justify-content:center;margin-bottom:20px;min-height:180px;align-items:center}
+.mermaid{width:100%}
+.mermaid svg{max-width:100%;height:auto}
+.desc-box{background:#1a1a2e;border-left:3px solid #c9a84c;padding:14px 18px;border-radius:0 8px 8px 0;font-size:.82rem;color:#b0a88a;line-height:1.7}
+.desc-box strong{color:#e0c97f}
+.meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px}
+.meta-item{flex:1;min-width:150px;background:#0f0f1e;border:1px solid #2a2a4a;border-radius:10px;padding:14px 18px}
+.meta-item .label{font-size:.65rem;color:#7a7a9a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
+.meta-item .value{font-size:.82rem;color:#e0c97f;font-weight:600}
+footer{text-align:center;padding:20px;color:#4a4a6a;font-size:.72rem;border-top:1px solid #1a1a2e;margin-top:auto}
+footer span{color:#c9a84c}
+@media print{
+  body{background:#fff;color:#111}
+  .print-btn{display:none}
+  .page{padding:10px}
+  .header,.card,.diagram-box,.desc-box,.meta-item{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:12mm}
+}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Enregistrer en PDF</button>
+<div class="page">
+  <div class="header">
+    <div class="icon">☁️</div>
+    <h1>Diagramme de Déploiement</h1>
+    <p class="sub">Infrastructure technique : Netlify + Supabase + DeepSeek + Google</p>
+    <div class="divider"></div>
+    <span class="badge">Deployment Diagram</span>
+    <span class="badge">Cloud Infrastructure</span>
+    <span class="badge">PFE 2025–2026</span>
+  </div>
+
+  <div class="diagram-box">
+    <div class="mermaid">
+flowchart TD
+    subgraph CoteClient["💻 Côté Client"]
+        Nav["🌐 Navigateur Web\nChrome / Firefox / Safari\n─────────────────\nHTML5 + CSS3 + Vanilla JS\nMoteur I18n (FR/EN/AR/ES)"]
+    end
+
+    subgraph Netlify["☁️ Netlify — Hébergement Statique"]
+        Files["📁 Fichiers Statiques\n─────────────────\nindex.html / chat.html\nstyle.css / script.js\nImages et Assets"]
+        CDN["🌍 CDN Netlify\nHTTPS / TLS\nDistribution mondiale"]
+    end
+
+    subgraph SupabaseCloud["🗄️ Supabase — Backend as a Service"]
+        Auth["🔐 Service Auth\nEmail + Google OAuth 2.0"]
+        PostgreSQL["🐘 PostgreSQL DB\n─────────────────\nTable : utilisateurs\nTable : reservations\nTable : chambres"]
+        API["🔌 API REST\nRow Level Security\nAuto-générée"]
+    end
+
+    subgraph DeepSeek["🤖 DeepSeek — API IA"]
+        Modele["🧠 Modèle deepseek-chat\nLLM Multilingue\nContexte hôtelier"]
+    end
+
+    subgraph GoogleServ["🔑 Services Google"]
+        OAuth["Google OAuth 2.0\nFournisseur d'identité"]
+        Fonts["Google Fonts\nPlayfair / Inter"]
+    end
+
+    Nav -->|"HTTPS GET"| CDN
+    CDN --> Files
+    Files --> Nav
+    Nav -->|"Supabase JS Client"| API
+    API --> Auth
+    API --> PostgreSQL
+    Auth -->|"Flux OAuth"| OAuth
+    OAuth -->|"ID Token"| Auth
+    Nav -->|"fetch POST Bearer Token"| Modele
+    Nav -->|"Import CSS"| Fonts
+
+    style CoteClient fill:#1a1a2e,color:#e0c97f,stroke:#e0c97f,stroke-width:2px
+    style Netlify fill:#00435a,color:#fff,stroke:#38bdf8,stroke-width:2px
+    style SupabaseCloud fill:#1a3c2e,color:#4ade80,stroke:#4ade80,stroke-width:2px
+    style DeepSeek fill:#2d1b69,color:#a78bfa,stroke:#7c3aed,stroke-width:2px
+    style GoogleServ fill:#3c2400,color:#fbbf24,stroke:#f59e0b,stroke-width:2px
+    </div>
+  </div>
+
+  <div class="desc-box">
+    <strong>Description :</strong> Ce diagramme représente l'architecture de déploiement finale du portail Golden Atlas. Les fichiers statiques sont hébergés sur Netlify. Le backend repose entièrement sur Supabase (PostgreSQL + Auth + API). L'IA conversationnelle est fournie par l'API DeepSeek, et l'authentification sociale par Google OAuth 2.0.
+  </div>
+
+  <div class="meta">
+    <div class="meta-item"><div class="label">Hébergement Static</div><div class="value">Netlify (CDN Global)</div></div>
+    <div class="meta-item"><div class="label">Backend / DB</div><div class="value">Supabase (PostgreSQL)</div></div>
+    <div class="meta-item"><div class="label">Services IA</div><div class="value">DeepSeek API (LLM)</div></div>
+    <div class="meta-item"><div class="label">Authentification</div><div class="value">Email + Google OAuth</div></div>
+  </div>
+</div>
+<footer>Golden Atlas PFE &nbsp;|&nbsp; <span>Diagramme 6/6</span> — Deployment Diagram</footer>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1a1a2e',primaryTextColor:'#e0c97f',primaryBorderColor:'#c9a84c',lineColor:'#a89b6e',secondaryColor:'#16213e',tertiaryColor:'#0f3460',background:'#08080f',mainBkg:'#111120',nodeBorder:'#c9a84c',clusterBkg:'#1a1a2e',titleColor:'#e0c97f'},flowchart:{curve:'basis',padding:20}});</script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Diagramme de Séquence — Atlas Chat IA — Golden Atlas</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0d1a;color:#e8e0cc;font-family:'Inter',sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.print-btn{position:fixed;top:18px;right:18px;z-index:999;background:linear-gradient(135deg,#c9a84c,#e0c97f);color:#1a1a2e;border:none;padding:11px 26px;border-radius:30px;font-family:'Inter',sans-serif;font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 4px 20px #c9a84c55;letter-spacing:.5px}
+.page{max-width:960px;margin:0 auto;padding:40px 30px;flex:1}
+.header{text-align:center;padding:50px 30px 40px;background:linear-gradient(135deg,#1a1a2e,#2d1b69,#0f3460);border:1px solid #a78bfa44;border-radius:18px;margin-bottom:36px}
+.header .icon{font-size:2.8rem;margin-bottom:12px}
+.header h1{font-family:'Playfair Display',serif;font-size:2rem;color:#e0c97f;margin-bottom:6px}
+.header .sub{font-size:.85rem;color:#a89b6e;margin-bottom:20px}
+.badge{display:inline-block;background:#e0c97f18;border:1px solid #e0c97f44;color:#e0c97f;padding:5px 18px;border-radius:20px;font-size:.75rem;font-weight:600;margin:3px}
+.divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#a78bfa,transparent);margin:18px auto}
+.diagram-box{background:#08080f;border:1px solid #1a1a30;border-radius:12px;padding:24px 16px;overflow-x:auto;display:flex;justify-content:center;margin-bottom:20px;min-height:180px;align-items:center}
+.mermaid{width:100%}
+.mermaid svg{max-width:100%;height:auto}
+.desc-box{background:#1a1a2e;border-left:3px solid #a78bfa;padding:14px 18px;border-radius:0 8px 8px 0;font-size:.82rem;color:#b0a88a;line-height:1.7}
+.desc-box strong{color:#e0c97f}
+.meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:20px}
+.meta-item{flex:1;min-width:150px;background:#0f0f1e;border:1px solid #2a2a4a;border-radius:10px;padding:14px 18px}
+.meta-item .label{font-size:.65rem;color:#7a7a9a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
+.meta-item .value{font-size:.82rem;color:#e0c97f;font-weight:600}
+footer{text-align:center;padding:20px;color:#4a4a6a;font-size:.72rem;border-top:1px solid #1a1a2e;margin-top:auto}
+footer span{color:#a78bfa}
+@media print{body{background:#fff}.print-btn{display:none}.page{padding:10px}.header,.diagram-box,.desc-box,.meta-item{-webkit-print-color-adjust:exact;print-color-adjust:exact}@page{size:A4;margin:12mm}}
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">🖨️ Enregistrer en PDF</button>
+<div class="page">
+  <div class="header">
+    <div class="icon">🤖</div>
+    <h1>Diagramme de Séquence — Atlas Chat IA</h1>
+    <p class="sub">Scénario : Conversation avec le concierge IA DeepSeek — Golden Atlas</p>
+    <div class="divider"></div>
+    <span class="badge">Sequence Diagram</span>
+    <span class="badge">DeepSeek API</span>
+    <span class="badge">PFE 2025–2026</span>
+  </div>
+
+  <div class="diagram-box">
+    <div class="mermaid">
+sequenceDiagram
+    actor C as Client
+    participant CH as chat.html
+    participant JS as AtlasChat JS
+    participant DS as DeepSeek API
+    participant SB as Supabase
+
+    C->>CH: Ouvre la page Atlas Chat
+    CH->>JS: initAtlasChat()
+    JS->>SB: getSession()
+    SB-->>JS: Données utilisateur + langue préférée
+    JS-->>CH: Message de bienvenue multilingue
+
+    loop Conversation interactive
+        C->>CH: Saisit un message
+        CH->>JS: sendMessage(texte)
+        JS->>JS: Construction du system prompt
+        JS->>DS: POST /v1/chat/completions
+        DS-->>JS: Réponse du modèle deepseek-chat
+        JS-->>CH: Affichage avec effet de frappe
+    end
+
+    C->>CH: Clique sur Réserver maintenant
+    CH->>JS: redirectToBooking()
+    JS-->>CH: Redirection vers hebergements.html
+    </div>
+  </div>
+
+  <div class="desc-box">
+    <strong>Description :</strong> Ce diagramme illustre le fonctionnement du concierge IA Atlas Chat. Les messages du client sont transmis à l'API DeepSeek via des requêtes HTTP sécurisées (Bearer Token). Le contexte système (system prompt) est construit dynamiquement selon la langue de l'utilisateur récupérée via Supabase.
+  </div>
+
+  <div class="meta">
+    <div class="meta-item"><div class="label">Participants</div><div class="value">Client / chat.html / JS / DeepSeek / Supabase</div></div>
+    <div class="meta-item"><div class="label">Modèle IA</div><div class="value">deepseek-chat (LLM)</div></div>
+    <div class="meta-item"><div class="label">Langues supportées</div><div class="value">FR / EN / AR / ES</div></div>
+    <div class="meta-item"><div class="label">Authentification API</div><div class="value">Bearer Token (HTTPS)</div></div>
+  </div>
+</div>
+<footer>Golden Atlas PFE &nbsp;|&nbsp; <span>Diagramme 4/6</span> — Sequence Diagram (Atlas Chat IA)</footer>
+<script>mermaid.initialize({startOnLoad:true,theme:'dark',themeVariables:{primaryColor:'#1a1a2e',primaryTextColor:'#e0c97f',primaryBorderColor:'#a78bfa',lineColor:'#a89b6e',secondaryColor:'#2d1b69',background:'#08080f',mainBkg:'#111120',actorBkg:'#2d1b69',actorBorder:'#a78bfa',actorTextColor:'#e0c97f',actorLineColor:'#a89b6e',signalColor:'#a78bfa',signalTextColor:'#e8e0cc',labelBoxBkgColor:'#2d1b69',labelBoxBorderColor:'#a78bfa',labelTextColor:'#e0c97f',loopTextColor:'#e0c97f',noteBorderColor:'#a78bfa',noteBkgColor:'#1a1040',noteTextColor:'#e8e0cc'},sequence:{actorMargin:60,width:140,height:50,mirrorActors:false}});</script>
+</body>
+</html>
