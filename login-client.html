@@ -438,11 +438,12 @@ document.getElementById('forgot-form')?.addEventListener('submit', async functio
     });
     
     if(error) {
-        console.error("Supabase Reset Error:", error);
-        simToast("❌ " + error.message, '#ef4444');
+        console.error("Supabase Reset Error:", JSON.stringify(error));
+        const msg = error.message || error.error_description || JSON.stringify(error);
+        simToast("❌ " + msg, '#ef4444');
     } else {
-        simToast("✅ Lien de réinitialisation envoyé.", 'var(--gold)');
-        setTimeout(() => document.getElementById('back-to-login-forgot').click(), 2000);
+        simToast("✅ Lien de réinitialisation envoyé ! Vérifiez Gmail.", 'var(--gold)');
+        setTimeout(() => document.getElementById('back-to-login-forgot').click(), 2500);
     }
     btn.textContent = 'ENVOYER LE LIEN';
 });

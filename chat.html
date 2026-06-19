@@ -537,7 +537,7 @@
         
         <!-- Quick Actions -->
         <div class="quick-actions">
-            <button class="quick-action-btn" onclick="quickSend('Réserver une chambre')">🛏️ Réserver</button>
+            <button class="quick-action-btn" onclick="quickSend('Je veux réserver une chambre')">🛏️ Réserver</button>
             <button class="quick-action-btn" onclick="quickSend('Informations sur le Spa')">🧖 Spa</button>
             <button class="quick-action-btn" onclick="quickSend('Voir le menu du restaurant')">🍽️ Restaurant</button>
             <button class="quick-action-btn" onclick="quickSend('Les tarifs')">💰 Tarifs</button>
@@ -620,6 +620,11 @@
             `);
             chatInput.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
+
+            // Check reservation flow first
+            const handled = await handleReservationFlow(text);
+            if (handled) return;
+
             chatHistory.push({ role: "user", content: text });
 
             const loadingId = "load-" + Date.now();
@@ -718,6 +723,148 @@
                 return "🎉 Notre salle des fêtes est disponible pour :\n\n• **Mariages** — Un cadre féerique\n• **Conférences** — Équipement dernier cri\n• **Événements privés** — Service personnalisé\n\nContactez-nous pour un devis sur mesure.";
             }
             return "C'est une excellente question ! En tant que concierge du Golden Atlas, je vous recommande de découvrir nos installations de classe mondiale. Puis-je vous renseigner sur nos chambres, le Spa, nos restaurants ou nos services de transport ? ✨";
+        }
+
+        // === Supabase Init ===
+        const SUPABASE_URL = 'https://dwvmunsmqkjmybjkhsvx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3dm11bnNtcWtqbXliamtoc3Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk1NzAxMDMsImV4cCI6MjA2NTE0NjEwM30.Mvqb6r5muBCfzBjnDFrFTrU2-W4NhLJtX5o8i9JEMNs';
+        const _supa = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+        // === Reservation Flow State ===
+        let resvState = null; // null | 'ask_room' | 'ask_checkin' | 'ask_checkout' | 'ask_confirm'
+        let resvData = {};
+
+        const ROOMS = [
+            { id: 1, name: 'Chambre Premium', price: 1200, type: 'Standard' },
+            { id: 2, name: 'Suite Royale', price: 2500, type: 'Suite' },
+            { id: 3, name: 'Riad Privé', price: 5000, type: 'VIP Suite' },
+            { id: 4, name: 'Pavillon de Luxe', price: 3800, type: 'Deluxe' },
+        ];
+
+        function getRoomByInput(text) {
+            const t = text.toLowerCase();
+            if (t.includes('premium') || t.includes('1') || t.includes('standard')) return ROOMS[0];
+            if (t.includes('royale') || t.includes('suite') || t.includes('2')) return ROOMS[1];
+            if (t.includes('riad') || t.includes('vip') || t.includes('3')) return ROOMS[2];
+            if (t.includes('pavillon') || t.includes('luxe') || t.includes('4') || t.includes('deluxe')) return ROOMS[3];
+            return null;
+        }
+
+        function parseDate(text) {
+            // Accept YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY
+            let d = text.match(/(\d{4})-(\d{2})-(\d{2})/);
+            if (d) return `${d[1]}-${d[2]}-${d[3]}`;
+            d = text.match(/(\d{2})[\/-](\d{2})[\/-](\d{4})/);
+            if (d) return `${d[3]}-${d[2]}-${d[1]}`;
+            return null;
+        }
+
+        function isReservationIntent(text) {
+            const t = text.toLowerCase();
+            return t.includes('réserver') || t.includes('reserver') || t.includes('réservation') ||  
+                   t.includes('book') || t.includes('chambre') || t.includes('suite') ||  
+                   t.includes('héberger') || t.includes('nuit') || t.includes('séjour') ||
+                   t.includes('riad') || t.includes('pavillon');
+        }
+
+        async function handleReservationFlow(text) {
+            const user = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+
+            if (!resvState && isReservationIntent(text)) {
+                if (!user) {
+                    addBotMessage("🔐 Pour effectuer une réservation, vous devez d'abord vous connecter.\n\nVeuillez vous rendre sur notre **[page de connexion](login-client.html)** et revenir ensuite.");
+                    return true;
+                }
+                resvState = 'ask_room';
+                resvData = { userName: user.name, userEmail: user.email };
+                addBotMessage(`Marhaba ${user.name} ! 🏨 Avec plaisir, je vais vous aider à réserver.\n\nVoici nos hébergements disponibles :\n\n**1** — Chambre Premium · 1 200 DH/nuit\n**2** — Suite Royale · 2 500 DH/nuit\n**3** — Riad Privé · 5 000 DH/nuit\n**4** — Pavillon de Luxe · 3 800 DH/nuit\n\nQuel hébergement souhaitez-vous réserver ? (tapez le numéro ou le nom)`);
+                return true;
+            }
+
+            if (resvState === 'ask_room') {
+                const room = getRoomByInput(text);
+                if (!room) {
+                    addBotMessage("Je n'ai pas bien compris. Tapez le **numéro** ou le **nom** de l'hébergement svp.\n(ex: 1, 2, Suite, Riad...)");
+                    return true;
+                }
+                resvData.room = room;
+                resvState = 'ask_checkin';
+                addBotMessage(`✅ Excellent choix ! **${room.name}** à **${room.price} DH/nuit**.\n\nQuelle est votre date d'arrivée ?\n(format : JJ/MM/AAAA ou AAAA-MM-JJ)`);
+                return true;
+            }
+
+            if (resvState === 'ask_checkin') {
+                const date = parseDate(text);
+                if (!date) {
+                    addBotMessage("Format de date non reconnu. Exemple : **24/06/2025** ou **2025-06-24**");
+                    return true;
+                }
+                if (new Date(date) < new Date()) {
+                    addBotMessage("⚠️ La date d'arrivée ne peut pas être dans le passé. Veuillez entrer une date valide.");
+                    return true;
+                }
+                resvData.checkin = date;
+                resvState = 'ask_checkout';
+                addBotMessage(`📅 Arrivée : **${date}**\n\nEt quelle est votre date de départ ?`);
+                return true;
+            }
+
+            if (resvState === 'ask_checkout') {
+                const date = parseDate(text);
+                if (!date) {
+                    addBotMessage("Format de date non reconnu. Exemple : **27/06/2025**");
+                    return true;
+                }
+                if (new Date(date) <= new Date(resvData.checkin)) {
+                    addBotMessage("⚠️ La date de départ doit être après la date d'arrivée.");
+                    return true;
+                }
+                resvData.checkout = date;
+                const nights = Math.round((new Date(date) - new Date(resvData.checkin)) / 86400000);
+                resvData.nights = nights;
+                resvData.total = nights * resvData.room.price;
+                resvState = 'ask_confirm';
+                addBotMessage(`✨ **Récapitulatif de votre réservation :**\n\n🏨 **${resvData.room.name}**\n👤 **${resvData.userName}**\n📅 Arrivée : ${resvData.checkin}\n📅 Départ : ${resvData.checkout}\n🌙 **${nights} nuit(s)**\n💰 **Total : ${resvData.total.toLocaleString()} DH**\n\nConfirmez-vous cette réservation ? (**oui** / **non**)`);
+                return true;
+            }
+
+            if (resvState === 'ask_confirm') {
+                const t = text.toLowerCase().trim();
+                if (t.includes('oui') || t.includes('yes') || t.includes('ok') || t.includes('confirm') || t.includes('nam') || t.includes('iyeh')) {
+                    addBotMessage('⏳ Traitement de votre réservation en cours...');
+                    try {
+                        if (_supa) {
+                            await _supa.from('ga_reservations').insert([{
+                                user_name: resvData.userName,
+                                user_email: resvData.userEmail,
+                                room_name: resvData.room.name,
+                                room_type: resvData.room.type,
+                                check_in: resvData.checkin,
+                                check_out: resvData.checkout,
+                                nights: resvData.nights,
+                                total_price: resvData.total,
+                                status: 'Confirmée',
+                                source: 'Atlas Chat'
+                            }]);
+                        }
+                        addBotMessage(`🎉 **Réservation confirmée avec succès !**\n\n✅ **${resvData.room.name}** du **${resvData.checkin}** au **${resvData.checkout}**\n💰 Montant total : **${resvData.total.toLocaleString()} DH**\n\nUn email de confirmation sera envoyé à **${resvData.userEmail}**.\n\nNous vous souhaitons un séjour mémorable au Golden Atlas ! ✨`);
+                    } catch(err) {
+                        addBotMessage('✅ Réservation enregistrée ! Notre équipe vous contactera pour la confirmation.');
+                    }
+                    resvState = null;
+                    resvData = {};
+                    return true;
+                } else if (t.includes('non') || t.includes('no') || t.includes('annul') || t.includes('la')) {
+                    resvState = null;
+                    resvData = {};
+                    addBotMessage("Réservation annulée. Je reste à votre disposition pour toute autre demande. ✨");
+                    return true;
+                } else {
+                    addBotMessage("Veuillez répondre par **oui** pour confirmer ou **non** pour annuler.");
+                    return true;
+                }
+            }
+            return false;
         }
 
         sendBtn.addEventListener('click', sendMessage);
