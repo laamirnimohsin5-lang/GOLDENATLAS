@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Présentation Golden Atlas · Digital Excellence</title>
+    <title>Soutenance Golden Atlas · Portail de Luxe</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -40,22 +40,23 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 80px;
+            padding: 60px 80px;
             overflow: hidden;
+            background: var(--dark);
         }
 
         .slide::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at center, rgba(201, 168, 76, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle at center, rgba(201, 168, 76, 0.03) 0%, transparent 70%);
             z-index: 0;
         }
 
         .content {
             position: relative;
             z-index: 10;
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
             opacity: 0;
             transform: translateY(30px);
@@ -68,320 +69,253 @@
         }
 
         /* Typography */
-        h1 { font-family: 'Playfair Display', serif; font-size: 5rem; color: var(--gold); margin-bottom: 20px; line-height: 1.1; }
-        h2 { font-family: 'Playfair Display', serif; font-size: 3.5rem; color: var(--gold); margin-bottom: 25px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: 4rem; color: var(--gold); margin-bottom: 20px; line-height: 1.1; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--gold); margin-bottom: 25px; border-bottom: 1px solid rgba(201,168,76,0.2); padding-bottom: 10px; }
         h3 { font-size: 0.8rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 15px; }
-        p { font-size: 1.2rem; line-height: 1.8; color: rgba(255,255,255,0.7); max-width: 800px; }
+        p { font-size: 1.1rem; line-height: 1.7; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+        
+        .accent-box {
+            background: rgba(201, 168, 76, 0.05);
+            border-left: 4px solid var(--gold);
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        /* Specific Layouts */
+        .page-garde { text-align: center; }
+        .garde-meta { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 50px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .meta-item label { display: block; font-size: 0.7rem; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px; }
+        .meta-item span { font-size: 1.2rem; font-weight: 500; }
+
+        .tech-icons { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 30px; }
+        .tech-pill { padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; font-size: 0.8rem; letter-spacing: 1px; color: var(--gold-light); }
+
+        .diagram-placeholder {
+            width: 100%; height: 400px; 
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(201,168,76,0.3);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.2); font-size: 0.9rem;
+            margin-top: 20px;
+        }
 
         /* Navigation */
-        .nav-dots {
-            position: fixed;
-            right: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+        .nav-dots { position: fixed; right: 40px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .dot { width: 10px; height: 10px; border: 1px solid var(--gold); border-radius: 50%; cursor: pointer; transition: 0.3s; }
+        .dot.active { background: var(--gold); transform: scale(1.3); }
+        
+        .slide-counter { position: fixed; bottom: 30px; left: 30px; font-size: 0.7rem; letter-spacing: 3px; color: var(--gold); }
+        .luxury-line { position: fixed; top: 0; left: 0; width: 4px; height: 100vh; background: var(--gold); }
+        
+        .questions-slide h1 { font-size: 6rem; letter-spacing: 10px; }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            border: 2px solid var(--gold);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .dot.active {
-            background: var(--gold);
-            transform: scale(1.3);
-        }
-
-        .nav-arrows {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            display: flex;
-            gap: 20px;
-            z-index: 100;
-        }
-
-        .arrow {
-            width: 50px;
-            height: 50px;
-            border: 1px solid rgba(201,168,76,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.4s;
-            color: var(--gold);
-        }
-
-        .arrow:hover { background: var(--gold); color: #000; }
-
-        /* Feature Grid */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 40px;
-            margin-top: 40px;
-        }
-
-        .feature-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(201,168,76,0.1);
-            padding: 30px;
-            transition: 0.4s;
-        }
-
-        .feature-item:hover { border-color: var(--gold); transform: translateY(-5px); }
-
-        .slide-counter {
-            position: fixed;
-            bottom: 40px;
-            left: 40px;
-            font-size: 0.8rem;
-            letter-spacing: 4px;
-            color: var(--gold);
-            z-index: 100;
-        }
-
-        .luxury-bar {
-            position: fixed;
-            top: 0; left: 0; width: 4px; height: 100vh;
-            background: var(--gold);
-            z-index: 100;
-        }
-
-        /* Branding */
-        .logo-top {
-            position: fixed;
-            top: 40px;
-            left: 40px;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-            color: var(--gold);
-            z-index: 100;
-        }
-
-        /* Background Visuals */
-        .bg-text {
-            position: absolute;
-            font-size: 20vw;
-            font-weight: 900;
-            color: rgba(201, 168, 76, 0.02);
-            font-family: 'Playfair Display', serif;
-            bottom: -5%;
-            right: -5%;
-            pointer-events: none;
-            text-transform: uppercase;
-        }
-
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
     </style>
 </head>
 <body>
-    <div class="luxury-bar"></div>
-    <div class="logo-top">GOLDEN ATLAS</div>
+    <div class="luxury-line"></div>
     <div class="slide-counter" id="counter">01 / 10</div>
-
     <div class="nav-dots" id="dots"></div>
 
-    <div class="nav-arrows">
-        <div class="arrow" onclick="prevSlide()">←</div>
-        <div class="arrow" onclick="nextSlide()">→</div>
-    </div>
-
     <div class="presentation-container" id="container">
-        <!-- Slide 1: Welcome -->
+        <!-- 1. Page de Garde -->
         <section class="slide active">
-            <div class="bg-text">HERITAGE</div>
-            <div class="content">
-                <h3>INTRODUCTION</h3>
+            <div class="content page-garde">
+                <h3>PROJET DE FIN D'ÉTUDES</h3>
                 <h1>Golden Atlas Palace</h1>
-                <p>Une métamorphose digitale pour un monument historique. Fusionner l'héritage légendaire de 1923 avec les standards technologiques du futur.</p>
-                <div style="margin-top: 40px; display: flex; gap: 20px;">
-                    <span style="padding: 10px 20px; border: 1px solid var(--gold); font-size: 0.7rem; letter-spacing: 2px;">LUXE DIGITAL</span>
-                    <span style="padding: 10px 20px; border: 1px solid var(--gold); font-size: 0.7rem; letter-spacing: 2px;">PRESENCE MONDIALE</span>
+                <p style="letter-spacing: 5px; color: var(--gold);">PORTAIL DE LUXE & SYSTÈME DE GESTION</p>
+                
+                <div class="garde-meta">
+                    <div class="meta-item"><label>Réalisé par</label><span>[Nom de l'Étudiant]</span></div>
+                    <div class="meta-item"><label>Encadrant</label><span>[Nom de l'Encadrant]</span></div>
+                    <div class="meta-item"><label>Établissement</label><span>[Nom de l'École/Université]</span></div>
+                    <div class="meta-item"><label>Date</label><span>Juin 2026</span></div>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 2: Vision -->
+        <!-- 2. Contexte Général -->
         <section class="slide">
-            <div class="bg-text">VISION</div>
             <div class="content">
-                <h3>OBJECTIFS DU PROJET</h3>
-                <h2>L'Évidence de l'Excellence</h2>
-                <div class="feature-grid">
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">Identité Visuelle</h4>
-                        <p style="font-size:0.9rem;">Design premium inspiré de l'architecture marocaine néo-classique.</p>
+                <h3>CONTEXTE</h3>
+                <h2>Pourquoi ce projet ?</h2>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color:var(--gold); margin-bottom:10px;">Le Choix</h4>
+                        <p>La ville d'Errachidia possède un joyau architectural, le Golden Atlas, qui nécessite une vitrine digitale à la hauteur de son prestige mondial.</p>
                     </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">Expérience Utilisateur</h4>
-                        <p style="font-size:0.9rem;">Navigation fluide, immersive et ultra-responsive.</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">Internationalisation</h4>
-                        <p style="font-size:0.9rem;">Interface multilingue (FR, EN, ES, AR) pour une clientèle globale.</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold); margin-bottom:10px;">Écosystème Digital</h4>
-                        <p style="font-size:0.9rem;">Intégration d'outils de réservation et de fidélisation avancés.</p>
+                    <div>
+                        <h4 style="color:var(--gold); margin-bottom:10px;">Le Problème</h4>
+                        <p>Manque d'interactivité, processus de réservation obsolète et absence de programme de fidélisation digitalisé pour une clientèle exigeante.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 3: Contenu Hébergements -->
+        <!-- 3. Problématique -->
         <section class="slide">
-            <div class="bg-text">SEJOUR</div>
             <div class="content">
-                <h3>L'OFFRE HÉBERGEMENT</h3>
-                <h2>Havres de Paix</h2>
-                <p>Une présentation exhaustive des chambres et suites, chacune racontant une histoire unique.</p>
-                <ul style="list-style:none; margin-top:30px; display:grid; grid-template-columns: repeat(2, 1fr); gap:15px;">
-                    <li style="border-left: 2px solid var(--gold); padding-left: 15px;">Chambres Atlas Supérieures</li>
-                    <li style="border-left: 2px solid var(--gold); padding-left: 15px;">Suites Juniors & Prestige</li>
-                    <li style="border-left: 2px solid var(--gold); padding-left: 15px;">Les Riads Privatisés</li>
-                    <li style="border-left: 2px solid var(--gold); padding-left: 15px;">Le Pavillon de Verre</li>
-                </ul>
+                <h3>PROBLÉMATIQUE</h3>
+                <h2>Défis de la Digitalisation</h2>
+                <div class="accent-box">
+                    <p style="color:#fff; font-weight:600; margin-bottom:10px;">Comment concilier authenticité historique et modernité technologique ?</p>
+                    <ul style="list-style:none; padding-left:10px;">
+                        <li style="margin-bottom:10px; opacity:0.8;">• Absence de visibilité en temps réel sur les services du Palace.</li>
+                        <li style="margin-bottom:10px; opacity:0.8;">• Difficulté de gestion des réservations internationales multilingues.</li>
+                        <li style="margin-bottom:10px; opacity:0.8;">• Besoin d'une assistance client personnalisée et instantanée (IA).</li>
+                    </ul>
+                </div>
             </div>
         </section>
 
-        <!-- Slide 4: Gastronomie & Spa -->
+        <!-- 4. Objectifs du Projet -->
         <section class="slide">
-            <div class="bg-text">VIVRE</div>
             <div class="content">
-                <h3>SERVICES D'EXCEPTION</h3>
-                <h2>Gastronomie & Bien-être</h2>
-                <div class="feature-grid">
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Gastronomie</h4>
-                        <p style="font-size:0.9rem;">4 Restaurants signatures (Marocain, Italien, Asiatique, Pavillon) avec menus interactifs.</p>
+                <h3>OBJECTIFS</h3>
+                <h2>Vers l'Excellence Numérique</h2>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color:var(--gold);">Objectifs Principaux</h4>
+                        <ul style="opacity:0.8; padding-left:20px; font-size:0.9rem;">
+                            <li>Création d'une interface immersive (Luxe).</li>
+                            <li>Tunnel de réservation fluide et sécurisé.</li>
+                            <li>Support multilingue complet (AR, FR, EN, ES).</li>
+                        </ul>
                     </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Spa & Bien-être</h4>
-                        <p style="font-size:0.9rem;">Immersion visuelle dans les hammams et soins ancestraux du Palace.</p>
+                    <div>
+                        <h4 style="color:var(--gold);">Objectifs Secondaires</h4>
+                        <ul style="opacity:0.8; padding-left:20px; font-size:0.9rem;">
+                            <li>Intégration d'un Concierge AI (Atlas Chat).</li>
+                            <li>Mise en place d'un programme de fidélité.</li>
+                            <li>Génération dynamique de factures PDF.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 5: Innovation AI -->
+        <!-- 5. Analyse des Besoins -->
         <section class="slide">
-            <div class="bg-text">TECH</div>
             <div class="content">
-                <h3>INNOVATION</h3>
-                <h2>Atlas Chat : L'Assistant IA</h2>
-                <p>Un concierge intelligent disponible 24/7 pour répondre aux besoins spécifiques des clients.</p>
-                <div style="margin-top:40px; background:rgba(201,168,76,0.1); border-left:4px solid var(--gold); padding:30px;">
-                    <p style="font-style:italic; font-size:1.1rem; color:#fff;">"Bienvenue au Golden Atlas. Comment puis-je sublimer votre séjour aujourd'hui ?"</p>
-                    <p style="font-size:0.8rem; margin-top:20px; letter-spacing:2px; color:var(--gold);">Propulsé par l'IA DeepSeek & OpenAI</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Slide 6: Réservation -->
-        <section class="slide">
-            <div class="bg-text">BOOKING</div>
-            <div class="content">
-                <h3>FLUX DE CONVERSION</h3>
-                <h2>Système de Réservation</h2>
-                <p>Un tunnel de vente simplifié pour une conversion maximale.</p>
-                <div class="feature-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div style="text-align:center;">
-                        <h1 style="font-size:2.5rem; margin-bottom:0;">01</h1>
-                        <p style="font-size:0.8rem;">Sélection de l'offre</p>
+                <h3>ANALYSE</h3>
+                <h2>Besoins Fonctionnels & Techniques</h2>
+                <div class="feature-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:30px;">
+                    <div class="tech-pill" style="height:auto;">
+                        <label style="color:var(--gold); font-weight:700;">Fonctionnels</label>
+                        <p style="font-size:0.8rem; margin:10px 0;">Réservation, Paiement à l'arrivée, Gestion de profil, Chat IA, Programme de points.</p>
                     </div>
-                    <div style="text-align:center;">
-                        <h1 style="font-size:2.5rem; margin-bottom:0;">02</h1>
-                        <p style="font-size:0.8rem;">Validation Sécurisée</p>
-                    </div>
-                    <div style="text-align:center;">
-                        <h1 style="font-size:2.5rem; margin-bottom:0;">03</h1>
-                        <p style="font-size:0.8rem;">Confirmation Instantanée</p>
+                    <div class="tech-pill" style="height:auto;">
+                        <label style="color:var(--gold); font-weight:700;">Non-Fonctionnels</label>
+                        <p style="font-size:0.8rem; margin:10px 0;">Sécurité des données, Rapidité (Performance), Responsive Design, Haute Disponibilité.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 7: Fidélité -->
+        <!-- 6. Conception UML -->
         <section class="slide">
-            <div class="bg-text">LOYALTY</div>
             <div class="content">
-                <h3>PROGRAMME DE RÉCOMPENSES</h3>
-                <h2>Le Pacte de Fidélité</h2>
-                <p>Encourager le retour de notre clientèle d'exception grâce à un système à paliers.</p>
-                <div style="margin-top:40px; padding:30px; border:1px dashed var(--gold);">
-                    <h4 style="color:var(--gold); font-size:1.5rem; margin-bottom:10px;">L'Offre 10/10</h4>
-                    <p>Pour chaque tranche de 10 réservations validées, le client bénéficie d'une réduction exceptionnelle de <strong style="color:var(--gold-light);">25% sur son prochain séjour</strong>.</p>
-                    <p style="font-size:0.8rem; margin-top:10px; opacity:0.5;">Suivi en temps réel via le portail client.</p>
+                <h3>CONCEPTION</h3>
+                <h2>Modélisation UML</h2>
+                <div class="grid-2">
+                    <div class="tech-pill" style="height:auto;">
+                        <p style="color:var(--gold); margin-bottom:5px;">Use Case & Sequence</p>
+                        <ul style="font-size:0.7rem; opacity:0.7;">
+                            <li>Client: Réserver, Consulter, Chat.</li>
+                            <li>Système: Valider, Générer PDF, Créditer Points.</li>
+                        </ul>
+                    </div>
+                    <div class="tech-pill" style="height:auto;">
+                        <p style="color:var(--gold); margin-bottom:5px;">Class Diagram</p>
+                        <ul style="font-size:0.7rem; opacity:0.7;">
+                            <li>Entities: User, Reservation, Room, Points.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="diagram-placeholder">
+                    [Insérer Diagrammes UML : Use Case, Classes, Séquence]
                 </div>
             </div>
         </section>
 
-        <!-- Slide 8: Multilingue -->
+        <!-- 7. Technologies Utilisées -->
         <section class="slide">
-            <div class="bg-text">GLOBAL</div>
             <div class="content">
-                <h3>ACCESSIBILITÉ</h3>
-                <h2>Le Monde en un Clic</h2>
-                <p>Un système i18n robuste gérant les layouts RTL (Arabe) et LTR (Français, Anglais, Espagnol).</p>
-                <div class="feature-grid">
-                    <div class="feature-item" style="display:flex; align-items:center; gap:20px;">
-                        <h2 style="font-size:1.5rem; margin:0;">FR/EN/ES</h2>
-                        <p style="font-size:0.8rem;">Layout standard européen</p>
+                <h3>TECHNOLOGIES</h3>
+                <h2>Stack Technologique Modern</h2>
+                <div class="tech-icons">
+                    <div class="tech-pill">HTML5 / CSS3 (Vanilla)</div>
+                    <div class="tech-pill">JavaScript ES6+</div>
+                    <div class="tech-pill">Three.js (3D Graphics)</div>
+                    <div class="tech-pill">Supabase (Backend / DB)</div>
+                    <div class="tech-pill">jsPDF (PDF Generation)</div>
+                    <div class="tech-pill">Git / GitHub</div>
+                    <div class="tech-pill">DeepSeek AI API</div>
+                </div>
+                <p style="margin-top:30px; font-size:0.9rem;">Une architecture "Serverless" centrée sur la performance front-end et la sécurité backend via Supabase.</p>
+            </div>
+        </section>
+
+        <!-- 8. Réalisation du Projet -->
+        <section class="slide">
+            <div class="content">
+                <h3>RÉALISATION</h3>
+                <h2>Aperçu de la Plateforme</h2>
+                <div class="grid-2">
+                    <div class="tech-pill" style="height:auto;">
+                        <h4 style="color:var(--gold);">Accueil & Expérience</h4>
+                        <p style="font-size:0.8rem;">Design immersif avec arrière-plan 3D dynamique et navigation intuitive.</p>
                     </div>
-                    <div class="feature-item" style="display:flex; align-items:center; gap:20px; border-color:var(--gold);">
-                        <h2 style="font-size:1.5rem; margin:0;">AR</h2>
-                        <p style="font-size:0.8rem;">Layout miroir (RTL)</p>
+                    <div class="tech-pill" style="height:auto;">
+                        <h4 style="color:var(--gold);">Gestion Clients</h4>
+                        <p style="font-size:0.8rem;">Espace "Mes Réservations" avec suivi des points et téléchargement de bons PDF.</p>
+                    </div>
+                </div>
+                <!-- Images representant le site -->
+                <div style="display:flex; gap:10px; margin-top:20px; height: 250px;">
+                    <div style="flex:1; background:rgba(201,168,76,0.1); border:1px solid var(--gold);"></div>
+                    <div style="flex:1; background:rgba(201,168,76,0.1); border:1px solid var(--gold);"></div>
+                    <div style="flex:1; background:rgba(201,168,76,0.1); border:1px solid var(--gold);"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. Résultats & Perspectives -->
+        <section class="slide">
+            <div class="content">
+                <h3>BILAN</h3>
+                <h2>Résultats & Futur</h2>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color:var(--gold);">Résultats Atteints</h4>
+                        <ul style="font-size:0.9rem; opacity:0.8; padding-left:20px;">
+                            <li>Système de réservation opérationnel.</li>
+                            <li>Loyalty program avec reset auto.</li>
+                            <li>Interface 100% multilingue.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--gold);">Perspectives</h4>
+                        <ul style="font-size:0.9rem; opacity:0.8; padding-left:20px;">
+                            <li>Intégration d'un paiement en ligne.</li>
+                            <li>Application Mobile (PWA).</li>
+                            <li>Réalité Virtuelle (Visite des chambres).</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Slide 9: Stack Technique -->
-        <section class="slide">
-            <div class="bg-text">STACK</div>
-            <div class="content">
-                <h3>ARCHITECTURE</h3>
-                <h2>Stack Technologique</h2>
-                <p>Une base solide pour des performances de haut niveau.</p>
-                <div class="feature-grid">
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Frontend</h4>
-                        <p style="font-size:0.8rem;">HTML5 Sémantique, CSS3 (Glassmorphism), Vanilla JS (Performance ES6+)</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Immersion</h4>
-                        <p style="font-size:0.8rem;">Three.js pour les fonds 3D interactifs (World Dynamics)</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Infrastructure</h4>
-                        <p style="font-size:0.8rem;">Supabase DB (PostgreSQL) + Auth Service</p>
-                    </div>
-                    <div class="feature-item">
-                        <h4 style="color:var(--gold);">Documents</h4>
-                        <p style="font-size:0.8rem;">jsPDF & html2canvas pour la génération dynamique de factures</p>
-                    </div>
+        <!-- 10. Conclusion -->
+        <section class="slide questions-slide">
+            <div class="content" style="text-align:center;">
+                <h3>MERCI POUR VOTRE ATTENTION</h3>
+                <h1>Conclusion</h1>
+                <p>Ce projet a permis de démontrer l'impact du digital sur l'industrie du luxe à Errachidia.</p>
+                <div class="accent-box" style="border:none; background:transparent;">
+                    <p style="color:var(--gold);">Questions ?</p>
                 </div>
-            </div>
-        </section>
-
-        <!-- Slide 10: Conclusion -->
-        <section class="slide">
-            <div class="bg-text">FIN</div>
-            <div class="content">
-                <h3>CONCLUSION</h3>
-                <h2>Un Nouveau Chapitre</h2>
-                <p>Le portail Golden Atlas n'est pas seulement un site, c'est l'extension digitale d'un service cinq étoiles.</p>
-                <h1 style="font-size:3rem; margin-top:40px;">MERCI</h1>
-                <p style="color:var(--gold); letter-spacing:3px;">L'ÉLÉGANCE À CHAQUE CLIC.</p>
+                <p style="font-size:0.7rem; opacity:0.4; margin-top:50px;">Soutenance PFE 2026 · Golden Atlas</p>
             </div>
         </section>
     </div>
@@ -393,7 +327,6 @@
         const dotsContainer = document.getElementById('dots');
         const counter = document.getElementById('counter');
 
-        // Init dots
         slides.forEach((_, i) => {
             const dot = document.createElement('div');
             dot.className = `dot ${i === 0 ? 'active' : ''}`;
@@ -403,58 +336,27 @@
 
         function updateState() {
             container.style.transform = `translateY(-${currentSlide * 100}vh)`;
-            
-            // Update dots
-            document.querySelectorAll('.dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentSlide);
-            });
-
-            // Update slides active state
-            slides.forEach((slide, i) => {
-                slide.classList.toggle('active', i === currentSlide);
-            });
-
-            // Update counter
+            document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === currentSlide));
+            slides.forEach((slide, i) => slide.classList.toggle('active', i === currentSlide));
             counter.textContent = `${String(currentSlide + 1).padStart(2, '0')} / 10`;
         }
 
-        function nextSlide() {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                updateState();
-            }
-        }
+        function nextSlide() { if (currentSlide < slides.length - 1) { currentSlide++; updateState(); } }
+        function prevSlide() { if (currentSlide > 0) { currentSlide--; updateState(); } }
+        function goToSlide(index) { currentSlide = index; updateState(); }
 
-        function prevSlide() {
-            if (currentSlide > 0) {
-                currentSlide--;
-                updateState();
-            }
-        }
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateState();
-        }
-
-        // Keyboard navigation
         window.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') nextSlide();
             if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') prevSlide();
         });
 
-        // Wheel navigation
         let lastWheelTime = 0;
         window.addEventListener('wheel', (e) => {
             const now = Date.now();
             if (now - lastWheelTime < 1000) return;
-            if (e.deltaY > 0) nextSlide();
-            else if (e.deltaY < 0) prevSlide();
+            if (e.deltaY > 0) nextSlide(); else prevSlide();
             lastWheelTime = now;
         });
-
-        // Initial state
-        setTimeout(updateState, 100);
     </script>
 </body>
 </html>
