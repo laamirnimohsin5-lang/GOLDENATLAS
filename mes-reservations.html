@@ -126,15 +126,17 @@
                         <h2 id="display-user-name">CHARGEMENT...</h2>
                         <p id="display-user-email"></p>
                         <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-                            <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">⭐ 0 POINTS</span>
+                            <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">⭐ 0 / 10 POINTS</span>
+                            <span id="loyalty-discount-badge" style="display:none; font-size: 0.65rem; background: rgba(34,197,94,0.15); color: #22c55e; padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(34,197,94,0.3);">🎁 -25% ACTIF</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Loyalty Offer Message -->
-                <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
-                    <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">🎉 FÉLICITATIONS ! VOUS AVEZ 10 POINTS.</p>
-                    <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
+                <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 20px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
+                    <p style="color: var(--gold); font-size: 0.85rem; font-weight: 700; letter-spacing: 1px;">🎉 FÉLICITATIONS ! VOUS AVEZ ATTEINT 10 POINTS.</p>
+                    <p style="color: #fff; font-size: 0.9rem; margin-top: 8px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900; font-size: 1.1rem;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
+                    <p style="color: rgba(255,255,255,0.5); font-size: 0.7rem; margin-top: 8px;">Après utilisation, vos points seront réinitialisés à 1.</p>
                 </div>
                 <style>
                     @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(201, 168, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); } }
@@ -153,7 +155,83 @@
     </div>
 
     <script>
-        // 3D Background (Simplified from login-client)
+        // ========== PRICE MAP ==========
+        const ROOM_PRICES = {
+            // Hébergements
+            'Chambre Supérieure Atlas': 3200,
+            'Chambre Deluxe Jardin': 3950,
+            'Suite Junior Palmier': 4800,
+            'Suite Prestige Royale': 12000,
+            'Suite Céleste': 12000,
+            'Suite des Palmiers': 15500,
+            'Suite Zellige': 18000,
+            'Suite Midnight': 22000,
+            // Riads
+            'Riad Al Andalous': 18000,
+            'Riad Majorelle': 22000,
+            'Riad des Jasmins': 16500,
+            'Riad Impérial': 25000,
+            // Restaurants
+            'Le Marocain': 950,
+            "L'Asiatique": 1200,
+            "L'Italien": 1100,
+            'Le Churchill': 300,
+            'Bar Majorelle': 400,
+            'Le Pavillon': 850,
+            // Spa
+            'Les Hammams': 800,
+            'Les Massages': 1200,
+            'Les Soins Visage': 1500,
+            'La Piscine & Sports': 600,
+            // VIP
+            'VIP Presidential Suite': 15000,
+            'VIP Royal Palace': 12000,
+            // Default
+            'Générique': 1500
+        };
+
+        function getRoomPrice(roomName) {
+            if (!roomName) return 1500;
+            const priceMap = {
+                // Hébergements
+                'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
+                'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,
+                'Suite Céleste': 12000, 'Suite des Palmiers': 15500,
+                'Suite Zellige': 18000, 'Suite Midnight': 22000,
+                // Riads
+                'Riad Al Andalous': 18000, 'Riad Majorelle': 22000,
+                'Riad des Jasmins': 16500, 'Riad Impérial': 25000,
+                // Restaurants
+                'Le Marocain': 950, "L'Asiatique": 1200, "L'Italien": 1100,
+                'Le Churchill': 300, 'Bar Majorelle': 400, 'Le Pavillon': 850,
+                'Le Café': 150, 'Restaurant Gym': 200,
+                // Spa
+                'Les Hammams': 800, 'Les Massages': 1200, 'Les Soins Visage': 1500,
+                'La Piscine & Sports': 600,
+                // VIP
+                'VIP Presidential Suite': 15000, 'VIP Royal Palace': 12000,
+                // Default
+                'Générique': 1500
+            };
+            const exact = priceMap[roomName];
+            if (exact) return exact;
+            const partial = Object.keys(priceMap).find(k => 
+                roomName.toLowerCase().includes(k.toLowerCase()) || 
+                k.toLowerCase().includes(roomName.toLowerCase())
+            );
+            return partial ? priceMap[partial] : 1500;
+        }
+
+        function calculateNights(arrival, departure) {
+            if (!arrival || !departure) return 1;
+            const a = new Date(arrival);
+            const d = new Date(departure);
+            const diff = d - a;
+            const nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            return nights > 0 ? nights : 1;
+        }
+
+        // 3D Background
         (function() {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
@@ -162,15 +240,9 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('world').appendChild(renderer.domElement);
             scene.add(new THREE.AmbientLight(0xffffff, 0.6));
-            
             const sea = new THREE.Mesh(new THREE.CylinderGeometry(600, 600, 800, 40), new THREE.MeshPhongMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.15 }));
             sea.rotation.x = -Math.PI / 2; sea.position.y = -600; scene.add(sea);
-
-            function animate() {
-                requestAnimationFrame(animate);
-                sea.rotation.z += 0.002;
-                renderer.render(scene, camera);
-            }
+            function animate() { requestAnimationFrame(animate); sea.rotation.z += 0.002; renderer.render(scene, camera); }
             animate();
         })();
 
@@ -189,16 +261,22 @@
                 .or(`user_email.eq.${user.email},name.ilike.%${user.name.split(' ')[0]}%`)
                 .order('created_at', { ascending: false });
 
-            // Update Points Display
-            const points = count || 0;
+            // ========== LOYALTY POINTS SYSTEM ==========
+            const totalReservations = count || 0;
+            // Points cycle: 1-10, reset after 10
+            const displayPoints = totalReservations === 0 ? 0 : ((totalReservations - 1) % 10) + 1;
+            const hasDiscount = displayPoints === 10;
+
             const pointsEl = document.getElementById('loyalty-points');
             if (pointsEl) {
-                pointsEl.textContent = `⭐ ${points} POINT${points > 1 ? 'S' : ''}`;
+                pointsEl.textContent = `⭐ ${displayPoints} / 10 POINT${displayPoints > 1 ? 'S' : ''}`;
             }
 
+            const discountBadge = document.getElementById('loyalty-discount-badge');
             const offerEl = document.getElementById('loyalty-offer');
-            if (offerEl && points >= 10) {
-                offerEl.style.display = 'block';
+            if (hasDiscount) {
+                if (discountBadge) discountBadge.style.display = 'inline-block';
+                if (offerEl) offerEl.style.display = 'block';
             }
 
             const container = document.getElementById('reservations-container');
@@ -208,33 +286,79 @@
             }
 
             window.localReservations = reservations;
-            container.innerHTML = reservations.map(r => `
-                <div class="reservation-card">
+            window.loyaltyPoints = displayPoints;
+
+            container.innerHTML = reservations.map((r, index) => {
+                const resNumber = totalReservations - index;
+                const pricePerUnit = getRoomPrice(r.room);
+                const nights = (r.room.includes('Chambre') || r.room.includes('Suite') || r.room.includes('Riad')) 
+                    ? calculateNights(r.arrival, r.departure) 
+                    : 1;
+                const baseTotal = pricePerUnit * nights;
+                
+                const isDiscountedRes = (resNumber % 10 === 0);
+                const discountAmount = isDiscountedRes ? Math.round(baseTotal * 0.25) : 0;
+                const finalTotal = baseTotal - discountAmount;
+
+                return `
+                <div class="reservation-card" style="position:relative;">
+                    ${isDiscountedRes ? '<div style="position:absolute; top:-10px; right:10px; background:var(--gold); color:#000; padding:4px 12px; font-size:0.55rem; font-weight:800; border-radius:4px; z-index:5;">RÉCOMPENSE FIDÉLITÉ</div>' : ''}
                     <div class="res-top">
-                        <div class="res-room">🏨 ${r.room}</div>
+                        <div>
+                            <div class="res-room">🏨 ${r.room}</div>
+                            <span style="font-size:0.6rem; color:rgba(255,255,255,0.4); letter-spacing:1px;">Réservation #${resNumber} ${nights > 1 ? `· ${nights} Nuits` : ''}</span>
+                        </div>
                         <span class="res-status ${r.status === 'Validée' ? 'Validée' : 'res-pending'}">${r.status || 'En attente'}</span>
                     </div>
-                    <div class="res-details">
-                        <div class="res-detail-item"><label>Arrivée</label><span>${r.arrival}</span></div>
-                        <div class="res-detail-item"><label>Départ</label><span>${r.departure}</span></div>
-                        <div class="res-detail-item"><label>Réf</label><span>#GA-${r.id.slice(0,6).toUpperCase()}</span></div>
+                    <div class="res-details" style="grid-template-columns: repeat(4, 1fr); align-items: center;">
+                        <div class="res-detail-item"><label>Période</label><span>${r.arrival}</span></div>
+                        <div class="res-detail-item"><label>Référence</label><span>#GA-${r.id.slice(0,6).toUpperCase()}</span></div>
+                        <div class="res-detail-item">
+                            <label>Détails</label>
+                            <span style="font-size:0.7rem; color:rgba(255,255,255,0.6);">${nights} x ${pricePerUnit.toLocaleString()} DH</span>
+                        </div>
+                        <div class="res-detail-item" style="text-align: right;">
+                            <label>Total à Payer</label>
+                            ${isDiscountedRes ? `
+                                <span style="text-decoration: line-through; color: rgba(255,255,255,0.3); font-size: 0.7rem; display:block;">${baseTotal.toLocaleString()} DH</span>
+                                <span style="color: #22c55e; font-weight: 800; font-size: 1rem;">${finalTotal.toLocaleString()} DH</span>
+                            ` : `
+                                <span style="font-size: 1rem;">${baseTotal.toLocaleString()} DH</span>
+                            `}
+                        </div>
                     </div>
                     ${r.status === 'Validée' ? `
                     <div class="notification-banner">
-                        <p>Votre bon de séjour est prêt.</p>
-                        <button class="btn-submit" style="height:40px; margin-top:10px; font-size:0.6rem;" onclick="downloadReservationPDF('${r.id}')">TÉLÉCHARGER LE BON (PDF)</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <p style="font-size:0.75rem;">Félicitations, votre bon de confirmation est prêt !</p>
+                            ${isDiscountedRes ? '<span style="color:#22c55e; font-weight:800; font-size:0.65rem;">🎉 -25% RÉDUCTION APPLIQUÉE</span>' : ''}
+                        </div>
+                        <button class="btn-submit" style="height:44px; margin-top:15px; font-size:0.65rem; border: 1px solid rgba(0,0,0,0.1);" onclick="downloadReservationPDF('${r.id}', ${resNumber})">
+                            📥 TÉLÉCHARGER MON REÇU PDF
+                        </button>
                     </div>` : ''}
                 </div>
-            `).join('');
+            `}).join('');
         });
 
-        window.downloadReservationPDF = function(resId) {
+        // ========== PDF GENERATOR WITH PRICING ==========
+        window.downloadReservationPDF = function(resId, resNumber) {
             const res = window.localReservations?.find(r => r.id == resId);
             if (!res) return;
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+
+            const pricePerUnit = getRoomPrice(res.room);
+            const nights = (res.room.includes('Chambre') || res.room.includes('Suite') || res.room.includes('Riad')) 
+                ? calculateNights(res.arrival, res.departure) 
+                : 1;
+            const baseTotal = pricePerUnit * nights;
             
-            // Header: Elegant Black Bar & Gold Title
+            const isDiscountedRes = (resNumber % 10 === 0);
+            const discountAmount = isDiscountedRes ? Math.round(baseTotal * 0.25) : 0;
+            const finalPrice = baseTotal - discountAmount;
+
+            // ===== HEADER =====
             doc.setFillColor(15, 15, 15);
             doc.rect(0, 0, 210, 50, 'F');
             doc.setTextColor(201, 168, 76);
@@ -245,69 +369,127 @@
             doc.text("P A L A C E  ·  E R R A C H I D I A", 105, 33, { align: 'center' });
             doc.text("DEPUIS 1923", 105, 38, { align: 'center' });
 
-            // Document Title
+            // ===== TITLE =====
             doc.setTextColor(40, 40, 40);
             doc.setFontSize(20);
-            doc.text("BON DE SÉJOUR", 20, 70);
+            doc.text("BON DE SEJOUR & FACTURE", 20, 68);
             doc.setDrawColor(201, 168, 76);
             doc.setLineWidth(1);
-            doc.line(20, 75, 190, 75);
+            doc.line(20, 73, 190, 73);
 
-            // Left Column: Client & Stay Details
+            // ===== META =====
             doc.setFontSize(9);
             doc.setTextColor(120, 120, 120);
-            doc.text("INFORMATIONS CLIENT", 20, 88);
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(11);
-            doc.text("Nom : " + res.name.toUpperCase(), 20, 95);
-            doc.text("Email : " + (res.user_email || 'Non renseigné'), 20, 102);
-            doc.text("Réf. Réservation : #GA-" + res.id.slice(0,8).toUpperCase(), 20, 109);
+            doc.text("Dossier : GA-" + res.id.slice(0,8).toUpperCase(), 20, 82);
+            doc.text("Emis le : " + new Date().toLocaleDateString('fr-FR'), 190, 82, { align: 'right' });
+            doc.text("Reservation N : #" + resNumber, 20, 88);
 
-            // Right Column: Reference & Dates
+            // ===== CLIENT INFO =====
             doc.setFontSize(9);
             doc.setTextColor(120, 120, 120);
-            doc.text("DÉTAILS DU SÉJOUR", 120, 88);
+            doc.text("INFORMATIONS CLIENT", 20, 100);
             doc.setTextColor(0, 0, 0);
             doc.setFontSize(11);
-            doc.text("Arrivée : " + res.arrival, 120, 95);
-            doc.text("Départ : " + res.departure, 120, 102);
-            doc.text("Hébergement : " + res.room.toUpperCase(), 120, 109);
+            doc.text("Nom : " + res.name.toUpperCase(), 20, 108);
+            doc.text("Email : " + (res.user_email || 'Non renseigne'), 20, 116);
 
-            // Summary Table Style
+            // ===== STAY DETAILS =====
+            doc.setFontSize(9);
+            doc.setTextColor(120, 120, 120);
+            doc.text("DETAILS DE LA RESERVATION", 120, 100);
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(11);
+            doc.text("Article : " + res.room, 120, 108);
+            doc.text("Date : " + res.arrival + (nights > 1 ? " (" + nights + " nuits)" : ""), 120, 116);
+
+            // ===== SUMMARY TABLE =====
+            const tableY = 135;
             doc.setFillColor(248, 245, 240);
-            doc.rect(20, 125, 170, 60, 'F');
+            doc.rect(20, tableY, 170, 70, 'F');
             doc.setDrawColor(201, 168, 76);
-            doc.rect(20, 125, 170, 60, 'S');
+            doc.rect(20, tableY, 170, 70, 'S');
 
             doc.setFontSize(10);
             doc.setTextColor(150, 110, 50);
-            doc.text("RÉSUMÉ DE LA RÉSERVATION", 30, 140);
-            
-            doc.setTextColor(60, 60, 60);
-            doc.text("Chambre / Suite :", 30, 155);
-            doc.text(res.room, 100, 155);
-            
-            doc.text("Nombre de Voyageurs :", 30, 165);
-            doc.text((res.guests || "1") + " Adulte(s)", 100, 165);
-            
-            doc.text("Statut du Paiement :", 30, 175);
-            doc.text("PAIEMENT À L'ARRIVÉE", 100, 175);
+            doc.text("DETAIL DU PRIX", 30, tableY + 12);
 
-            // Bottom Footer with contact
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(10);
+            doc.text("Prix unitaire :", 30, tableY + 25);
+            doc.setTextColor(0, 0, 0);
+            doc.text(pricePerUnit.toLocaleString() + " DH", 90, tableY + 25);
+
+            doc.setTextColor(60, 60, 60);
+            doc.text("Quantite/Nuits :", 30, tableY + 35);
+            doc.setTextColor(0, 0, 0);
+            doc.text(nights.toString(), 90, tableY + 35);
+
+            doc.setTextColor(60, 60, 60);
+            doc.text("Sous-total :", 30, tableY + 45);
+            doc.setTextColor(0, 0, 0);
+            doc.text(baseTotal.toLocaleString() + " DH", 90, tableY + 45);
+
+            if (isDiscountedRes) {
+                // Discount line
+                doc.setTextColor(34, 139, 34);
+                doc.setFontSize(10);
+                doc.text("REDUCTION FIDELITE (10e Reservation) :", 30, tableY + 55);
+                doc.setFontSize(11);
+                doc.text("- 25% (-" + discountAmount.toLocaleString() + " DH)", 110, tableY + 55);
+
+                // Final price line
+                doc.setDrawColor(201, 168, 76);
+                doc.setLineWidth(0.5);
+                doc.line(30, tableY + 59, 180, tableY + 59);
+
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(13);
+                doc.text("NET A PAYER :", 30, tableY + 65);
+                doc.setTextColor(201, 168, 76);
+                doc.setFontSize(14);
+                doc.text(finalPrice.toLocaleString() + " DH", 110, tableY + 65);
+            } else {
+                // Normal price total
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(12);
+                doc.text("TOTAL A PAYER :", 30, tableY + 65);
+                doc.setTextColor(201, 168, 76);
+                doc.setFontSize(13);
+                doc.text(baseTotal.toLocaleString() + " DH", 110, tableY + 65);
+            }
+
+            // ===== LOYALTY PROGRESS =====
+            const pointsAfter = (resNumber % 10 === 0) ? 1 : (resNumber % 10) + 1;
+            const progressY = 215;
+            doc.setDrawColor(220, 220, 220);
+            doc.rect(20, progressY, 170, 25);
+            doc.setTextColor(100, 100, 100);
+            doc.setFontSize(9);
+            doc.text("POSITION DANS VOTRE PROGRAMME DE FIDELITE", 105, progressY + 8, { align: 'center' });
+            
+            doc.setTextColor(201, 168, 76);
+            doc.setFontSize(11);
+            if (isDiscountedRes) {
+                doc.text("FELICITATIONS ! VOUS AVEZ UTILISE VOS 10 POINTS.", 105, progressY + 18, { align: 'center' });
+            } else {
+                doc.text("RESERVATION #" + resNumber + " SUR 10 POUR VOTRE PROCHAINE RECOMPENSE.", 105, progressY + 18, { align: 'center' });
+            }
+
+            // ===== FOOTER =====
             doc.setDrawColor(230, 230, 230);
             doc.line(20, 260, 190, 260);
             doc.setFontSize(8);
             doc.setTextColor(150, 150, 150);
-            doc.text("Golden Atlas Errachidia - Avenue Mohammed V, Errachidia, Maroc", 105, 270, { align: 'center' });
-            doc.text("Contact : +212 (0) 535-123-456 | reservation@goldenatlas.com", 105, 275, { align: 'center' });
-            doc.text("Le Palais décline toute responsabilité en cas de perte de ce document.", 105, 280, { align: 'center' });
+            doc.text("Golden Atlas Errachidia - Avenue Mohammed V, Errachidia, Maroc", 105, 268, { align: 'center' });
+            doc.text("Contact : +212 (0) 535-123-456 | reservation@goldenatlas.com", 105, 273, { align: 'center' });
+            doc.text("Ce document doit etre presente a la reception. Merci de votre fidelite.", 105, 278, { align: 'center' });
 
-            // Gold Leaf Decoration
+            // Gold bar bottom
             doc.setDrawColor(201, 168, 76);
             doc.setLineWidth(5);
             doc.line(0, 290, 210, 290);
 
-            doc.save("Confirmation_GoldenAtlas_" + res.name.replace(' ','_') + ".pdf");
+            doc.save("Recu_GoldenAtlas_" + res.name.replace(' ','_') + "_Res" + resNumber + ".pdf");
         };
     </script>
 </body>

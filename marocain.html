@@ -6,6 +6,27 @@
     <title>Le Marocain · Golden Atlas</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .page-gallery-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        .page-gallery-img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .page-gallery-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(197,160,89,0.2);
+        }
+    </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
 </head>
@@ -85,7 +106,7 @@
     <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
 <main>
-    <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=85'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
+    <section class="sub-hero" style="background-image: url('assets/ressterants/Luxury_Moroccan_restaurant_decor_202606220148.jpeg'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
         <div class="sub-hero-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.5);"></div>
         <div class="sub-hero-content" style="position:relative; z-index:2; text-align:center;">
             <span class="surtitle" style="color:var(--gold); letter-spacing:5px;">Gastronomie</span>
@@ -103,11 +124,14 @@
         </div>
     </section>
     <section class="section-pad" style="background:#fff; padding: 60px 5%;">
-        <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:20px;">
-            <img src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1553653924-39b70295f8da?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1595166418858-a400ccfa0fd3?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
+        <div class="page-gallery-grid">
+            <img src="assets/ressterants/Luxury_Moroccan_restaurant_decor_202606220148.jpeg" class="page-gallery-img" alt="Décor Marocain">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <img src="assets/ressterants/Moroccan_tajine_and_couscous_res._202606220148.jpeg" class="page-gallery-img" style="height: 212px;" alt="Gastronomie">
+                <img src="assets/ressterants/Restaurant_terrace_at_sunset_Mor._202606220148.jpeg" class="page-gallery-img" style="height: 212px;" alt="Terrasse">
+            </div>
+            <img src="assets/ressterants/Luxury_terrace_dining_at_night_202606220148.jpeg" class="page-gallery-img" alt="Dîner Nuit">
+            <img src="assets/ressterants/Cocktails_in_crystal_glasses_202606220148.jpeg" class="page-gallery-img" alt="Service">
         </div>
     </section>
 </main>

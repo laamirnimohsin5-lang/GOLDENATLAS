@@ -10,6 +10,194 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="assets/room.png">
     <link rel="stylesheet" href="subpage.css">
+    <style>
+        .lux-section {
+            display: flex;
+            min-height: 80vh;
+            align-items: stretch;
+            background: #fff;
+        }
+        .lux-box {
+            flex: 1;
+            padding: 8% 10%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fdfbf7;
+        }
+        .lux-img {
+            flex: 1.2;
+            background-size: cover;
+            background-position: center;
+            min-height: 50vh;
+        }
+        .lux-title {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            color: var(--gold-dark);
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        .lux-subtitle {
+            font-family: var(--font-body);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        .lux-desc {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 40px;
+        }
+        .lux-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: var(--gold);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.4s ease;
+            align-self: flex-start;
+            border: 1px solid var(--gold);
+        }
+        .lux-btn:hover {
+            background: #fff;
+            color: var(--gold);
+        }
+        .reversed {
+            flex-direction: row-reverse;
+        }
+        .reversed .lux-box {
+            background: #ffffff;
+        }
+
+        /* Dark section for Bars */
+        .bars-section {
+            background: #0a0a0a;
+            color: #fff;
+            padding: 100px 5%;
+            text-align: center;
+        }
+        .bars-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 60px auto 0;
+        }
+        .bar-card-new {
+            position: relative;
+            height: 500px;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            text-decoration: none;
+        }
+        .bar-card-new img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        .bar-card-new:hover img {
+            transform: scale(1.05);
+        }
+        .bar-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%);
+        }
+        .bar-card-content {
+            position: relative;
+            z-index: 2;
+            padding: 40px;
+            text-align: left;
+            width: 100%;
+        }
+        .bar-card-content h3 {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .bar-card-content p {
+            color: #eee;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .bar-card-btn {
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid var(--gold);
+            padding-bottom: 5px;
+            transition: 0.3s;
+        }
+        .bar-card-new:hover .bar-card-btn {
+            color: var(--gold);
+        }
+
+        @media (max-width: 900px) {
+            .lux-section { flex-direction: column !important; }
+            .lux-img { height: 50vh; width: 100%; }
+            .bars-grid { grid-template-columns: 1fr; }
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        .gallery-card {
+            position: relative;
+            aspect-ratio: 1 / 1; /* Square for clean grid */
+            border-radius: 8px;
+            overflow: hidden;
+            background: #eee;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.4s ease;
+        }
+        
+        .gallery-card.show-card {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .gallery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+        
+        .gallery-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-card:hover {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+
+        /* Large items for visual interest */
+        @media (min-width: 900px) {
+            .gallery-card:nth-child(7n+1) { grid-column: span 2; grid-row: span 2; }
+        }
+
+    </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
 </head>
@@ -89,99 +277,137 @@
     </div>
     <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
-<div class="modal-overlay" id="modal-overlay"></div>
 
 <main>
     <!-- HERO -->
     <section class="sub-hero hero-anim">
-        <div class="sub-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85');"></div>
+        <div class="sub-hero-bg" style="background-image:url('assets/ressterants/Restaurant_terrace_at_sunset_Mor._202606220148.jpeg');"></div>
         <div class="sub-hero-overlay"></div>
         <div class="sub-hero-content">
-            <span class="surtitle" style="color:rgba(255,255,255,0.7);">Golden Atlas · Errachidia</span>
+            <span class="surtitle" style="color:#fff;">L'art de vivre</span>
             <h1 class="title-xl text-white">Restaurants & Bars</h1>
-            <p class="text-white" style="letter-spacing:6px;text-transform:uppercase;font-size:0.82rem;margin-top:1.2rem;">Un univers de saveurs d'exception</p>
+            <p class="text-white" style="letter-spacing:6px;text-transform:uppercase;font-size:0.9rem;margin-top:1.5rem;">Un univers de saveurs d'exception</p>
         </div>
     </section>
 
     <!-- INTRO -->
-    <section class="section-pad text-center reveal" id="intro">
-        <div class="container-sm">
-            <span class="surtitle" data-i18n="menu_dining">Gastronomie</span>
-            <h2 class="title-lg" data-i18n="resto_intro_title">L'Excellence Culinaire</h2>
-            <div class="separator"></div>
-            <p class="body-text" data-i18n="resto_intro_text">Quatre restaurants signés par des chefs de renommée mondiale.</p>
+    <section class="section-pad text-center reveal" id="intro" style="padding: 100px 5% 80px;">
+        <div class="container-sm" style="max-width: 800px; margin: 0 auto;">
+            <span class="surtitle" data-i18n="menu_dining" style="color: var(--gold); display: block; margin-bottom: 20px;">Gastronomie</span>
+            <h2 class="title-lg" data-i18n="resto_intro_title" style="margin-bottom: 30px; font-size: 2.8rem;">L'Excellence Culinaire</h2>
+            <div class="separator" style="margin: 0 auto 30px;"></div>
+            <p class="body-text" data-i18n="resto_intro_text" style="font-size: 1.2rem; color: #555; line-height: 1.8;">Plongez dans des expériences culinaires incomparables. Nos restaurants iconiques, méticuleusement conçus et gérés par des chefs de renommée mondiale, vous invitent à un périple des sens. Un hymne aux produits nobles et aux traditions lointaines.</p>
+            <button onclick="document.getElementById('gallery').scrollIntoView({behavior: 'smooth'})" style="margin-top:40px; font-size:14px; padding:15px 40px; background:var(--gold); border:none; color:#fff; cursor:pointer; font-family:var(--font-body); letter-spacing:2px; font-weight:600; transition: 0.3s; box-shadow: 0 4px 15px rgba(197,160,89,0.3);">DÉCOUVRIR LA GALERIE</button>
         </div>
     </section>
 
-    <!-- RESTAURANT GRID (big cards) -->
-    <section class="resto-showcase container reveal">
-        <div class="resto-big-grid">
-
-            <div class="resto-card" data-room-type="asiatique" data-room="L'Asiatique">
-                <div class="resto-card-img">
-                    <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=900&q=80" alt="L'Asiatique">
-                </div>
-                <div class="resto-card-body">
-                    <span class="surtitle" data-i18n="discover">Restaurant</span>
-                    <h3 data-i18n="resto_asian_title">L'Asiatique</h3>
-                    <p class="resto-chef" data-i18n="resto_chef_jg">par Jean-Georges Vongerichten</p>
-                    <p class="resto-desc" data-i18n="resto_asian_desc">Saveurs asiatiques d'une finesse inouïe.</p>
-                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Asiatique" data-i18n="discover">Voir Détails</button>
-                </div>
+    <!-- LES RESTAURANTS LUXE -->
+    <div id="restaurants-list">
+        
+        <!-- Le Marocain -->
+        <section class="lux-section">
+            <div class="lux-img reveal" style="background-image: url('assets/ressterants/Luxury_Moroccan_restaurant_decor_202606220148.jpeg');"></div>
+            <div class="lux-box reveal">
+                <span class="lux-subtitle">Authenticité & Tradition</span>
+                <h3 class="lux-title">Le Marocain</h3>
+                <p class="lux-desc">La tradition marocaine dans sa plus belle expression. Laissez-vous envoûter par nos tajines parfumés et couscous royaux dans un décor qui est une véritable ode à l'art marocain ancestral. Un lieu de partage sous le rythme d'une musique luth feutrée.</p>
+                <a href="marocain.html" class="lux-btn">Voir la carte et réserver</a>
             </div>
+        </section>
 
-            <div class="resto-card reversed" data-room-type="italien" data-room="L'Italien">
-                <div class="resto-card-img">
-                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=900&q=80" alt="L'Italien">
-                </div>
-                <div class="resto-card-body">
-                    <span class="surtitle" data-i18n="discover">Restaurant</span>
-                    <h3 data-i18n="resto_italian_title">L'Italien</h3>
-                    <p class="resto-chef" data-i18n="resto_chef_simone">par Simone Zanoni</p>
-                    <p class="resto-desc" data-i18n="resto_italian_desc">La dolce vita dans toute sa splendeur.</p>
-                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="L'Italien" data-i18n="discover">Voir Détails</button>
-                </div>
+        <!-- L'Asiatique -->
+        <section class="lux-section reversed">
+            <div class="lux-img reveal" style="background-image: url('assets/ressterants/Luxury_Asian_fine_dining_restaurant_202606220148.jpeg');"></div>
+            <div class="lux-box reveal">
+                <span class="lux-subtitle">Par Jean-Georges Vongerichten</span>
+                <h3 class="lux-title">L'Asiatique</h3>
+                <p class="lux-desc">Un voyage sensoriel inédit vers l'Extrême-Orient. Le Chef étoilé Jean-Georges Vongerichten propose des saveurs sud-asiatiques vibrantes, mêlant épices exotiques et produits locaux de première fraîcheur, le tout dans un cadre raffiné et intimiste.</p>
+                <a href="asiatique.html" class="lux-btn">Voir la carte et réserver</a>
             </div>
+        </section>
 
-            <div class="resto-card" data-room-type="marocain" data-room="Le Marocain">
-                <div class="resto-card-img">
-                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&q=80" alt="Le Marocain">
-                </div>
-                <div class="resto-card-body">
-                    <span class="surtitle">Restaurant</span>
-                    <h3>Le Marocain</h3>
-                    <p class="resto-chef">Chef Rachid Agouray</p>
-                    <p class="resto-desc">La tradition marocaine dans sa plus belle expression. Tajines parfumés, couscous royaux, pastillas croustillantes dans un décor qui est lui-même une ode à l'art marocain.</p>
-                    <div class="resto-meta">
-                        <span>🕯️ Dîner</span><span>🎵 Musique Live</span><span>🏛️ Décor Royal</span>
-                    </div>
-                    <button class="btn-gold" style="margin-top:1.5rem;" data-room="Le Marocain">Voir Détails</button>
-                </div>
+        <!-- L'Italien -->
+        <section class="lux-section">
+            <div class="lux-img reveal" style="background-image: url('assets/ressterants/Luxury_Italian_pasta_dish_202606220148.jpeg');"></div>
+            <div class="lux-box reveal">
+                <span class="lux-subtitle">Par Simone Zanoni</span>
+                <h3 class="lux-title">L'Italien</h3>
+                <p class="lux-desc">La dolce vita dans toute sa splendeur à Golden Atlas. Savourez l'élégance de la cuisine italienne avec des plats authentiques aux accents méditerranéens. Un univers chaleureux, vibrant et profondément romantique pour vos dîners mémorables.</p>
+                <a href="italien.html" class="lux-btn">Voir la carte et réserver</a>
             </div>
+        </section>
 
-        </div>
-    </section>
+    </div>
 
     <!-- BARS SECTION -->
-    <section class="section-pad bg-dark-section reveal">
-        <div class="container">
-            <div class="section-title-block">
-                <span class="surtitle" style="color:var(--gold-light);">Bars & Lounges</span>
-                <h2 class="title-lg text-white">Une hospitalité unique</h2>
-                <div class="separator"></div>
-            </div>
-            <div class="grid-2" style="gap: 3px;">
-                <div class="card" onclick="openModalGlobal()">
-                    <img class="card-img" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80" alt="Bar Majorelle">
-                    <div class="card-overlay"><h3>Le Bar Majorelle</h3><p>Cocktails & Ambiance</p><span class="card-cta">Réserver →</span></div>
+    <section class="bars-section reveal">
+        <span class="lux-subtitle" style="color:var(--gold);">Moments Suspendus</span>
+        <h2 class="title-lg" style="font-size:3rem; margin-top:10px;">Bars & Lounges</h2>
+        <div class="separator" style="margin: 20px auto 0; background:rgba(197,160,89,0.3);"></div>
+        
+        <div class="bars-grid">
+            <a href="bar-majorelle.html" class="bar-card-new">
+                <img src="assets/ressterants/Luxury_cocktail_bar_Majorelle_style_202606220148.jpeg" alt="Bar Majorelle">
+                <div class="bar-card-overlay"></div>
+                <div class="bar-card-content">
+                    <h3>Le Bar Majorelle</h3>
+                    <p>Lounge, Cocktails & Ambiance Jazzy Chic.</p>
+                    <span class="bar-card-btn">Découvrir l'ambiance →</span>
                 </div>
-                <div class="card" onclick="openModalGlobal()">
-                    <img class="card-img" src="https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=800&q=80" alt="Churchill Bar">
-                    <div class="card-overlay"><h3>Le Churchill</h3><p>Bar Légendaire</p><span class="card-cta">Réserver →</span></div>
+            </a>
+            
+            <a href="churchill.html" class="bar-card-new">
+                <img src="assets/ressterants/Luxury_whisky_bar_leather_armchairs_202606220148.jpeg" alt="Churchill Bar">
+                <div class="bar-card-overlay"></div>
+                <div class="bar-card-content">
+                    <h3>Le Churchill</h3>
+                    <p>Le bar mythique, refuge feutré des connaisseurs.</p>
+                    <span class="bar-card-btn">Découvrir le repaire →</span>
                 </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- NEW GALLERY SECTION -->
+    <section id="gallery" style="background:#fdfbf7; padding: 100px 5%;">
+        <div class="container" style="max-width:1400px; margin:0 auto;">
+            <h3 class="title-md text-center" style="margin-bottom: 10px; font-size: 2.5rem; color: var(--gold-dark);">Galerie d'Exception</h3>
+            <p class="text-center" style="color: #666; margin-bottom: 60px; font-family: var(--font-body); letter-spacing: 1px;">VOS PLUS BEAUX SOUVENIRS CULINAIRES</p>
+            
+            <div class="gallery-grid">
+                <!-- Row 1 & Large Feature -->
+                <div class="gallery-card"><img src="assets/ressterants/Restaurant_atmosphere_guests_fin._202606220148.jpeg" alt="Atmosphère"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Chef_preparing_gourmet_dishes_202606220148.jpeg" alt="Chef"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_Moroccan_restaurant_decor_202606220148.jpeg" alt="Marocain"></div>
+                
+                <!-- Row 2 -->
+                <div class="gallery-card"><img src="assets/ressterants/Cocktails_in_crystal_glasses_202606220148.jpeg" alt="Cocktail"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_Asian_fine_dining_restaurant_202606220148.jpeg" alt="Asie"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_Italian_pasta_dish_202606220148.jpeg" alt="Italien"></div>
+                
+                <!-- Feature 2 -->
+                <div class="gallery-card"><img src="assets/ressterants/Restaurant_terrace_at_sunset_Mor._202606220148.jpeg" alt="Terrasse"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_cocktail_bar_Majorelle_style_202606220148.jpeg" alt="Bar"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_sushi_Asian_platter_202606220148.jpeg" alt="Sushi"></div>
+                
+                <!-- More Tiles -->
+                <div class="gallery-card"><img src="assets/ressterants/Moroccan_tajine_and_couscous_res._202606220148.jpeg" alt="Tajine"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Wine_cellar_with_wine_bottles_202606220148.jpeg" alt="Cave"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Hotel_lounge_elegant_sofas_lighting_202606220148.jpeg" alt="Lounge"></div>
+                
+                <!-- More Features -->
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_terrace_dining_at_night_202606220148.jpeg" alt="Dîner Nuit"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_whisky_bar_leather_armchairs_202606220148.jpeg" alt="Whisky"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_breakfast_buffet_hotel_202606220148.jpeg" alt="Buffet"></div>
+                
+                <!-- Final Tiles -->
+                <div class="gallery-card"><img src="assets/ressterants/Luxury_dessert_collection_artist._202606220148.jpeg" alt="Dessert"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Restaurant_in_luxury_hotel_202606220148.jpeg" alt="Intérieur"></div>
+                <div class="gallery-card"><img src="assets/ressterants/Cocktails_in_crystal_glasses_202606220148_2.jpeg" alt="Bar Mixology"></div>
             </div>
         </div>
     </section>
+
 </main>
 
 <footer class="main-footer reveal">
@@ -190,63 +416,25 @@
     </div>
 </footer>
 
-<!-- Room Details & Reservation Modal -->
-<div class="reservation-modal" id="reservation-modal">
-    <button class="modal-close-btn" id="modal-close">×</button>
-    
-    <div id="modal-details-view">
-        <div class="modal-gallery" id="modal-gallery">
-            <div class="modal-gallery-wrapper">
-                <div class="modal-gallery-track" id="modal-gallery-track">
-                    <!-- Dynamic images will be inserted here -->
-                </div>
-            </div>
-            <button class="modal-gallery-btn prev" id="modal-prev">‹</button>
-            <button class="modal-gallery-btn next" id="modal-next">›</button>
-            <div class="modal-gallery-dots" id="modal-gallery-dots"></div>
-        </div>
-        <div class="modal-info-content">
-            <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
-            <h2 class="modal-title" id="modal-room-name"></h2>
-            <div class="modal-full-desc" id="modal-room-desc">
-                <!-- Dynamic description -->
-            </div>
-            <div class="modal-features" id="modal-room-features" style="margin: 20px 0; display: flex; flex-wrap: wrap; gap: 10px;">
-                <!-- Dynamic features -->
-            </div>
-            <button class="btn-gold" id="btn-show-booking" style="width:100%;">Passer à la réservation</button>
-        </div>
-    </div>
-
-    <div id="modal-booking-view" style="display:none; padding-top: 20px;">
-        <button id="btn-back-details" style="background:none; border:none; color:var(--gold); cursor:pointer; font-size:0.8rem; margin-bottom:15px; display:flex; align-items:center; gap:5px;">← Retour aux détails</button>
-        <p class="modal-title">Réserver une table</p>
-        <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
-        <form id="booking-form">
-            <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required placeholder="Votre nom et prénom"></div>
-            <div class="form-group"><label>Restaurant</label>
-                <select id="modal-room-name" required><option value="" disabled selected>Choisir</option>
-                    <option>L'Asiatique par Jean-Georges</option><option>L'Italien par Simone Zanoni</option><option>Le Marocain</option><option>Le Pavillon de la Piscine</option>
-                </select>
-            </div>
-            <div class="form-group"><label>Date du repas</label><input type="date" id="booking-date" required></div>
-            <div class="form-group"><label>Nombre de couverts</label>
-                <select id="booking-guests" required><option value="" disabled selected>Choisir</option><option>1-2</option><option>3-4</option><option>5+</option></select>
-            </div>
-            <button type="submit" class="btn-modal-submit">CONFIRMER LA RÉSERVATION</button>
-        </form>
-    </div>
-</div>
 <div class="toast" id="toast-msg"></div>
 
 <script src="script.js"></script>
 <script>
-    function openModalGlobal() {
-        document.getElementById('reservation-modal').classList.add('active');
-        document.getElementById('modal-overlay').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const galleries = document.querySelectorAll('.gallery-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if(entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('show-card');
+                    }, (index % 4) * 100); 
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+        
+        galleries.forEach(card => observer.observe(card));
+    });
 </script>
 </body>
 </html>
-

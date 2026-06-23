@@ -715,63 +715,174 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
-     * PDF GENERATOR
+     * ROOM PRICE MAP
+     */
+    const ROOM_PRICES = {
+        'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
+        'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,
+        'Suite Céleste': 12000, 'Suite des Palmiers': 15500,
+        'Suite Zellige': 18000, 'Suite Midnight': 22000,
+        'Riad Al Andalous': 18000, 'Riad Majorelle': 22000,
+        'Riad des Jasmins': 16500, 'Riad Impérial': 25000,
+        'Le Marocain': 950, "L'Asiatique": 1200, "L'Italien": 1100,
+        'Le Churchill': 300, 'Bar Majorelle': 400, 'Le Pavillon': 850,
+        'Les Hammams': 800, 'Les Massages': 1200, 'Les Soins Visage': 1500,
+        'La Piscine & Sports': 600, 'VIP Presidential Suite': 15000,
+        'VIP Royal Palace': 12000, 'Générique': 1500
+    };
+    function getRoomPrice(roomName) {
+        if (!roomName) return 1500;
+        const priceMap = {
+            'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
+            'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,
+            'Suite Céleste': 12000, 'Suite des Palmiers': 15500,
+            'Suite Zellige': 18000, 'Suite Midnight': 22000,
+            'Riad Al Andalous': 18000, 'Riad Majorelle': 22000,
+            'Riad des Jasmins': 16500, 'Riad Impérial': 25000,
+            'Le Marocain': 950, "L'Asiatique": 1200, "L'Italien": 1100,
+            'Le Churchill': 300, 'Bar Majorelle': 400, 'Le Pavillon': 850,
+            'Les Hammams': 800, 'Les Massages': 1200, 'Les Soins Visage': 1500,
+            'La Piscine & Sports': 600, 'VIP Presidential Suite': 15000,
+            'VIP Royal Palace': 12000, 'Générique': 1500
+        };
+        const exact = priceMap[roomName];
+        if (exact) return exact;
+        const partial = Object.keys(priceMap).find(k =>
+            roomName.toLowerCase().includes(k.toLowerCase()) ||
+            k.toLowerCase().includes(roomName.toLowerCase())
+        );
+        return partial ? priceMap[partial] : 1500;
+    }
+
+    function calculateNights(arrival, departure) {
+        if (!arrival || !departure) return 1;
+        const a = new Date(arrival);
+        const d = new Date(departure);
+        const diff = d - a;
+        const nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        return nights > 0 ? nights : 1;
+    }
+
+    /**
+     * PDF GENERATOR (with pricing & loyalty discount)
      */
     window.downloadReservationPDF = function(resId) {
-        const res = window.localReservations?.find(r => r.id == resId);
+        const reservations = window.localReservations;
+        const res = reservations?.find(r => r.id == resId);
         if (!res) return;
+
+        const resIndex = reservations.indexOf(res);
+        const totalRes = reservations.length;
+        const resNumber = totalRes - resIndex;
+
+        const pricePerUnit = getRoomPrice(res.room);
+        const nights = (res.room.includes('Chambre') || res.room.includes('Suite') || res.room.includes('Riad')) 
+            ? calculateNights(res.arrival, res.departure) 
+            : 1;
+        const baseTotal = pricePerUnit * nights;
+        
+        const isDiscountedRes = (resNumber % 10 === 0);
+        const discountAmount = isDiscountedRes ? Math.round(baseTotal * 0.25) : 0;
+        const finalPrice = baseTotal - discountAmount;
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
 
-        // Design PDF
+        // Header
         doc.setFillColor(15, 15, 15);
-        doc.rect(0, 0, 210, 45, 'F');
-
+        doc.rect(0, 0, 210, 50, 'F');
         doc.setTextColor(201, 168, 76);
-        doc.setFontSize(26);
-        doc.text("GOLDEN ATLAS PRESTIGE", 105, 25, { align: 'center' });
+        doc.setFontSize(28);
+        doc.text("GOLDEN ATLAS", 105, 25, { align: 'center' });
         doc.setFontSize(10);
-        doc.text("ERRACHIDIA - TAFILALET - LUXE & PATRIMOINE", 105, 33, { align: 'center' });
+        doc.setTextColor(150, 110, 50);
+        doc.text("P A L A C E  ·  E R R A C H I D I A", 105, 33, { align: 'center' });
+        doc.text("DEPUIS 1923", 105, 38, { align: 'center' });
 
+        // Title
         doc.setTextColor(40, 40, 40);
-        doc.setFontSize(16);
-        doc.text("CONFIRMATION DE SÉJOUR", 20, 65);
-        
+        doc.setFontSize(20);
+        doc.text("BON DE SEJOUR & FACTURE", 20, 68);
         doc.setDrawColor(201, 168, 76);
-        doc.setLineWidth(0.5);
-        doc.line(20, 70, 190, 70);
+        doc.setLineWidth(1);
+        doc.line(20, 73, 190, 73);
 
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text(`Dossier N° : GA-${res.id.slice(0,8).toUpperCase()}`, 20, 80);
-        doc.text(`Émis le : ${new Date().toLocaleDateString('fr-FR')}`, 190, 80, { align: 'right' });
+        // Meta
+        doc.setFontSize(9);
+        doc.setTextColor(120, 120, 120);
+        doc.text("Dossier : GA-" + res.id.slice(0,8).toUpperCase(), 20, 82);
+        doc.text("Emis le : " + new Date().toLocaleDateString('fr-FR'), 190, 82, { align: 'right' });
+        doc.text("Reservation N : #" + resNumber, 20, 88);
 
-        const drawInfo = (label, data, y) => {
-            doc.setFontSize(10);
-            doc.setTextColor(120, 120, 120);
-            doc.text(label, 20, y);
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(11);
-            doc.text(data, 75, y);
-        };
-
-        drawInfo("NOM DU CLIENT", res.name.toUpperCase(), 100);
-        drawInfo("HÉBERGEMENT / N°", res.room.toUpperCase(), 110);
-        drawInfo("DATE D'ARRIVÉE", res.arrival, 125);
-        drawInfo("DATE DE DÉPART", res.departure, 135);
-        drawInfo("NB. DE PERSONNES", res.guests + " Personne(s)", 145);
-        drawInfo("TYPE DE SÉJOUR", "PRESTIGE & DÉTENTE", 155);
-        
-        doc.setDrawColor(230, 230, 230);
-        doc.line(20, 165, 190, 165);
+        // Client & Stay
+        doc.setFontSize(9);
+        doc.setTextColor(120, 120, 120);
+        doc.text("INFORMATIONS CLIENT", 20, 100);
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(11);
+        doc.text("Nom : " + res.name.toUpperCase(), 20, 108);
+        doc.text("Email : " + (res.user_email || 'Non renseigne'), 20, 116);
 
         doc.setFontSize(9);
         doc.setTextColor(120, 120, 120);
-        doc.text("Ce document doit être présenté à la réception dès votre arrivée.", 105, 185, { align: 'center' });
-        doc.text("Contact Conciergerie : +212 (0) 555-987-654 | contact@goldenatlas.com", 105, 192, { align: 'center' });
+        doc.text("DETAILS DE LA RESERVATION", 120, 100);
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(11);
+        doc.text("Article : " + res.room, 120, 108);
+        doc.text("Date : " + res.arrival + (nights > 1 ? " (" + nights + " nuits)" : ""), 120, 116);
 
-        doc.save(`Confirmation_GA_${res.id.slice(0,8).toUpperCase()}.pdf`);
+        // Summary Table
+        const tableY = 135;
+        doc.setFillColor(248, 245, 240);
+        doc.rect(20, tableY, 170, 70, 'F');
+        doc.setDrawColor(201, 168, 76);
+        doc.rect(20, tableY, 170, 70, 'S');
+
+        doc.setFontSize(10);
+        doc.setTextColor(150, 110, 50);
+        doc.text("DETAIL DU PRIX", 30, tableY + 12);
+
+        doc.setTextColor(60, 60, 60);
+        doc.text("Prix unitaire :", 30, tableY + 25);
+        doc.setTextColor(0, 0, 0);
+        doc.text(pricePerUnit.toLocaleString() + " DH", 90, tableY + 25);
+
+        doc.setTextColor(60, 60, 60);
+        doc.text("Quantite :", 30, tableY + 35);
+        doc.setTextColor(0, 0, 0);
+        doc.text(nights.toString(), 90, tableY + 35);
+
+        doc.setTextColor(60, 60, 60);
+        doc.text("Sous-total :", 30, tableY + 45);
+        doc.setTextColor(0, 0, 0);
+        doc.text(baseTotal.toLocaleString() + " DH", 90, tableY + 45);
+
+        if (isDiscountedRes) {
+            doc.setTextColor(34, 139, 34);
+            doc.text("REDUCTION FIDELITE (10e) :", 30, tableY + 55);
+            doc.text("- 25% (-" + discountAmount.toLocaleString() + " DH)", 110, tableY + 55);
+
+            doc.setDrawColor(201, 168, 76);
+            doc.line(30, tableY + 59, 180, tableY + 59);
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(13);
+            doc.text("NET A PAYER :", 30, tableY + 65);
+            doc.setTextColor(201, 168, 76);
+            doc.text(finalPrice.toLocaleString() + " DH", 110, tableY + 65);
+        } else {
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.text("TOTAL A PAYER :", 30, tableY + 65);
+            doc.setTextColor(201, 168, 76);
+            doc.text(baseTotal.toLocaleString() + " DH", 110, tableY + 65);
+        }
+
+        // Footer & Progress
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text("Golden Atlas Errachidia - Avenue Mohammed V, Errachidia", 105, 270, { align: 'center' });
+        doc.save("Recu_GoldenAtlas_" + res.name.replace(' ','_') + ".pdf");
     };
 
     // 2. SCROLL EFFECTS (Header & Revelations)

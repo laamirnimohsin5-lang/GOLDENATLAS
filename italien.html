@@ -6,6 +6,27 @@
     <title>L'Italien · Golden Atlas</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .page-gallery-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+        .page-gallery-img {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .page-gallery-img:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(197,160,89,0.2);
+        }
+    </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
 </head>
@@ -85,7 +106,7 @@
     <div class="menu-right-pane" style="position:relative; z-index:1;"></div>
 </nav>
 <main>
-    <section class="sub-hero" style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&q=85'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
+    <section class="sub-hero" style="background-image: url('assets/ressterants/Luxury_Italian_pasta_dish_202606220148.jpeg'); background-size:cover; background-position:center; min-height:75vh; position:relative; display:flex; align-items:center; justify-content:center;">
         <div class="sub-hero-overlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.5);"></div>
         <div class="sub-hero-content" style="position:relative; z-index:2; text-align:center;">
             <span class="surtitle" style="color:var(--gold); letter-spacing:5px;">Gastronomie</span>
@@ -103,11 +124,14 @@
         </div>
     </section>
     <section class="section-pad" style="background:#fff; padding: 60px 5%;">
-        <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:20px;">
-            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
-            <img src="https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800&q=85" style="width:100%; height:350px; object-fit:cover;">
+        <div class="page-gallery-grid">
+            <img src="assets/ressterants/Luxury_Italian_pasta_dish_202606220148.jpeg" class="page-gallery-img" alt="Pâtes Italiennes">
+            <div style="display: flex; flex-direction: column; gap: 25px;">
+                <img src="assets/ressterants/Restaurant_in_luxury_hotel_202606220148.jpeg" class="page-gallery-img" style="height: 212px;" alt="Cadre">
+                <img src="assets/ressterants/Chef_preparing_gourmet_dishes_202606220148.jpeg" class="page-gallery-img" style="height: 212px;" alt="Chef">
+            </div>
+            <img src="assets/ressterants/Wine_cellar_with_wine_bottles_202606220148.jpeg" class="page-gallery-img" alt="Cave à Vin">
+            <img src="assets/ressterants/Hotel_lounge_elegant_sofas_lighting_202606220148.jpeg" class="page-gallery-img" alt="Ambiance Lounge">
         </div>
     </section>
 </main>

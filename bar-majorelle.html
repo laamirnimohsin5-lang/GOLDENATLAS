@@ -6,6 +6,28 @@
     <title>Le Bar Majorelle · Golden Atlas</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .bar-card {
+            opacity: 0;
+            transform: translateX(100px);
+            transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s ease;
+            will-change: transform, opacity;
+        }
+        .bar-card.show-card {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .bar-card:hover {
+            box-shadow: 0 15px 40px rgba(197, 160, 89, 0.15) !important;
+        }
+        .bar-card img {
+            transition: transform 0.8s ease;
+            will-change: transform;
+        }
+        .bar-card:hover img {
+            transform: scale(1.08); /* Zoom in ambiance effect */
+        }
+    </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
 </head>
@@ -99,17 +121,17 @@
             <div class="separator"></div>
             <p class="body-text">L'endroit idéal pour déguster des cocktails créations dans une atmosphère jazzy chic et élégante, rythmée par la musique live tous les soirs. Un véritable voyage dans le temps.</p>
             <p style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-top: 20px;">Prix : Cocktails à partir de 250 MAD</p>
-            <button class="btn-reserver" onclick="document.getElementById('reservation-modal').classList.add('show'); document.getElementById('modal-overlay').classList.add('show');" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer;">RÉSERVER UNE TABLE</button>
+            <button onclick="document.getElementById('collections').scrollIntoView({behavior: 'smooth'})" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer; font-family:var(--font-body); letter-spacing:1px; transition: 0.3s; box-shadow: 0 4px 15px rgba(197,160,89,0.3);">DÉCOUVRIR LA CARTE</button>
         </div>
     </section>
-    <section class="section-pad" style="background:#fff; padding: 60px 5%;">
+    <section id="collections" class="section-pad" style="background:#fff; padding: 60px 5%;">
         <div class="container">
             <h3 class="title-md text-center" style="margin-bottom: 50px;">Nos Collections d'Exception</h3>
             <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:40px;">
                 
                 <!-- Collection 1 -->
                 <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
-                    <img src="assets/bar-1.png" style="width:100%; height:450px; object-fit:cover;">
+                    <img src="assets/bar_skull.png" style="width:100%; height:450px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">L'Expérience "Dark Skull"</h4>
                         <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Une sélection pointue de Whiskeys Single Malt servis avec notre glace sculptée artisanale pour une dégustation mystique et raffinée.</p>
@@ -119,7 +141,7 @@
 
                 <!-- Collection 2 -->
                 <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
-                    <img src="assets/bar-2.png" style="width:100%; height:450px; object-fit:cover;">
+                    <img src="assets/bar_tropical.png" style="width:100%; height:450px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Cocktails "Éclat Tropical"</h4>
                         <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Des créations explosives à base de fruits frais et d'essences botaniques. Un festival de couleurs et de saveurs audacieuses.</p>
@@ -129,7 +151,7 @@
 
                 <!-- Collection 3 -->
                 <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
-                    <img src="https://images.unsplash.com/photo-1597290282695-edc43d0e7129?w=800&q=85" style="width:100%; height:450px; object-fit:cover;">
+                    <img src="assets/bar_champagne.png" style="width:100%; height:450px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Le Carré Champagne</h4>
                         <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Les plus grandes cuvées servies à température parfaite dans l'effervescence de nos soirées Jazz. Prestige et célébration.</p>
@@ -139,11 +161,31 @@
 
                 <!-- Collection 4 -->
                 <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
-                    <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=800&q=85" style="width:100%; height:450px; object-fit:cover;">
+                    <img src="assets/bar_library.png" style="width:100%; height:450px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">La Bibliothèque des Spiritueux</h4>
                         <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Plus de 200 références de spiritueux d'exception provenant des quatre coins du monde. Un voyage initiatique pour les connaisseurs.</p>
                         <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 180 MAD / Dégustation</p>
+                    </div>
+                </div>
+
+                <!-- Collection 5 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="assets/bar_mixologist.png" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">L'Art de la Mixologie</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Assistez au spectacle de nos mixologues élaborant des cocktails créatifs avec passion et des techniques d'avant-garde.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : 320 MAD / Création</p>
+                    </div>
+                </div>
+
+                <!-- Collection 6 -->
+                <div class="bar-card" style="background:#0a0a0a; border:1px solid rgba(197,160,89,0.1); color:#fff; overflow:hidden;">
+                    <img src="assets/bar_jazz.png" style="width:100%; height:450px; object-fit:cover;">
+                    <div style="padding: 30px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Soirées Jazz & Blues</h4>
+                        <p style="margin: 15px 0; color: #aaa; line-height: 1.6;">Laissez-vous envoûter par l'atmosphère musicale live, sublimée par nos boissons signatures et le talent de nos pianistes.</p>
+                        <p style="font-weight: 600; color: var(--gold); font-size: 1.2rem;">Prix : Sur réservation</p>
                     </div>
                 </div>
 
@@ -166,6 +208,23 @@
 </div>
 <div class="toast" id="toast-msg"></div>
 <script src="script.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cards = document.querySelectorAll('.bar-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if(entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('show-card');
+                    }, index * 150); // cascading entrance effect
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+        
+        cards.forEach(card => observer.observe(card));
+    });
+</script>
 </body>
 </html>
 
