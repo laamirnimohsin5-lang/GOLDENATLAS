@@ -640,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      <span style="display:block; font-size:0.75rem; font-weight:600; letter-spacing:1px;">BIENVENUE</span>
                 </div>
                 <ul id="user-dropdown" style="display:none; position:absolute; top:40px; right:0; background:#111; border:1px solid rgba(255,255,255,0.1); width:200px; padding:10px 0; list-style:none; z-index:2001; animation: fadeIn 0.3s ease;">
+                    <li id="show-my-account" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; cursor:pointer; transition:0.3s; border-bottom:1px solid rgba(255,255,255,0.05);">👤 MON COMPTE</li>
                     <li id="show-my-res" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; cursor:pointer; transition:0.3s; border-bottom:1px solid rgba(255,255,255,0.05);">MES RÉSERVATIONS</li>
                     <li id="client-logout" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; color:#ef4444; cursor:pointer; transition:0.3s;">DÉCONNEXION</li>
                 </ul>
@@ -659,6 +660,11 @@ document.addEventListener('DOMContentLoaded', () => {
             dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         });
         document.addEventListener('click', () => { if (dropdown) dropdown.style.display = 'none'; });
+
+        // Mon Compte
+        document.getElementById('show-my-account')?.addEventListener('click', () => {
+            window.location.href = 'login-client.html';
+        });
 
         // Logout
         document.getElementById('client-logout')?.addEventListener('click', () => {

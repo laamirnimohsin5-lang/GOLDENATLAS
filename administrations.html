@@ -259,6 +259,64 @@
         .sub-tab { cursor: pointer; font-size: 0.8rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
         .sub-tab.active { color: var(--primary); font-weight: 700; }
         .sub-tab:hover { color: #fff; }
+
+        @media (max-width: 991px) {
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 20px; 
+                border-right: none; 
+                border-bottom: 1px solid rgba(201,168,76,0.1); 
+            }
+            .sidebar nav { 
+                display: flex; 
+                flex-wrap: wrap; 
+                gap: 5px; 
+                justify-content: center; 
+            }
+            .nav-item { 
+                margin-bottom: 0; 
+                padding: 8px 12px; 
+                font-size: 0.65rem; 
+            }
+            .nav-item[style*="margin-top: 50px"], .nav-item[style*="margin-top: 10px"] { 
+                margin-top: 0 !important; 
+            }
+            .main-content { 
+                margin-left: 0; 
+                padding: 20px; 
+            }
+            .stats-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .header-bar { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 10px; 
+            }
+            table { 
+                display: block; 
+                overflow-x: auto; 
+                white-space: nowrap; 
+            }
+            .form-grid { 
+                grid-template-columns: 1fr; 
+            }
+            .flex-between {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-bar {
+                max-width: 100%;
+            }
+        }
     </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
@@ -291,7 +349,8 @@
 <aside class="sidebar">
 <div class="sidebar-logo">GOLDEN ATLAS</div>
 <nav>
-<div class="nav-item active" data-tab="reservations"><i>📅</i> Réservations</div>
+<div class="nav-item active" data-tab="dashboard"><i>📊</i> Tableau de Bord</div>
+<div class="nav-item" data-tab="reservations"><i>📅</i> Réservations</div>
 <div class="nav-item" data-tab="customers"><i>👤</i> Clients</div>
 <div class="nav-item" data-tab="messages"><i>✉️</i> Messages</div>
 <div class="nav-item" data-tab="hotel"><i>🏨</i> Gestion de l'Hôtel</div>
@@ -311,7 +370,46 @@
 <div class="stat-box"><span class="stat-num" data-i18n="ag_administrations_11" id="stat-status">OK</span><span class="stat-label" data-i18n="ag_administrations_12">État Système</span></div>
 </div>
 <!-- TABS -->
-<div class="tab-content active" id="tab-reservations">
+<div class="tab-content active" id="tab-dashboard">
+<div class="data-card" style="background: linear-gradient(135deg, rgba(201,168,76,0.05), rgba(10,11,20,0.9)); border-color: rgba(201,168,76,0.2);">
+  <h3 style="font-family:'Playfair Display', serif; color: var(--primary); margin-bottom: 8px;">Bienvenue, Administrateur</h3>
+  <p style="font-size:0.8rem; color:rgba(255,255,255,0.4);">Vue d'ensemble de l'activité de Golden Atlas Prestige</p>
+</div>
+<div class="stats-grid" style="margin-bottom: 30px;">
+  <div class="stat-box" style="border-color: rgba(34,197,94,0.2); background: rgba(34,197,94,0.03);">
+    <span class="stat-num" id="db-stat-res" style="color:#22c55e;">0</span>
+    <span class="stat-label">Réservations Totales</span>
+  </div>
+  <div class="stat-box" style="border-color: rgba(59,130,246,0.2); background: rgba(59,130,246,0.03);">
+    <span class="stat-num" id="db-stat-users" style="color:#3b82f6;">0</span>
+    <span class="stat-label">Clients Inscrits</span>
+  </div>
+  <div class="stat-box" style="border-color: rgba(201,168,76,0.2); background: rgba(201,168,76,0.03);">
+    <span class="stat-num" id="db-stat-msg" style="color:var(--primary);">0</span>
+    <span class="stat-label">Messages Reçus</span>
+  </div>
+  <div class="stat-box" style="border-color: rgba(168,85,247,0.2); background: rgba(168,85,247,0.03);">
+    <span class="stat-num" style="color:#a855f7;">✓</span>
+    <span class="stat-label">Système Actif</span>
+  </div>
+</div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+  <div class="data-card">
+    <h4 style="color:var(--primary); font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px;">⚡ Dernières Réservations</h4>
+    <div id="db-recent-res" style="font-size:0.8rem; color:rgba(255,255,255,0.5);">Chargement...</div>
+  </div>
+  <div class="data-card">
+    <h4 style="color:var(--primary); font-size:0.75rem; letter-spacing:2px; text-transform:uppercase; margin-bottom:20px;">🏨 Éléments Réservables</h4>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span style="color:rgba(255,255,255,0.6);">Suites &amp; Chambres</span><span style="color:#22c55e;">Disponibles</span></div>
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span style="color:rgba(255,255,255,0.6);">Spa &amp; Hammam</span><span style="color:#22c55e;">Actif</span></div>
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span style="color:rgba(255,255,255,0.6);">Restaurants</span><span style="color:#22c55e;">Actif</span></div>
+      <div style="display:flex; justify-content:space-between; font-size:0.8rem;"><span style="color:rgba(255,255,255,0.6);">Transport VIP</span><span style="color:#22c55e;">Actif</span></div>
+    </div>
+  </div>
+</div>
+</div>
+<div class="tab-content" id="tab-reservations">
 <div class="data-card">
 <h3 data-i18n="ag_administrations_13">Vérification des demandes de séjour</h3>
 <table id="res-table">
@@ -360,6 +458,7 @@
 <th>Expéditeur</th>
 <th>Message</th>
 <th>Date</th>
+<th>Actions</th>
 </tr>
 </thead>
 <tbody id="msg-body">
@@ -426,6 +525,27 @@
 </main>
 </div>
 <!-- ── MODALS ── -->
+<!-- Reply Modal -->
+<div class="modal" id="modal-reply">
+<div class="modal-content" style="max-width: 500px;">
+<span class="close-modal" onclick="closeModal('modal-reply')">×</span>
+<h2 class="modal-title">✉️ Répondre au Client</h2>
+<div style="margin-bottom:15px;">
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.5); margin-bottom:5px;">Destinataire :</p>
+    <p id="reply-to-name" style="color:var(--primary); font-weight:700; font-size:0.9rem;"></p>
+    <p id="reply-to-email" style="color:rgba(255,255,255,0.4); font-size:0.7rem;"></p>
+</div>
+<div style="margin-bottom:15px;">
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.5); margin-bottom:5px;">Message original :</p>
+    <p id="reply-original-msg" style="font-size:0.8rem; color:rgba(255,255,255,0.7); background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); padding:10px; border-radius:6px; font-style:italic;"></p>
+</div>
+<label class="form-label">Votre Réponse</label>
+<textarea id="reply-text" class="form-input" rows="5" placeholder="Rédigez votre réponse au client..."></textarea>
+<div style="text-align:right; margin-top:15px;">
+    <button class="btn-gold" onclick="sendAdminReply()">📨 Envoyer la Réponse</button>
+</div>
+</div>
+</div>
 <!-- Room Modal -->
 <div class="modal" id="modal-room">
 <div class="modal-content">
@@ -694,6 +814,25 @@ async function loadDashboardData() {
     renderReservations(reservations || []);
     renderUsers(users || []);
     renderMessages(messages || []);
+
+    // Update dashboard tab stats
+    document.getElementById('db-stat-res').textContent = reservations ? reservations.length : 0;
+    document.getElementById('db-stat-users').textContent = users ? users.length : 0;
+    document.getElementById('db-stat-msg').textContent = messages ? messages.length : 0;
+
+    // Recent reservations in dashboard
+    const recentEl = document.getElementById('db-recent-res');
+    const recent = (reservations || []).slice(-4).reverse();
+    if (recent.length) {
+        recentEl.innerHTML = recent.map(r => `
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05);">
+                <span style="color:#fff;">${r.name}</span>
+                <span class="badge ${r.status === 'Validée' ? 'badge-success' : r.status === 'Refusée' ? 'badge-danger' : 'badge-pending'}">${r.status || 'En attente'}</span>
+            </div>
+        `).join('');
+    } else {
+        recentEl.textContent = 'Aucune réservation pour le moment.';
+    }
 }
 
 function renderReservations(data) {
@@ -739,11 +878,44 @@ function renderMessages(data) {
     const tbody = document.getElementById('msg-body');
     tbody.innerHTML = data.length ? data.map(m => `
         <tr>
-            <td>${m.sender}</td>
+            <td>
+                <div style="font-weight:600;">${m.sender}</div>
+                ${m.user_email ? `<div style="font-size:0.65rem; color:rgba(255,255,255,0.4);">${m.user_email}</div>` : ''}
+            </td>
             <td style="max-width:300px;">${m.message}</td>
             <td>${new Date(m.created_at || m.date).toLocaleDateString()}</td>
+            <td>
+                <button class="action-btn" style="border-color:var(--primary); color:var(--primary);" onclick="openReplyModal('${m.sender}', '${m.user_email || ''}', \`${m.message.replace(/`/g,'&#96;')}\`)">\u2709\ufe0f R\u00e9pondre</button>
+            </td>
         </tr>
-    `).join('') : '<tr><td colspan="3" style="text-align:center;">Aucun message reçu.</td></tr>';
+    `).join('') : '<tr><td colspan="4" style="text-align:center;">Aucun message re\u00e7u.</td></tr>';
+}
+
+// Reply Modal Logic
+let replyTarget = {};
+function openReplyModal(sender, email, message) {
+    replyTarget = { sender, email };
+    document.getElementById('reply-to-name').textContent = sender;
+    document.getElementById('reply-to-email').textContent = email || '(email non renseign\u00e9)';
+    document.getElementById('reply-original-msg').textContent = message;
+    document.getElementById('reply-text').value = '';
+    openModal('modal-reply');
+}
+function sendAdminReply() {
+    const replyText = document.getElementById('reply-text').value.trim();
+    if (!replyText) { showAdminToast('\u26a0\ufe0f Veuillez saisir une r\u00e9ponse !'); return; }
+    
+    const key = 'ga_admin_replies';
+    const all = JSON.parse(localStorage.getItem(key) || '[]');
+    all.push({
+        to_name: replyTarget.sender,
+        to_email: replyTarget.email,
+        message: replyText,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem(key, JSON.stringify(all));
+    closeModal('modal-reply');
+    showAdminToast(`R\u00e9ponse envoy\u00e9e \u00e0 ${replyTarget.sender} \u2713`);
 }
 
 // 3. Update Status
@@ -776,7 +948,8 @@ document.querySelectorAll('.nav-item[data-tab]').forEach(item => {
         const activeTab = document.getElementById('tab-' + tab);
         if(activeTab) activeTab.classList.add('active');
         
-        document.getElementById('tab-title').textContent = titleMap[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
+        const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'messages': 'Messages', 'dashboard': 'Tableau de Bord' };
+        document.getElementById('tab-title').textContent = tabTitles[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
     });
 });
 
