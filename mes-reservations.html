@@ -107,6 +107,18 @@
         }
         .btn-row { display: flex; gap: 12px; margin-top: 25px; }
         .empty-state { text-align: center; padding: 40px; color: rgba(255,255,255,0.3); border: 1px dashed rgba(201,168,76,0.15); }
+
+        @media (max-width: 600px) {
+            body { padding: 15px 10px; }
+            .login-wrapper { max-width: 100%; }
+            .login-card { padding: 30px 15px; }
+            .login-logo { font-size: 1.8rem; }
+            .account-header { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
+            .account-avatar { margin: 0 auto; }
+            .res-top { flex-direction: column; gap: 8px; align-items: flex-start; }
+            .res-details { grid-template-columns: 1fr 1fr !important; gap: 15px; }
+            .res-detail-item { text-align: left !important; }
+        }
     </style>
 </head>
 <body>
