@@ -59,7 +59,7 @@
             <div class="menu-column">
                 <ul class="sub-links pt-0">
                     <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
-                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="salle-jeux.html" data-i18n="menu_rooms">SALLE DE JEUX</a></li>
                     <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
                     <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
                     <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
@@ -109,35 +109,209 @@
             <div class="separator"></div>
             <p class="body-text">Notre piscine extérieure chauffée, bordée de palmiers majestueux et de bougainvilliers en fleur, offre un cadre paradisiaque pour se détendre sous le soleil d'Errachidia. Des transats premium, un service de serviettes fraîches et un bar aquatique complètent cette expérience de bien-être absolue.</p>
             <p class="body-text" style="margin-top:15px;">Piscine chauffée 28°C · Ouverte de 8h à 20h · Bar aquatique · Transats & cabanas privées</p>
+
         </div>
     </section>
 
     <!-- GALERIE PHOTOS -->
-    <section class="section-pad reveal" style="background:#fff; padding: 60px 5%;">
+    <style>
+        .pool-gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .pool-gallery-card {
+            background: var(--bg-white, #ffffff);
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .pool-gallery-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(197, 160, 89, 0.12) !important;
+            border-color: var(--gold);
+        }
+        .pool-gallery-img-wrapper {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            line-height: 0;
+            position: relative;
+        }
+        .pool-gallery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pool-gallery-card:hover img {
+            transform: scale(1.06);
+        }
+        .pool-gallery-info {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+        .pool-gallery-title {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--text-dark);
+            margin: 0;
+            transition: color 0.3s;
+        }
+        .pool-gallery-card:hover .pool-gallery-title {
+            color: var(--gold);
+        }
+        .pool-gallery-desc {
+            font-family: var(--font-body);
+            font-size: 0.88rem;
+            color: var(--text-mid);
+            line-height: 1.6;
+            margin: 0;
+        }
+        .pool-gallery-tag {
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-top: auto;
+            border-top: 1px solid rgba(197, 160, 89, 0.1);
+            padding-top: 12px;
+        }
+    </style>
+    <section class="section-pad reveal" style="background: var(--bg-white, #fff); padding: 80px 5%;">
         <div style="max-width:1200px; margin:0 auto;">
-            <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:20px;">
-                <div style="position:relative; overflow:hidden; line-height:0;">
-                    <img src="https://images.unsplash.com/photo-1572331165267-854da2b10ccc?w=800&q=85" alt="Piscine Vue Générale" style="width:100%; height:350px; object-fit:cover;">
-                    <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff;">
-                        <p style="font-family:var(--font-heading); font-style:italic; font-size:1.1rem;">Vue panoramique de la piscine</p>
+            <div class="pool-gallery-grid">
+                <!-- Image 1 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1572331165267-854da2b10ccc?auto=format&fit=crop&w=800&q=80" alt="Le Bassin Principal">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Le Bassin Principal</h3>
+                        <p class="pool-gallery-desc">Un magnifique couloir de nage chauffé de 25 mètres alliant design contemporain, carrelage d'azur et confort d'exception.</p>
+                        <span class="pool-gallery-tag">Bassin chauffé · 25 mètres</span>
                     </div>
                 </div>
-                <div style="position:relative; overflow:hidden; line-height:0;">
-                    <img src="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?w=800&q=85" alt="Piscine & Palmiers" style="width:100%; height:350px; object-fit:cover;">
-                    <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff;">
-                        <p style="font-family:var(--font-heading); font-style:italic; font-size:1.1rem;">Bordée de palmiers et de verdure</p>
+                <!-- Image 2 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1575429198097-0414ec08e8cd?auto=format&fit=crop&w=800&q=80" alt="Palmiers & Sérénité">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Palmiers & Sérénité</h3>
+                        <p class="pool-gallery-desc">Une oasis de fraîcheur avec des palmiers majestueux se reflétant délicatement dans une eau turquoise d'une pureté absolue.</p>
+                        <span class="pool-gallery-tag">Cocon de sérénité andalou</span>
                     </div>
                 </div>
-                <div style="position:relative; overflow:hidden; line-height:0;">
-                    <img src="https://images.unsplash.com/photo-1540539234-c14a20fb7c7b?w=800&q=85" alt="Transats Piscine" style="width:100%; height:350px; object-fit:cover;">
-                    <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff;">
-                        <p style="font-family:var(--font-heading); font-style:italic; font-size:1.1rem;">Transats & espace détente</p>
+                <!-- Image 3 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80" alt="Eau Pure & Sérénité">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Eau Pure & Sérénité</h3>
+                        <p class="pool-gallery-desc">Un bassin calme et majestueux doté de lits immergés pour se relaxer pleinement au fil de l'eau.</p>
+                        <span class="pool-gallery-tag">Bassin majestueux et lits immergés</span>
                     </div>
                 </div>
-                <div style="position:relative; overflow:hidden; line-height:0;">
-                    <img src="https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=800&q=85" alt="Coucher de soleil Piscine" style="width:100%; height:350px; object-fit:cover;">
-                    <div style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:linear-gradient(transparent, rgba(0,0,0,0.7)); color:#fff;">
-                        <p style="font-family:var(--font-heading); font-style:italic; font-size:1.1rem;">Coucher de soleil sur la piscine</p>
+                <!-- Image 4 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1470376619031-a6791e534bf0?auto=format&fit=crop&w=800&q=80" alt="Coucher de Soleil">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Coucher de Soleil</h3>
+                        <p class="pool-gallery-desc">Une ambiance féerique à la tombée de la nuit lorsque le ciel s'embrase et illumine la terrasse principale.</p>
+                        <span class="pool-gallery-tag">Ambiance féerique nocturne</span>
+                    </div>
+                </div>
+                <!-- Image 5 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" alt="Un Refuge d'Exception">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Un Refuge d'Exception</h3>
+                        <p class="pool-gallery-desc">L'alliance splendide d'une architecture d'époque aux détails ciselés et d'un design contemporain haut de gamme.</p>
+                        <span class="pool-gallery-tag">Alliance d'histoire et de luxe</span>
+                    </div>
+                </div>
+                <!-- Image 6 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80" alt="Les Cabanas Privées">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Les Cabanas Privées</h3>
+                        <p class="pool-gallery-desc">Des espaces de détente exclusifs et ombragés au bord de la piscine avec service de majordome dédié à vos moindres désirs.</p>
+                        <span class="pool-gallery-tag">Espaces privatifs de grand confort</span>
+                    </div>
+                </div>
+                <!-- Image 7 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=800&q=80" alt="L'Esprit Riad">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">L'Esprit Riad</h3>
+                        <p class="pool-gallery-desc">Un bassin intime inspiré des patios andalous et entouré de colonnes sculptées pour une relaxation hors du temps.</p>
+                        <span class="pool-gallery-tag">Patio andalou traditionnel</span>
+                    </div>
+                </div>
+                <!-- Image 8 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&w=800&q=80" alt="Le Jardin Tropical">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Le Jardin Tropical</h3>
+                        <p class="pool-gallery-desc">Nagez en toute sérénité au cœur d'un environnement sauvage peuplé de palmiers exotiques et de fleurs parfumées.</p>
+                        <span class="pool-gallery-tag">Végétation exubérante</span>
+                    </div>
+                </div>
+                <!-- Image 9 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=800&q=80" alt="L'Infini Céleste">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">L'Infini Céleste</h3>
+                        <p class="pool-gallery-desc">Une piscine à débordement offrant un panorama spectaculaire et plongeant directement sur l'horizon fascinant d'Errachidia.</p>
+                        <span class="pool-gallery-tag">Débordement panoramique</span>
+                    </div>
+                </div>
+                <!-- Image 10 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80" alt="Le Spa Volupté">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Le Spa Volupté</h3>
+                        <p class="pool-gallery-desc">Un lagon intérieur calme et tamisé pour ressourcer votre corps avec des jets hydro-massants chauffés à température idéale.</p>
+                        <span class="pool-gallery-tag">Thermal & Hydrothérapie</span>
+                    </div>
+                </div>
+                <!-- Image 11 -->
+                <div class="pool-gallery-card">
+                    <div class="pool-gallery-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80" alt="Le Solarium">
+                    </div>
+                    <div class="pool-gallery-info">
+                        <h3 class="pool-gallery-title">Le Solarium</h3>
+                        <p class="pool-gallery-desc">Une terrasse baignée de lumière naturelle équipée de chaises longues ultra-confortables pour parfaire votre bronzage marocain.</p>
+                        <span class="pool-gallery-tag">Bains de soleil exclusifs</span>
                     </div>
                 </div>
             </div>
@@ -154,7 +328,7 @@
                 <a href="tel:+212648120577">+212 648 120 577</a>
                 <a href="mailto:laamirnimohsin5@gmail.com">laamirnimohsin5@gmail.com</a>
             </div>
-            <div class="footer-col"><h4>Hôtel</h4><ul><li><a href="hebergements.html">Hébergements</a></li><li><a href="restaurants.html">Restaurants</a></li><li><a href="spa.html">Spa</a></li></ul></div>
+            <div class="footer-col"><h4>Hôtel</h4><ul><li><a href="salle-jeux.html">Salle de Jeux</a></li><li><a href="restaurants.html">Restaurants</a></li><li><a href="spa.html">Spa</a></li></ul></div>
             <div class="footer-col"><h4>Loisirs</h4><ul><li><a href="piscine.html">Piscine</a></li><li><a href="cafe.html">Café</a></li><li><a href="salle-fetes.html">Salle des Fêtes</a></li><li><a href="restaurant.html">Restaurant</a></li></ul></div>
         </div>
     </div>

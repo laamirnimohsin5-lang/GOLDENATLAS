@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soutenance PFE - Golden Atlas Palace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --dark-gold: #996515;
+            --black: #050505;
+            --near-black: #0d0d0d;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--black);
+            color: var(--white);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Particles Background Simulation */
+        .bg-glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+            z-index: -1;
+        }
+
+        /* Slides Logic */
+        .slides-wrapper {
+            width: 100%;
+            height: 100%;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide {
+            min-width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: var(--transition);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .slide-content {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 4rem;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .slide-text h2 {
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 2rem;
+            line-height: 1.1;
+        }
+
+        .slide-text p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-visual {
+            position: relative;
+            height: 400px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border: 1px solid var(--gold);
+        }
+
+        .slide-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        /* Navigation */
+        .nav-controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: var(--gold);
+            color: var(--black);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.4);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--gold);
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1000;
+        }
+
+        .slide-indicator {
+            position: fixed;
+            bottom: 2.5rem;
+            left: 2rem;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--gold);
+            font-size: 0.9rem;
+        }
+
+        /* Specific Lists Stylings */
+        ul {
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        li::before {
+            content: "✦";
+            color: var(--gold);
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Mermaid Overrides */
+        .mermaid {
+            background: transparent !important;
+            width: 100%;
+        }
+
+        /* Tech Badges */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .tech-badge {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--gold);
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .slide-content {
+                grid-template-columns: 1fr;
+                padding: 2rem;
+                gap: 2rem;
+            }
+            .slide-visual {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progress"></div>
+    <div class="bg-glow"></div>
+    
+    <div class="slides-wrapper" id="wrapper">
+        <!-- Page 1: Présentation & Introduction -->
+        <section class="slide active" id="slide-1">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <span style="color: var(--gold); letter-spacing: 5px;">ESTABLISHED 1923</span>
+                    <h2>Golden Atlas Palace</h2>
+                    <p>Le plus haut niveau d'hôtellerie marocaine combinant architecture traditionnelle et innovation technologique de pointe.</p>
+                    <p>Une expérience immersive conçue pour redéfinir le luxe digital à Errachidia.</p>
+                </div>
+                <div class="slide-visual">
+                    <img src="luxury_palace_experience_1781134213953.png" alt="Golden Atlas Palace">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 2: Analyse (Problématique & Objectifs) -->
+        <section class="slide" id="slide-2">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Problématique & Objectifs</h2>
+                    <ul>
+                        <li>Manque de présence digitale pour les petits établissements.</li>
+                        <li>Gestion manuelle archaïque entraînant des erreurs fatales.</li>
+                        <li>Optimisation de la visibilité et de l'image de marque.</li>
+                        <li>Automatisation complète du cycle de réservation.</li>
+                    </ul>
+                </div>
+                <div class="slide-visual" style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); flex-direction: column; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️ → ✨</div>
+                    <p style="color: var(--gold); text-align: center;">Transformation numérique : De la gestion papier à l'intelligence artificielle.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 3: Conception Structural (Use Case & Class) -->
+        <section class="slide" id="slide-3">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Conception (UML)</h2>
+                    <p>Modélisation de l'architecture logicielle :</p>
+                    <ul>
+                        <li><b>Diagramme de Cas d'Utilisation :</b> Interactions Acteur/Système.</li>
+                        <li><b>Diagramme de Classe :</b> Structure de la base de données PostgreSQL/Supabase.</li>
+                    </ul>
+                </div>
+                <div class="slide-visual" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: transparent; border: none;">
+                    <img src="use_case.png" alt="Use Case Diagram" style="border-radius: 10px; border: 1px solid var(--gold);">
+                    <img src="class_diagram.png" alt="Class Diagram" style="border-radius: 10px; border: 1px solid var(--gold);">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 4: Conception Dynamique (Sequence) & IA -->
+        <section class="slide" id="slide-4">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Flux & Intelligence</h2>
+                    <p><b>Diagramme de Séquence :</b> Processus de réservation asynchrone.</p>
+                    <div style="background: rgba(212, 175, 55, 0.1); padding: 1rem; border-radius: 10px; border-left: 4px solid var(--gold);">
+                        <p style="font-size: 0.9rem; margin: 0;">Intégration de l'<b>API DeepSeek</b> pour le concierge virtuel Atlas Chat.</p>
+                    </div>
+                </div>
+                <div class="slide-visual">
+                    <img src="sequence_diagram.png" alt="Sequence Diagram">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5: Stack Tech & Backend -->
+        <section class="slide" id="slide-5">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Stack Technologie</h2>
+                    <div class="tech-grid">
+                        <div class="tech-badge">HTML5 / CSS3</div>
+                        <div class="tech-badge">JavaScript (ES6)</div>
+                        <div class="tech-badge">Supabase</div>
+                        <div class="tech-badge">Three.js</div>
+                        <div class="tech-badge">DeepSeek AI</div>
+                        <div class="tech-badge">jsPDF</div>
+                    </div>
+                    <p style="margin-top: 1.5rem;">Utilisation de <b>Supabase</b> pour la gestion temps réel des réservations et de l'<b>authentification Google</b>.</p>
+                </div>
+                <div class="slide-visual">
+                    <img src="luxury_palace_mosque_internal.png" alt="Architecture">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5: Plateforme & Résultats -->
+        <section class="slide" id="slide-5">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Application Web</h2>
+                    <ul>
+                        <li><b>Portail Client :</b> Responsive, 4 langues, 3D immersive.</li>
+                        <li><b>Fidélisation :</b> Système "10 réservations = -25%".</li>
+                        <li><b>Admin Panel :</b> Validation en temps réel et CRM.</li>
+                        <li><b>PDF Express :</b> Facturation automatique de luxe.</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <img src="cafe_hero.png" alt="Application UI">
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 6: Conclusion & Gestion project -->
+        <section class="slide" id="slide-6">
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h2>Conclusion & Gestion</h2>
+                    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                        <span class="tech-badge" style="background: var(--gold); color: black; font-weight: bold;">SCRUM</span>
+                        <span class="tech-badge">KANBAN</span>
+                        <span class="tech-badge">AGILE</span>
+                    </div>
+                    <p><b>Outils de pilotage :</b> Monday.com, Google Meet, Trello.</p>
+                    <p>Le projet <b>Golden Atlas</b> démontre qu'il est possible d'allier le prestige d'un palais séculaire aux exigences de la transformation digitale moderne.</p>
+                    <p style="margin-top: 2rem; color: var(--gold); font-size: 1.5rem; font-style: italic;">"La technologie au service du patrimoine."</p>
+                    <h3 style="margin-top: 2rem;">Merci pour votre attention.</h3>
+                </div>
+                <div class="slide-visual" style="background: var(--near-black); border: none; display: flex; flex-direction: column;">
+                    <div style="color: var(--gold); font-size: 5rem; font-family: 'Playfair Display';">MERCI</div>
+                    <div style="color: rgba(255,255,255,0.3); letter-spacing: 10px; margin-top: 1rem;">QUESTIONS ?</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="slide-indicator" id="indicator">PAGE 01 / 06</div>
+
+    <div class="nav-controls">
+        <button class="nav-btn" onclick="prevSlide()">←</button>
+        <button class="nav-btn" onclick="nextSlide()">→</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const wrapper = document.getElementById('wrapper');
+        const progress = document.getElementById('progress');
+        const indicator = document.getElementById('indicator');
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            const offset = -currentSlide * 100;
+            wrapper.style.transform = `translateY(${offset}vh)`;
+            
+            // Progress and indicator
+            const percent = ((currentSlide + 1) / slides.length) * 100;
+            progress.style.width = `${percent}%`;
+            indicator.innerText = `PAGE 0${currentSlide + 1} / 06`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        // Navigation clavier
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+</body>
+</html>

@@ -18,7 +18,7 @@ const translations = {
         intro_title: "Au cœur de notre légende",
         intro_text: "Fidèle à son identity singulière, Golden Atlas se réinvente en permanence dans une magie toujours unique tissée d'élégance et d'exception. Depuis 1923, un héritage de raffinement inégalé.",
         menu_home: "ACCUEIL",
-        menu_rooms: "HÉBERGEMENTS",
+        menu_rooms: "SALLE DE JEUX",
         menu_chambres: "Les Chambres",
         menu_suites: "Les suites",
         menu_vip: "Chambres VIP",
@@ -162,9 +162,11 @@ const translations = {
         loc_address: "Avenue Bab Jdid, 40040 Errachidia, Maroc",
         auth_req_title: "Connexion Requise",
         auth_req_desc: "Vous devez créer un compte ou vous connecter avant de faire une réservation.",
+        auth_req_desc_msg: "Vous devez créer un compte ou vous connecter avant d'envoyer un message.",
         auth_req_login: "Se connecter",
         auth_req_signup: "S'inscrire",
-        auth_req_cancel: "Annuler"
+        auth_req_cancel: "Annuler",
+        contact_placeholder_login: "Veuillez vous connecter pour envoyer un message..."
     },
     EN: {
         nav_login: "SIGN IN",
@@ -180,7 +182,7 @@ const translations = {
         intro_title: "At the heart of our legend",
         intro_text: "Faithful to its singular identity, Golden Atlas constantly reinvents itself in a unique magic woven of elegance and exception. Since 1923, a heritage of unmatched refinement.",
         menu_home: "HOME",
-        menu_rooms: "ACCOMMODATIONS",
+        menu_rooms: "GAMES ROOM",
         menu_chambres: "The Rooms",
         menu_suites: "The Suites",
         menu_vip: "VIP Rooms",
@@ -324,16 +326,18 @@ const translations = {
         loc_address: "Avenue Bab Jdid, 40040 Errachidia, Morocco",
         auth_req_title: "Login Required",
         auth_req_desc: "You must create an account or log in before making a reservation.",
+        auth_req_desc_msg: "You must create an account or log in before sending a message.",
         auth_req_login: "Login",
         auth_req_signup: "Sign Up",
-        auth_req_cancel: "Cancel"
+        auth_req_cancel: "Cancel",
+        contact_placeholder_login: "Please log in to send a message..."
     },
     ES: {
         nav_login: "IDENTIFICARSE",
         hero_title: "Golden Atlas",
         hero_subtitle: "Palacio · Errachidia · Desde 1923",
         menu_home: "INICIO",
-        menu_rooms: "ALOJAMIENTOS",
+        menu_rooms: "SALA DE JUEGOS",
         menu_chambres: "Habitaciones",
         menu_suites: "Suites",
         menu_vip: "Habitaciones VIP",
@@ -407,9 +411,11 @@ const translations = {
         loc_address: "Avenida Bab Jdid, 40040 Errachidia, Marruecos",
         auth_req_title: "Inicio de sesión requerido",
         auth_req_desc: "Debe crear una cuenta o iniciar sesión antes de realizar una reserva.",
+        auth_req_desc_msg: "Debe crear una cuenta o iniciar sesión antes de enviar un mensaje.",
         auth_req_login: "Iniciar sesión",
         auth_req_signup: "Regístrate",
-        auth_req_cancel: "Cancelar"
+        auth_req_cancel: "Cancelar",
+        contact_placeholder_login: "Inicie sesión para enviar un mensaje..."
     },
     AR: {
         nav_login: "تسجيل الدخول",
@@ -425,7 +431,7 @@ const translations = {
         intro_title: "في قلب أسطورتنا",
         intro_text: "وفياً لهويته الفريدة، يعيد غولدن أطلس ابتكار نفسه باستمرار في سحر دائم يجمع بين الأناقة والاستثناء. منذ عام 1923، تراث من الرقي لا يضاهى.",
         menu_home: "الرئيسية",
-        menu_rooms: "أماكن الإقامة",
+        menu_rooms: "صالة الألعاب",
         menu_chambres: "الغرف",
         menu_suites: "الأجنحة",
         menu_vip: "غرف VIP",
@@ -568,9 +574,11 @@ const translations = {
         loc_address: "شارع باب جديد، 40040 الرشيدية، المغرب",
         auth_req_title: "تسجيل الدخول مطلوب",
         auth_req_desc: "يجب عليك إنشاء حساب أو تسجيل الدخول قبل إجراء الحجز.",
+        auth_req_desc_msg: "يجب عليك إنشاء حساب أو تسجيل الدخول قبل إرسال رسالتك.",
         auth_req_login: "تسجيل الدخول",
         auth_req_signup: "إنشاء حساب",
-        auth_req_cancel: "إلغاء"
+        auth_req_cancel: "إلغاء",
+        contact_placeholder_login: "يرجى تسجيل الدخول لإرسال رسالة..."
     }
 };
 
@@ -591,8 +599,12 @@ function showToast(msg, bg = "var(--gold)", duration = 3000) {
 }
 
 function updateLanguage(lang) {
+    const user = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
+        let key = el.dataset.i18n;
+        if (key === 'contact_placeholder' && !user) {
+            key = 'contact_placeholder_login';
+        }
         const translation = translations[lang] ? translations[lang][key] : null;
         if (translation) {
             if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
@@ -629,6 +641,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateLanguage(savedLang);
 
     const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+    if (!currentUser) {
+        const feedbackMsg = document.getElementById('feedback-msg');
+        if (feedbackMsg) {
+            feedbackMsg.readOnly = true;
+            feedbackMsg.style.cursor = 'pointer';
+        }
+    }
     if (currentUser && loginBtn) {
         loginBtn.innerHTML = `
             <div id="user-profile-trigger" style="display:flex; align-items:center; gap:10px; cursor:pointer; position:relative;">
@@ -1024,6 +1043,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     bookingForm?.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // AUTH GUARD — block unauthenticated form submission
+        const activeUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+        if (!activeUser) {
+            showToast("Veuillez vous connecter pour effectuer une réservation.", "#ef4444", 4000);
+            closeAllModals();
+            if (window.showAuthModalGlobal) window.showAuthModalGlobal('auth_req_desc');
+            return;
+        }
+
         const arr = document.getElementById('booking-arrival')?.value || document.getElementById('booking-date')?.value;
         const dep = document.getElementById('booking-departure')?.value || ""; 
         const name = document.getElementById('booking-name')?.value;
@@ -1051,11 +1080,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. FEEDBACK FORM
     document.getElementById('feedback-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
+        
+        const activeUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+        if (!activeUser) {
+            if (window.showAuthModalGlobal) {
+                window.showAuthModalGlobal('auth_req_desc_msg');
+            } else {
+                showToast("Veuillez vous connecter pour envoyer un message.", "#ef4444");
+            }
+            return;
+        }
+
         const msg = document.getElementById('feedback-msg')?.value;
         if (!msg || !window.supabaseClient) return;
 
         const { error } = await window.supabaseClient.from('ga_feedback').insert([{
-            message: msg, sender: currentUser ? currentUser.name : 'Client Anonyme', status: 'Nouveau'
+            message: msg, sender: activeUser.name, status: 'Nouveau'
         }]);
 
         if (!error) {
@@ -1688,7 +1728,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary, #c5a059)" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path></svg>
                 </div>
                 <h2 style="font-family: 'Playfair Display', serif; color: var(--primary, #c5a059); font-size: 1.8rem; margin-bottom: 12px; letter-spacing: 1px;" data-i18n="auth_req_title">Login Required</h2>
-                <p style="font-family: 'Montserrat', sans-serif; color: #a1a1aa; font-size: 0.9rem; line-height: 1.6; margin-bottom: 35px;" data-i18n="auth_req_desc">You must create an account or log in before making a reservation.</p>
+                <p id="auth-modal-desc" style="font-family: 'Montserrat', sans-serif; color: #a1a1aa; font-size: 0.9rem; line-height: 1.6; margin-bottom: 35px;" data-i18n="auth_req_desc">You must create an account or log in before making a reservation.</p>
                 <div style="display:flex; flex-direction:column; gap:12px;">
                     <button id="auth-modal-login-btn" style="background: linear-gradient(135deg, #c5a059, #a67c00); border: none; color: #fff; padding: 16px; font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(197,160,89,0.3);" data-i18n="auth_req_login">Login</button>
                     <button id="auth-modal-signup-btn" style="background: transparent; border: 1px solid var(--primary, #c5a059); color: var(--primary, #c5a059); padding: 16px; font-weight: 700; letter-spacing: 3px; font-size: 0.8rem; text-transform: uppercase; border-radius: 8px; cursor: pointer; transition: 0.3s;" data-i18n="auth_req_signup">Sign Up</button>
@@ -1705,13 +1745,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnSignup = document.getElementById('auth-modal-signup-btn');
     const btnCancel = document.getElementById('auth-modal-cancel-btn');
 
-    function showAuthModal() {
+    function showAuthModal(descKey = 'auth_req_desc') {
+        const descEl = document.getElementById('auth-modal-desc');
+        if (descEl) {
+            const savedLang = localStorage.getItem('ga_lang') || 'FR';
+            const translation = translations[savedLang]?.[descKey];
+            if (translation) {
+                descEl.textContent = translation;
+                descEl.setAttribute('data-i18n', descKey);
+            }
+        }
         authModal.style.display = 'flex';
         setTimeout(() => {
             authModal.style.opacity = '1';
             authModalContent.style.transform = 'scale(1)';
         }, 10);
     }
+    window.showAuthModalGlobal = showAuthModal;
 
     function closeAuthModal() {
         authModal.style.opacity = '0';
@@ -1737,7 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Intercept clicks
     document.addEventListener('click', function(e) {
         const target = e.target;
-        const isBookingBtn = target.closest('.btn-room-reserver, .btn-ed-gold, #btn-pq-reserver, #btn-banner-reserver, #btn-show-booking, #btn-top-reserver2, .btn-riad, .card-cta');
+        const isBookingBtn = target.closest('.btn-room-reserver, .btn-ed-gold, #btn-pq-reserver, #btn-banner-reserver, #btn-show-booking, #btn-top-reserver2, .btn-riad, .card-cta, .btn-reserver, .btn-reserver-pavillon, .btn-book-now');
         
         if(isBookingBtn) {
             const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
@@ -1745,7 +1795,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // User not logged in, stop the event and show our auth modal
                 e.preventDefault();
                 e.stopPropagation();
-                showAuthModal();
+                showAuthModal('auth_req_desc');
+                return;
+            }
+        }
+
+        const isFeedbackAction = target.closest('#feedback-msg, #feedback-btn');
+        if (isFeedbackAction) {
+            const currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+            if (!currentUser) {
+                // User not logged in, stop the event and show our auth modal for messages
+                e.preventDefault();
+                e.stopPropagation();
+                showAuthModal('auth_req_desc_msg');
+                return;
             }
         }
     }, true); // useCapture = true is critical here to fire before regular bubbling events!

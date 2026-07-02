@@ -55,7 +55,7 @@
             <div class="menu-column">
                 <ul class="sub-links pt-0">
                     <li><a href="index.html" data-i18n="menu_home">ACCUEIL</a></li>
-                    <li><a href="hebergements.html" data-i18n="menu_rooms">HÉBERGEMENTS</a></li>
+                    <li><a href="salle-jeux.html" data-i18n="menu_rooms">SALLE DE JEUX</a></li>
                     <li><a href="hebergements.html" data-i18n="menu_chambres">LES CHAMBRES</a></li>
                     <li><a href="suites.html" data-i18n="menu_suites">LES SUITES</a></li>
                     <li><a href="vip-room.html" data-i18n="menu_vip">CHAMBRES VIP</a></li>
@@ -99,7 +99,7 @@
             <div class="separator"></div>
             <p class="body-text">Bercé par le clapotis de l'eau, le Pavillon de la Piscine vous propose un somptueux buffet de délices méditerranéens et internationaux pour des déjeuners ensoleillés et enchanteurs.</p>
             <p style="font-family: var(--font-heading); font-size: 1.5rem; color: var(--gold); margin-top: 20px;">Prix : Buffet Grand Palais à 850 MAD</p>
-            <button class="btn-reserver" onclick="document.getElementById('reservation-modal').classList.add('show'); document.getElementById('modal-overlay').classList.add('show');" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer;">RÉSERVER UNE TABLE</button>
+            <button class="btn-reserver" onclick="document.getElementById('reservation-modal').classList.add('active'); document.getElementById('modal-overlay').classList.add('active');" style="margin-top:20px; font-size:14px; padding:12px 30px; background:var(--gold); border:none; color:#fff; cursor:pointer;">RÉSERVER UNE TABLE</button>
         </div>
     </section>
     <section class="section-pad" style="background:#fff; padding: 60px 5%;">
@@ -108,42 +108,46 @@
             <div style="max-width:1200px; margin:0 auto; display:grid; grid-template-columns: repeat(2, 1fr); gap:40px;">
                 
                 <!-- Pavillon 1 -->
-                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s;">
+                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <img src="assets/pav-1.png" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Pavillon "Nuit Étoilée"</h4>
                         <p style="margin: 15px 0; color: #666; line-height: 1.6;">Un espace moderne avec éclairage d'ambiance et confort absolu pour vos soirées privées. Musique douce et atmosphère magique garantie.</p>
                         <p style="font-weight: 600; color: var(--text-dark); font-size: 1.2rem;">Prix : 1 500 MAD / Session</p>
+                        <button class="btn-reserver-pavillon" onclick="openPavillonReservation('Pavillon Nuit Étoilée', '1 500 MAD')" style="margin-top:20px; width:100%; padding:14px 0; background: linear-gradient(135deg, #c5a059, #a67c00); border:none; color:#fff; font-family: var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:6px; transition:all 0.3s ease; box-shadow: 0 6px 18px rgba(197,160,89,0.35);">RÉSERVER CE PAVILLON</button>
                     </div>
                 </div>
 
                 <!-- Pavillon 2 -->
-                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s;">
+                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <img src="assets/pav-2.png" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Kiosque "Harmonie Tradition"</h4>
                         <p style="margin: 15px 0; color: #666; line-height: 1.6;">Le charme du bois et des lanternes artisanales pour une expérience chaleureuse au cœur de nos jardins luxuriants.</p>
                         <p style="font-weight: 600; color: var(--text-dark); font-size: 1.2rem;">Prix : 1 200 MAD / Session</p>
+                        <button class="btn-reserver-pavillon" onclick="openPavillonReservation('Kiosque Harmonie Tradition', '1 200 MAD')" style="margin-top:20px; width:100%; padding:14px 0; background: linear-gradient(135deg, #c5a059, #a67c00); border:none; color:#fff; font-family: var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:6px; transition:all 0.3s ease; box-shadow: 0 6px 18px rgba(197,160,89,0.35);">RÉSERVER CE PAVILLON</button>
                     </div>
                 </div>
 
                 <!-- Pavillon 3 -->
-                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s;">
+                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <img src="assets/pav-3.png" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Espace "Sérénité Blanche"</h4>
                         <p style="margin: 15px 0; color: #666; line-height: 1.6;">Design épuré et fraîcheur pour vos déjeuners privés. Un cocon de calme et d'élégance minimaliste.</p>
                         <p style="font-weight: 600; color: var(--text-dark); font-size: 1.2rem;">Prix : 1 800 MAD / Session</p>
+                        <button class="btn-reserver-pavillon" onclick="openPavillonReservation('Espace Sérénité Blanche', '1 800 MAD')" style="margin-top:20px; width:100%; padding:14px 0; background: linear-gradient(135deg, #c5a059, #a67c00); border:none; color:#fff; font-family: var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:6px; transition:all 0.3s ease; box-shadow: 0 6px 18px rgba(197,160,89,0.35);">RÉSERVER CE PAVILLON</button>
                     </div>
                 </div>
 
                 <!-- Pavillon 4 -->
-                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s;">
+                <div class="pavillon-card" style="background:var(--bg-cream); border:1px solid rgba(197,160,89,0.1); transition: 0.4s; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
                     <img src="assets/pav-4.png" style="width:100%; height:400px; object-fit:cover;">
                     <div style="padding: 30px;">
                         <h4 style="font-family: var(--font-heading); font-size: 1.8rem; color: var(--gold);">Pergola "Prestige Royale"</h4>
                         <p style="margin: 15px 0; color: #666; line-height: 1.6;">Le summum du luxe extérieur. Un vaste pavillon avec tentures et mobilier premium pour vos réceptions les plus exclusives.</p>
                         <p style="font-weight: 600; color: var(--text-dark); font-size: 1.2rem;">Prix : 2 500 MAD / Session</p>
+                        <button class="btn-reserver-pavillon" onclick="openPavillonReservation('Pergola Prestige Royale', '2 500 MAD')" style="margin-top:20px; width:100%; padding:14px 0; background: linear-gradient(135deg, #c5a059, #a67c00); border:none; color:#fff; font-family: var(--font-body); font-size:0.8rem; font-weight:600; letter-spacing:3px; text-transform:uppercase; cursor:pointer; border-radius:6px; transition:all 0.3s ease; box-shadow: 0 6px 18px rgba(197,160,89,0.35);">RÉSERVER CE PAVILLON</button>
                     </div>
                 </div>
 
@@ -153,19 +157,60 @@
 </main>
 <div class="modal-overlay" id="modal-overlay"></div>
 <div class="reservation-modal" id="reservation-modal">
-    <button class="modal-close-btn" onclick="document.getElementById('reservation-modal').classList.remove('show'); document.getElementById('modal-overlay').classList.remove('show');">×</button>
-    <p class="modal-title">Réserver une table</p>
+    <button class="modal-close-btn" onclick="document.getElementById('reservation-modal').classList.remove('active'); document.getElementById('modal-overlay').classList.remove('active');">×</button>
+    <p class="modal-title" id="modal-title-text">Réserver une table</p>
     <p class="modal-sub">GOLDEN ATLAS ERRACHIDIA</p>
+    <p id="modal-pavillon-info" style="display:none; font-family: var(--font-heading); font-size: 1.2rem; color: var(--gold); text-align:center; margin: 5px 0 15px; padding: 10px 15px; background: rgba(197,160,89,0.08); border-radius: 8px; border: 1px solid rgba(197,160,89,0.2);"></p>
     <form id="booking-form">
         <div class="form-group"><label>Nom complet</label><input type="text" id="booking-name" required></div>
         <div class="form-group"><label>Date de réservation</label><input type="date" id="booking-arrival" required></div>
-        <div class="form-group"><label>Nombre de couverts</label><select id="booking-guests" required><option value="2">2 Personnes</option><option value="4">4 Personnes</option></select></div>
+        <div class="form-group"><label>Nombre de couverts</label><select id="booking-guests" required><option value="2">2 Personnes</option><option value="4">4 Personnes</option><option value="6">6 Personnes</option><option value="8">8 Personnes</option><option value="10">10 Personnes</option></select></div>
         <p id="modal-room-name" style="display:none;">Le Pavillon de la Piscine</p>
         <button type="submit" class="btn-modal-submit">CONFIRMER LA RÉSERVATION</button>
     </form>
 </div>
 <div class="toast" id="toast-msg"></div>
 <script src="script.js"></script>
+<script>
+function openPavillonReservation(pavillonName, pavillonPrice) {
+    // Update modal title and info
+    const titleEl = document.getElementById('modal-title-text');
+    const infoEl = document.getElementById('modal-pavillon-info');
+    const roomEl = document.getElementById('modal-room-name');
+    
+    titleEl.textContent = 'Réserver ' + pavillonName;
+    infoEl.textContent = pavillonName + ' — ' + pavillonPrice + ' / Session';
+    infoEl.style.display = 'block';
+    roomEl.textContent = pavillonName;
+    
+    // Open modal
+    document.getElementById('reservation-modal').classList.add('active');
+    document.getElementById('modal-overlay').classList.add('active');
+}
+
+// Add hover effects to pavillon reservation buttons
+document.querySelectorAll('.btn-reserver-pavillon').forEach(btn => {
+    btn.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-2px)';
+        this.style.boxShadow = '0 10px 25px rgba(197,160,89,0.5)';
+        this.style.background = 'linear-gradient(135deg, #d4af6a, #b8860b)';
+    });
+    btn.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0)';
+        this.style.boxShadow = '0 6px 18px rgba(197,160,89,0.35)';
+        this.style.background = 'linear-gradient(135deg, #c5a059, #a67c00)';
+    });
+});
+
+// Reset modal when closing
+document.getElementById('modal-overlay').addEventListener('click', function() {
+    document.getElementById('reservation-modal').classList.remove('active');
+    this.classList.remove('active');
+    // Reset to default
+    document.getElementById('modal-title-text').textContent = 'Réserver une table';
+    document.getElementById('modal-pavillon-info').style.display = 'none';
+});
+</script>
 </body>
 </html>
 
