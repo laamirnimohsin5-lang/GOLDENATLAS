@@ -190,6 +190,13 @@
 <script>
 async function syncLivePrices() {
     let rooms = [];
+    await new Promise(resolve => {
+        if (window.supabaseClient) return resolve();
+        const check = setInterval(() => {
+            if (window.supabaseClient) { clearInterval(check); resolve(); }
+        }, 50);
+        setTimeout(() => { clearInterval(check); resolve(); }, 3000);
+    });
     try {
         if (window.supabaseClient) {
             const { data, error } = await window.supabaseClient.from('ga_rooms').select('name, price');

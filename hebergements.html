@@ -491,6 +491,14 @@
 // ── Sync live prices from Supabase/localStorage ──────────────────
 async function syncLivePrices() {
     let rooms = [];
+    // Wait until supabaseClient is initialized (max 3 seconds)
+    await new Promise(resolve => {
+        if (window.supabaseClient) return resolve();
+        const check = setInterval(() => {
+            if (window.supabaseClient) { clearInterval(check); resolve(); }
+        }, 50);
+        setTimeout(() => { clearInterval(check); resolve(); }, 3000);
+    });
     try {
         if (window.supabaseClient) {
             const { data, error } = await window.supabaseClient.from('ga_rooms').select('name, price');
