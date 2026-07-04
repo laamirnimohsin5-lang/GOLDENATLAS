@@ -180,8 +180,8 @@
                         <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1200&q=85" alt="Chambre Deluxe">
                     </div>
                     <div class="room-v-info">
-                        <h3>Chambre Deluxe Emeraude</h3>
-                        <p class="room-v-price">4 800 MAD <span>/ nuit</span></p>
+                        <h3>Chambre Deluxe Jardin</h3>
+                        <p class="room-v-price" data-room-price="Chambre Deluxe Jardin">3 950 MAD <span>/ nuit</span></p>
                         <div class="room-v-rule"></div>
                         <ul class="room-v-features">
                             <li><span>Surface :</span> 30-45 m²</li>
@@ -191,15 +191,15 @@
                             <li><span>Bain :</span> Marbre, douche et baignoire séparées</li>
                             <li><span>Extérieur :</span> Balcon / terrasse privée</li>
                         </ul>
-                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Deluxe Emeraude">Réserver cette chambre</button>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Deluxe Jardin">Réserver cette chambre</button>
                     </div>
                 </div>
 
                 <!-- Superieure -->
                 <div class="room-v-card reverse">
                     <div class="room-v-info">
-                        <h3>Chambre Supérieure Saphir</h3>
-                        <p class="room-v-price">3 950 MAD <span>/ nuit</span></p>
+                        <h3>Chambre Supérieure Atlas</h3>
+                        <p class="room-v-price" data-room-price="Chambre Supérieure Atlas">3 200 MAD <span>/ nuit</span></p>
                         <div class="room-v-rule"></div>
                         <ul class="room-v-features">
                             <li><span>Surface :</span> 28-38 m²</li>
@@ -208,7 +208,7 @@
                             <li><span>Bain :</span> Salle de bain en marbre</li>
                             <li><span>Produits :</span> Signature La Mamounia</li>
                         </ul>
-                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Supérieure Saphir">Réserver cette chambre</button>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Supérieure Atlas">Réserver cette chambre</button>
                     </div>
                     <div class="room-v-img">
                         <img src="https://images.unsplash.com/photo-1540518614846-7eded433c457?w=1200&q=85" alt="Chambre Supérieure">
@@ -221,8 +221,8 @@
                         <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?w=1200&q=85" alt="Chambre Classique">
                     </div>
                     <div class="room-v-info">
-                        <h3>Chambre Classique Perle</h3>
-                        <p class="room-v-price">3 200 MAD <span>/ nuit</span></p>
+                        <h3>Chambre Supérieure Atlas</h3>
+                        <p class="room-v-price" data-room-price="Suite Junior Palmier">4 800 MAD <span>/ nuit</span></p>
                         <div class="room-v-rule"></div>
                         <ul class="room-v-features">
                             <li><span>Surface :</span> 25-32 m²</li>
@@ -231,7 +231,7 @@
                             <li><span>Vue :</span> Jardin intérieur</li>
                             <li><span>Bain :</span> Douche et baignoire</li>
                         </ul>
-                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Chambre Classique Perle">Réserver cette chambre</button>
+                        <button class="btn-reserver btn-room-reserver" style="background-color: var(--gold); border-color: var(--gold); color: #fff;" data-room="Suite Junior Palmier">Réserver cette chambre</button>
                     </div>
                 </div>
 
@@ -487,6 +487,32 @@
 <div id="toast-msg" class="toast"></div>
 
 <script src="script.js"></script>
+<script>
+// ── Sync live prices from Supabase/localStorage ──────────────────
+async function syncLivePrices() {
+    let rooms = [];
+    try {
+        if (window.supabaseClient) {
+            const { data, error } = await window.supabaseClient.from('ga_rooms').select('name, price');
+            if (!error && data && data.length > 0) rooms = data;
+        }
+    } catch(e) {}
+    if (!rooms.length) {
+        rooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+    }
+    if (!rooms.length) return;
+    document.querySelectorAll('[data-room-price]').forEach(el => {
+        const rName = el.dataset.roomPrice;
+        const match = rooms.find(r => r.name.toLowerCase() === rName.toLowerCase()
+            || rName.toLowerCase().includes(r.name.toLowerCase())
+            || r.name.toLowerCase().includes(rName.toLowerCase()));
+        if (match) {
+            el.innerHTML = match.price.toLocaleString('fr-FR') + ' MAD <span>/ nuit</span>';
+        }
+    });
+}
+document.addEventListener('DOMContentLoaded', syncLivePrices);
+</script>
 <script>
 // ── Gallery navigation state ────────────────────────────────────
 let hbGalleryIndex = 0;
