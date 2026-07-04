@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Employé · Golden Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+<style>
+    :root {
+        --primary: #c9a84c;
+        --primary-glow: rgba(201,168,76,0.35);
+        --secondary: #e8c97a;
+        --bg: #05060f;
+        --glass: rgba(10,11,20,0.75);
+        --card: #0d0e18;
+        --border: rgba(201,168,76,0.12);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Montserrat',sans-serif; background:var(--bg); color:#fff; min-height:100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+        min-height: 100vh;
+        display: flex; align-items: center; justify-content: center;
+        background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse at 70% 20%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    }
+    .emp-login-card {
+        width: 100%; max-width: 420px;
+        background: var(--glass);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(201,168,76,0.18);
+        border-radius: 20px;
+        padding: 50px 40px;
+        box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 50px var(--primary-glow);
+        animation: slideUp 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    @keyframes slideUp { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
+
+    .emp-badge {
+        width: 70px; height: 70px; margin: 0 auto 28px;
+        background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+        border: 2px solid var(--primary);
+        border-radius: 16px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem;
+        box-shadow: 0 0 30px var(--primary-glow);
+    }
+    .emp-title { font-family:'Playfair Display',serif; font-size:1.6rem; text-align:center; color:#fff; margin-bottom:6px; }
+    .emp-subtitle { text-align:center; font-size:0.6rem; letter-spacing:4px; color:var(--primary); text-transform:uppercase; margin-bottom:35px; }
+
+    .field-group { margin-bottom:22px; }
+    .field-group label { display:block; font-size:0.65rem; letter-spacing:2px; color:var(--primary); text-transform:uppercase; margin-bottom:9px; font-weight:600; }
+    .field-group input {
+        width:100%; padding:15px 18px;
+        background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.12);
+        color:#fff; border-radius:10px; outline:none; font-family:inherit; font-size:0.88rem; transition:.3s;
+    }
+    .field-group input:focus { border-color:var(--primary); background:rgba(255,255,255,0.07); box-shadow:0 0 18px var(--primary-glow); }
+
+    .btn-gold-full {
+        width:100%; padding:17px; border:none;
+        background: linear-gradient(135deg, #7a5c1a, var(--primary), var(--secondary));
+        color:#000; font-weight:800; letter-spacing:3px; text-transform:uppercase; font-size:0.78rem;
+        border-radius:10px; cursor:pointer; transition:.4s;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+    }
+    .btn-gold-full:hover { transform:translateY(-2px); box-shadow:0 12px 30px var(--primary-glow); }
+    .btn-gold-full:active { transform:scale(0.98); }
+
+    /* ── DASHBOARD ── */
+    #emp-dashboard { display:none; min-height:100vh; }
+
+    .emp-header {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 40px;
+        display: flex; justify-content:space-between; align-items:center;
+        position: sticky; top:0; z-index:100;
+    }
+    .emp-header-left { display:flex; align-items:center; gap:15px; }
+    .emp-avatar {
+        width:44px; height:44px; border-radius:50%;
+        background:linear-gradient(135deg,#7a5c1a,var(--primary));
+        display:flex; align-items:center; justify-content:center;
+        font-family:'Playfair Display',serif; font-size:1.1rem; color:#000; font-weight:700;
+        border:2px solid rgba(201,168,76,0.4);
+    }
+    .emp-name { font-weight:700; font-size:0.95rem; }
+    .emp-role { font-size:0.6rem; letter-spacing:2px; color:var(--primary); text-transform:uppercase; }
+
+    .emp-main { padding:40px; max-width:1200px; margin:0 auto; }
+
+    .emp-page-title { font-family:'Playfair Display',serif; font-size:1.8rem; margin-bottom:8px; }
+    .emp-page-sub { font-size:0.75rem; color:rgba(255,255,255,0.4); letter-spacing:1px; margin-bottom:35px; }
+
+    /* Stats strip */
+    .stat-strip { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:35px; }
+    .stat-pill {
+        background:var(--card); border:1px solid var(--border); border-radius:12px;
+        padding:20px; text-align:center; position:relative; overflow:hidden;
+        transition:.3s;
+    }
+    .stat-pill::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+    .stat-pill.blue::before { background:#3b82f6; }
+    .stat-pill.gold::before { background:var(--primary); }
+    .stat-pill.green::before { background:#22c55e; }
+    .stat-pill-num { font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:4px; }
+    .stat-pill.blue .stat-pill-num { color:#3b82f6; }
+    .stat-pill.gold .stat-pill-num { color:var(--primary); }
+    .stat-pill.green .stat-pill-num { color:#22c55e; }
+    .stat-pill-label { font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.4); text-transform:uppercase; }
+
+    /* Table */
+    .claims-card { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .claims-card-header {
+        padding:22px 28px;
+        border-bottom:1px solid var(--border);
+        display:flex; justify-content:space-between; align-items:center;
+        flex-wrap:wrap; gap:12px;
+    }
+    .claims-card-header h3 { font-size:0.75rem; letter-spacing:3px; text-transform:uppercase; color:var(--primary); }
+
+    .filter-bar { display:flex; gap:10px; flex-wrap:wrap; }
+    .filter-btn {
+        padding:7px 18px; border-radius:20px; cursor:pointer; font-size:0.65rem;
+        letter-spacing:1px; text-transform:uppercase; font-weight:600; border:1px solid; transition:.3s;
+    }
+    .filter-btn.all { border-color:rgba(255,255,255,0.2); color:rgba(255,255,255,0.6); background:transparent; }
+    .filter-btn.all.active, .filter-btn.all:hover { background:rgba(255,255,255,0.1); color:#fff; }
+    .filter-btn.pending { border-color:rgba(201,168,76,0.4); color:#c9a84c; background:transparent; }
+    .filter-btn.pending.active, .filter-btn.pending:hover { background:rgba(201,168,76,0.15); }
+    .filter-btn.progress { border-color:rgba(59,130,246,0.4); color:#3b82f6; background:transparent; }
+    .filter-btn.progress.active, .filter-btn.progress:hover { background:rgba(59,130,246,0.15); }
+    .filter-btn.done { border-color:rgba(34,197,94,0.4); color:#22c55e; background:transparent; }
+    .filter-btn.done.active, .filter-btn.done:hover { background:rgba(34,197,94,0.15); }
+
+    .claims-table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { padding:14px 20px; font-size:0.6rem; letter-spacing:2px; text-transform:uppercase; color:var(--primary); border-bottom:1px solid var(--border); text-align:left; white-space:nowrap; }
+    td { padding:18px 20px; font-size:0.82rem; color:rgba(255,255,255,0.8); border-bottom:1px solid rgba(255,255,255,0.03); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:rgba(201,168,76,0.03); }
+
+    .badge { padding:4px 12px; border-radius:20px; font-size:0.62rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; display:inline-block; white-space:nowrap; }
+    .badge-pending  { background:rgba(201,168,76,0.18); color:#c9a84c; border:1px solid rgba(201,168,76,0.3); }
+    .badge-progress { background:rgba(59,130,246,0.18); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
+    .badge-done     { background:rgba(34,197,94,0.18); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+
+    .status-select {
+        background:rgba(255,255,255,0.05); border:1px solid rgba(201,168,76,0.2);
+        color:#fff; padding:8px 14px; border-radius:8px; font-size:0.75rem;
+        cursor:pointer; outline:none; font-family:inherit; transition:.3s;
+        min-width:140px;
+    }
+    .status-select:focus { border-color:var(--primary); }
+    .status-select option { background:#0d0e18; }
+
+    .empty-row td { text-align:center; padding:50px; color:rgba(255,255,255,0.3); font-size:0.85rem; }
+
+    /* Toast */
+    .emp-toast {
+        position:fixed; bottom:28px; right:28px;
+        background:var(--primary); color:#000;
+        padding:14px 28px; border-radius:8px; font-weight:800;
+        font-size:0.78rem; letter-spacing:1px;
+        transform:translateY(80px); transition:.4s; z-index:9999;
+        box-shadow:0 8px 30px rgba(0,0,0,0.6);
+    }
+    .emp-toast.show { transform:translateY(0); }
+
+    /* Logout btn */
+    .btn-logout {
+        padding:9px 22px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3);
+        color:#ef4444; border-radius:8px; cursor:pointer; font-size:0.7rem; font-weight:600;
+        font-family:inherit; letter-spacing:1px; text-transform:uppercase; transition:.3s;
+    }
+    .btn-logout:hover { background:rgba(239,68,68,0.2); }
+
+    .problem-type { color:rgba(255,255,255,0.55); font-size:0.75rem; margin-top:3px; }
+    .desc-cell { max-width:220px; font-size:0.78rem; color:rgba(255,255,255,0.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .room-num { font-family:'Playfair Display',serif; font-size:1rem; color:var(--primary); font-weight:700; }
+
+    @media(max-width:768px){
+        .emp-header { padding:15px 20px; }
+        .emp-main { padding:20px; }
+        .stat-strip { grid-template-columns:1fr 1fr; }
+        td, th { padding:12px 14px; }
+        .status-select { min-width:110px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="emp-toast" class="emp-toast">✓ Enregistré !</div>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen" style="position: relative;">
+    <a href="index.html" style="position: absolute; top: 40px; left: 40px; color: var(--primary); text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: 0.3s; z-index: 10; opacity: 0.8;" onmouseover="this.style.opacity='1'; this.style.transform='translateX(-5px)';" onmouseout="this.style.opacity='0.8'; this.style.transform='translateX(0)';">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Retour au site
+    </a>
+    <div class="emp-login-card">
+        <div class="emp-badge">🛠️</div>
+        <h1 class="emp-title">Espace Employé</h1>
+        <p class="emp-subtitle">Golden Atlas · Service Technique</p>
+        <form id="emp-login-form">
+            <div class="field-group">
+                <label>Identifiant</label>
+                <input type="text" id="emp-user" placeholder="votre.identifiant" required autocomplete="username">
+            </div>
+            <div class="field-group">
+                <label>Mot de passe</label>
+                <input type="password" id="emp-pass" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn-gold-full">Accéder à mon espace</button>
+        </form>
+        <p style="text-align:center; margin-top:22px; font-size:0.65rem; color:rgba(255,255,255,0.25);">
+            Accès réservé au personnel autorisé · Golden Atlas
+        </p>
+    </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="emp-dashboard">
+    <header class="emp-header">
+        <div class="emp-header-left">
+            <div class="emp-avatar" id="emp-avatar-initials">E</div>
+            <div>
+                <div class="emp-name" id="emp-display-name">Employé</div>
+                <div class="emp-role">Technicien · Golden Atlas</div>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:15px;">
+            <span style="font-size:0.65rem; color:rgba(255,255,255,0.3); letter-spacing:1px;">
+                <span id="emp-date-display"></span>
+            </span>
+            <button class="btn-logout" id="emp-logout-btn">⬅ Déconnexion</button>
+        </div>
+    </header>
+
+    <main class="emp-main">
+        <div class="emp-page-title">Mes Réclamations Assignées</div>
+        <div class="emp-page-sub">Toutes les réclamations qui vous ont été affectées par l'administration</div>
+
+        <div class="stat-strip">
+            <div class="stat-pill gold">
+                <div class="stat-pill-num" id="emp-stat-total">0</div>
+                <div class="stat-pill-label">Total assignées</div>
+            </div>
+            <div class="stat-pill blue">
+                <div class="stat-pill-num" id="emp-stat-progress">0</div>
+                <div class="stat-pill-label">En cours</div>
+            </div>
+            <div class="stat-pill green">
+                <div class="stat-pill-num" id="emp-stat-done">0</div>
+                <div class="stat-pill-label">Résolues</div>
+            </div>
+        </div>
+
+        <div class="claims-card">
+            <div class="claims-card-header">
+                <h3>📋 Liste des Réclamations</h3>
+                <div class="filter-bar">
+                    <button class="filter-btn all active" onclick="filterEmpClaims('all', this)">Toutes</button>
+                    <button class="filter-btn pending" onclick="filterEmpClaims('En attente', this)">En attente</button>
+                    <button class="filter-btn progress" onclick="filterEmpClaims('En cours', this)">En cours</button>
+                    <button class="filter-btn done" onclick="filterEmpClaims('Résolu', this)">Résolues</button>
+                </div>
+            </div>
+            <div class="claims-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Chambre</th>
+                            <th>Client</th>
+                            <th>Problème</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="emp-claims-body">
+                        <tr class="empty-row"><td colspan="6">Chargement…</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ── Employee accounts (stored locally for simplicity) ──
+// In production these would be stored in Supabase
+const EMP_ACCOUNTS = [
+    { id: 'emp1', username: 'ahmed.alaoui',   password: 'emp123', name: 'Ahmed Alaoui' },
+    { id: 'emp2', username: 'fatima.benali',  password: 'emp456', name: 'Fatima Benali' },
+    { id: 'emp3', username: 'youssef.idrissi',password: 'emp789', name: 'Youssef Idrissi' },
+    { id: 'emp4', username: 'sara.mansouri',  password: 'emp101', name: 'Sara Mansouri' },
+    { id: 'emp5', username: 'admin',          password: 'emp000', name: 'Technicien Chef' },
+];
+
+let currentEmp = null;
+let allEmpClaims = [];
+let currentFilter = 'all';
+
+// Date display
+document.getElementById('emp-date-display').textContent = new Date().toLocaleDateString('fr-FR', {
+    weekday:'long', day:'2-digit', month:'long', year:'numeric'
+});
+
+// Toast
+function empToast(msg, isError = false) {
+    const t = document.getElementById('emp-toast');
+    t.textContent = msg;
+    t.style.background = isError ? '#ef4444' : 'var(--primary)';
+    t.style.color = isError ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── LOGIN ──
+document.getElementById('emp-login-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const username = document.getElementById('emp-user').value.trim();
+    const password = document.getElementById('emp-pass').value;
+    const found = EMP_ACCOUNTS.find(a => a.username === username && a.password === password);
+    if (!found) {
+        empToast('❌ Identifiants incorrects.', true);
+        return;
+    }
+    currentEmp = found;
+    sessionStorage.setItem('ga_emp_session', JSON.stringify(found));
+    showEmpDashboard();
+});
+
+function showEmpDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('emp-dashboard').style.display = 'block';
+    document.getElementById('emp-display-name').textContent = currentEmp.name;
+    document.getElementById('emp-avatar-initials').textContent = currentEmp.name[0];
+    loadEmpClaims();
+}
+
+// ── LOGOUT ──
+document.getElementById('emp-logout-btn').addEventListener('click', () => {
+    sessionStorage.removeItem('ga_emp_session');
+    currentEmp = null;
+    document.getElementById('emp-dashboard').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+});
+
+// ── LOAD CLAIMS ──
+async function loadEmpClaims() {
+    document.getElementById('emp-claims-body').innerHTML = '<tr class="empty-row"><td colspan="6">Chargement…</td></tr>';
+    const { data, error } = await window.supabaseClient
+        .from('ga_reclamations')
+        .select('*')
+        .eq('assigned_employee', currentEmp.name)
+        .order('created_at', { ascending: false });
+    
+    if (error) { empToast('❌ Erreur chargement', true); return; }
+    allEmpClaims = data || [];
+    updateStats();
+    renderEmpClaims();
+}
+
+function updateStats() {
+    document.getElementById('emp-stat-total').textContent = allEmpClaims.length;
+    document.getElementById('emp-stat-progress').textContent = allEmpClaims.filter(c => c.status === 'En cours').length;
+    document.getElementById('emp-stat-done').textContent = allEmpClaims.filter(c => c.status === 'Résolu').length;
+}
+
+function renderEmpClaims() {
+    const filtered = currentFilter === 'all' ? allEmpClaims : allEmpClaims.filter(c => c.status === currentFilter);
+    const tbody = document.getElementById('emp-claims-body');
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Aucune réclamation pour ce filtre.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = filtered.map(c => `
+        <tr>
+            <td><span class="room-num">🏨 ${c.room_number}</span></td>
+            <td>
+                <div style="font-weight:600;">${c.client_name}</div>
+                <div style="font-size:0.65rem; color:rgba(255,255,255,0.35); margin-top:2px;">${c.client_email || ''}</div>
+            </td>
+            <td>
+                <div style="font-weight:600;">${c.problem_type}</div>
+            </td>
+            <td><div class="desc-cell" title="${(c.description||'').replace(/"/g,'&quot;')}">${c.description || '—'}</div></td>
+            <td style="white-space:nowrap; color:rgba(255,255,255,0.5); font-size:0.75rem;">${formatDate(c.created_at)}</td>
+            <td>
+                <select class="status-select" onchange="updateClaimStatus('${c.id}', this.value)">
+                    <option value="En attente" ${c.status==='En attente'?'selected':''}>⏳ En attente</option>
+                    <option value="En cours"   ${c.status==='En cours'  ?'selected':''}>🔧 En cours</option>
+                    <option value="Résolu"     ${c.status==='Résolu'    ?'selected':''}>✅ Résolu</option>
+                </select>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function formatDate(iso) {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+window.filterEmpClaims = function(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderEmpClaims();
+};
+
+window.updateClaimStatus = async function(id, status) {
+    const { error } = await window.supabaseClient.from('ga_reclamations').update({ status }).eq('id', id);
+    if (error) { empToast('❌ Erreur mise à jour', true); return; }
+    const idx = allEmpClaims.findIndex(c => c.id == id);
+    if (idx > -1) allEmpClaims[idx].status = status;
+    updateStats();
+    empToast(`✅ Statut mis à jour : ${status}`);
+};
+
+// ── AUTO-LOGIN if session exists ──
+window.addEventListener('load', () => {
+    const saved = sessionStorage.getItem('ga_emp_session');
+    if (saved) {
+        currentEmp = JSON.parse(saved);
+        showEmpDashboard();
+    }
+});
+</script>
+</body>
+</html>

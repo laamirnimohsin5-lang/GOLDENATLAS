@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un compte · Golden Atlas Errachidia</title>
+    <title>CrÃ©er un compte Â· Golden Atlas Errachidia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -113,7 +113,107 @@
         .status-badge.pending  { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
         .status-badge.rejected { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
 
-        .btn-row { display: flex; gap: 12px; margin-top: 15px; }
+        /* Unified Dashboard Actions Grid */
+        .dashboard-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .btn-dash {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            height: 56px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+            border: 1px solid transparent;
+        }
+        
+        /* 1. Primary Gold Button */
+        .btn-dash-primary {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+            background-size: 200% 200%;
+            color: #000;
+            animation: gradShift 5s ease infinite;
+        }
+        .btn-dash-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.35);
+        }
+        .btn-dash-primary:active {
+            transform: scale(0.98);
+        }
+        
+        /* 2. Danger Red Button */
+        .btn-dash-danger {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            color: #ef8888;
+        }
+        .btn-dash-danger:hover {
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.6);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
+        }
+        .btn-dash-danger:active {
+            transform: scale(0.98);
+        }
+        
+        /* 3. Secondary Gold Border Button */
+        .btn-dash-secondary {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(201, 168, 76, 0.3);
+            color: var(--gold-light);
+        }
+        .btn-dash-secondary:hover {
+            background: rgba(201, 168, 76, 0.08);
+            border-color: var(--gold);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.15);
+        }
+        .btn-dash-secondary:active {
+            transform: scale(0.98);
+        }
+        
+        /* 4. Outline/Muted Logout Button */
+        .btn-dash-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .btn-dash-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
+        }
+        .btn-dash-outline:active {
+            transform: scale(0.98);
+        }
+
+        .btn-dash svg {
+            transition: transform 0.3s ease;
+        }
+        .btn-dash:hover svg {
+            transform: scale(1.15);
+        }
 
         /* Messages inbox */
         .msg-inbox { margin-top: 30px; border-top: 1px solid rgba(201,168,76,0.15); padding-top: 25px; }
@@ -129,7 +229,8 @@
         @media (max-width: 600px) {
             body { padding: 20px 10px; }
             .login-card { padding: 30px 20px; }
-            .btn-row { flex-direction: column; gap: 10px; }
+            .dashboard-actions { grid-template-columns: 1fr; gap: 12px; }
+            .btn-dash { height: 50px; font-size: 0.68rem; letter-spacing: 1px; }
             .btn-submit, a.btn-submit { height: 50px; font-size: 0.7rem; letter-spacing: 2px; }
             .account-header { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
             .account-avatar { margin: 0 auto; }
@@ -150,11 +251,11 @@
 
 <div class="login-wrapper">
     <div class="login-card">
-        <a href="index.html" class="back-link">← RETOUR · BACK</a>
+        <a href="index.html" class="back-link">â† RETOUR Â· BACK</a>
 
         <div class="login-header">
             <span class="login-logo">GOLDEN ATLAS</span>
-            <p class="login-subtitle">Espace Privilège · Client</p>
+            <p class="login-subtitle">Espace PrivilÃ¨ge Â· Client</p>
             <h1 id="form-title">Espace Client</h1>
         </div>
 
@@ -174,7 +275,7 @@
                     </div>
                 </div>
                 <div style="text-align: right; margin-bottom: 20px;">
-                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oublié ?</a>
+                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oubliÃ© ?</a>
                 </div>
                 <button type="submit" class="btn-submit">SE CONNECTER</button>
             </form>
@@ -191,7 +292,7 @@
             </button>
 
             <div class="register-footer">
-                Pas encore de compte ? <a href="#" id="show-register">Créer un compte →</a>
+                Pas encore de compte ? <a href="#" id="show-register">CrÃ©er un compte â†’</a>
             </div>
         </div>
 
@@ -208,21 +309,21 @@
                 <div class="form-group">
                     <label>Mot de passe</label>
                     <div style="position: relative;">
-                        <input type="password" id="reg-pwd" placeholder="Créer votre mot de passe" required style="padding-right: 45px;">
+                        <input type="password" id="reg-pwd" placeholder="CrÃ©er votre mot de passe" required style="padding-right: 45px;">
                         <span class="toggle-pwd" data-target="reg-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>N° CIN / Passport</label>
+                    <label>NÂ° CIN / Passport</label>
                     <input type="text" id="reg-cin" placeholder="CIN ou Passport" required>
                 </div>
                 <div class="form-group">
-                    <label>Téléphone</label>
+                    <label>TÃ©lÃ©phone</label>
                     <input type="text" id="reg-phone" placeholder="+212 ..." required>
                 </div>
-                <button type="submit" class="btn-submit">CRÉER MON COMPTE</button>
+                <button type="submit" class="btn-submit">CRÃ‰ER MON COMPTE</button>
             </form>
             
             <div style="display: flex; align-items: center; margin: 25px 0;">
@@ -237,7 +338,7 @@
             </button>
 
             <div class="register-footer">
-                Déjà inscrit ? <a href="#" id="show-login">Se connecter →</a>
+                DÃ©jÃ  inscrit ? <a href="#" id="show-login">Se connecter â†’</a>
             </div>
         </div>
 
@@ -249,37 +350,64 @@
                     <p id="display-user-email"></p>
                     <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
                         <span class="status-badge pending" id="display-user-status">En attente</span>
-                        <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">⭐ 0 POINTS</span>
+                        <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">â­ 0 POINTS</span>
                     </div>
                 </div>
             </div>
 
             <!-- Loyalty Offer Message -->
             <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
-                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">🎉 FÉLICITATIONS ! VOUS AVEZ 10 POINTS.</p>
-                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
+                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">ðŸŽ‰ FÃ‰LICITATIONS ! VOUS AVEZ 10 POINTS.</p>
+                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">BÃ©nÃ©ficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÃ‰DUCTION</span> sur votre prochain sÃ©jour !</p>
             </div>
             <style>
                 @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(201, 168, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); } }
             </style>
-
-            <div class="btn-row">
-                <button class="btn-submit" id="btn-logout" style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 0.65rem;">SE DÉCONNECTER</button>
-                <a href="mes-reservations.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem;">VOIR MES RÉSERVATIONS</a>
+            <!-- Active General Promotions -->
+            <div id="active-promotions-section" style="display: none; margin-bottom: 25px;">
+                <h3 style="font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
+                    🏷️ Offres Spéciales & Promotions du Moment
+                </h3>
+                <div id="active-promotions-list" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Dynamically populated -->
+                </div>
             </div>
-            <div class="btn-row">
-                <a href="index.html" class="btn-submit" style="display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.65rem; background: transparent; border: 1px solid var(--gold); color: var(--gold);">↩ RETOUR AU SITE</a>
+
+            <div class="dashboard-actions">
+                <a href="mes-reservations.html" class="btn-dash btn-dash-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                    Voir mes rÃ©servations
+                </a>
+                <a href="reclamations-client.html" class="btn-dash btn-dash-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                    Signaler un problÃ¨me
+                </a>
+                <a href="index.html" class="btn-dash btn-dash-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Retour au site
+                </a>
+                <button type="button" class="btn-dash btn-dash-outline" id="btn-logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                    Se dÃ©connecter
+                </button>
             </div>
 
             <!-- MESSAGES INBOX FROM ADMIN -->
             <div class="msg-inbox">
-                <h3>✉️ Mes Messages <span class="badge-count" id="msg-inbox-count" style="display:none;">0</span></h3>
-                <div id="msg-inbox-list"><p class="msg-empty">Aucun message reçu pour l'instant.</p></div>
+                <h3>âœ‰ï¸ Mes Messages <span class="badge-count" id="msg-inbox-count" style="display:none;">0</span></h3>
+                <div id="msg-inbox-list"><p class="msg-empty">Aucun message reÃ§u pour l'instant.</p></div>
+            </div>
+
+            <!-- RECLAMATIONS QUICK STATUS -->
+            <div class="msg-inbox" id="recl-inbox-section" style="display:none;">
+                <h3>âš ï¸ Mes RÃ©clamations <span class="badge-count" id="recl-inbox-count" style="display:none;">0</span></h3>
+                <div id="recl-inbox-list"></div>
+                <a href="reclamations-client.html" style="display:block; text-align:center; margin-top:12px; font-size:0.68rem; color:var(--gold); text-decoration:none; letter-spacing:2px;">VOIR TOUTES MES RÃ‰CLAMATIONS â†’</a>
             </div>
         </div>
 
         <div id="forgot-view" style="display: none;">
-            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
+            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de rÃ©initialisation.</p>
             <form id="forgot-form">
                 <div class="form-group">
                     <label>Adresse Email</label>
@@ -288,7 +416,7 @@
                 <button type="submit" class="btn-submit">ENVOYER LE LIEN</button>
             </form>
             <div class="register-footer" style="margin-top: 20px;">
-                <a href="#" id="back-to-login-forgot">← Retour à la connexion</a>
+                <a href="#" id="back-to-login-forgot">â† Retour Ã  la connexion</a>
             </div>
         </div>
 
@@ -298,20 +426,20 @@
                 <div class="form-group">
                     <label>Nouveau mot de passe</label>
                     <div style="position: relative;">
-                        <input type="password" id="reset-new-pwd" placeholder="Créer votre nouveau mot de passe" required style="padding-right: 45px;">
+                        <input type="password" id="reset-new-pwd" placeholder="CrÃ©er votre nouveau mot de passe" required style="padding-right: 45px;">
                         <span class="toggle-pwd" data-target="reset-new-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">METTRE À JOUR</button>
+                <button type="submit" class="btn-submit">METTRE Ã€ JOUR</button>
             </form>
         </div>
     </div>
 </div>
 
 <script>
-/* ── Engine 3D ── */
+/* â”€â”€ Engine 3D â”€â”€ */
 (function() {
     const world = document.getElementById('world');
     const scene = new THREE.Scene();
@@ -364,7 +492,7 @@ async function showAccountDashboard(user) {
     const points = count || 0;
     const pointsEl = document.getElementById('loyalty-points');
     if (pointsEl) {
-        pointsEl.textContent = `⭐ ${points} POINT${points > 1 ? 'S' : ''}`;
+        pointsEl.textContent = `â­ ${points} POINT${points > 1 ? 'S' : ''}`;
     }
     
     const offerEl = document.getElementById('loyalty-offer');
@@ -376,6 +504,44 @@ async function showAccountDashboard(user) {
     document.getElementById('register-view').style.display = 'none';
     document.getElementById('account-view').style.display = 'block';
     loadAdminMessages(user);
+    loadClientReclamations(user);
+    loadActivePromotions();
+}
+
+async function loadClientReclamations(user) {
+    const { data } = await window.supabaseClient
+        .from('ga_reclamations')
+        .select('*')
+        .or(`client_email.eq.${user.email},client_name.ilike.%${(user.name||'').split(' ')[0]}%`)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+    if (!data || data.length === 0) return;
+
+    const section = document.getElementById('recl-inbox-section');
+    const listEl  = document.getElementById('recl-inbox-list');
+    const countEl = document.getElementById('recl-inbox-count');
+    if (!section || !listEl) return;
+
+    section.style.display = 'block';
+    countEl.textContent = data.length;
+    countEl.style.display = 'inline-flex';
+
+    const statusStyles = {
+        'En attente': 'background:rgba(201,168,76,0.15); color:#c9a84c;',
+        'En cours':   'background:rgba(59,130,246,0.15); color:#3b82f6;',
+        'RÃ©solu':     'background:rgba(34,197,94,0.15); color:#22c55e;'
+    };
+    listEl.innerHTML = data.map(c => `
+        <div class="msg-item">
+            <div class="msg-header">
+                <span class="msg-from">ðŸ¨ ${c.room_number} Â· ${c.problem_type}</span>
+                <span style="${statusStyles[c.status]||''} padding:3px 10px; border-radius:12px; font-size:0.6rem; font-weight:700; text-transform:uppercase;">${c.status}</span>
+            </div>
+            <p class="msg-body" style="font-size:0.78rem;">${(c.description||'').slice(0,100)}${(c.description||'').length>100?'â€¦':''}</p>
+            ${c.assigned_employee ? `<p style="font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:5px;">ðŸ‘· AssignÃ©e Ã  : ${c.assigned_employee}</p>` : ''}
+        </div>
+    `).join('');
 }
 
 function loadAdminMessages(user) {
@@ -388,7 +554,7 @@ function loadAdminMessages(user) {
     const countEl = document.getElementById('msg-inbox-count');
     if (!listEl) return;
     if (myMsgs.length === 0) {
-        listEl.innerHTML = '<p class="msg-empty">Aucun message reçu pour l\'instant.</p>';
+        listEl.innerHTML = '<p class="msg-empty">Aucun message reÃ§u pour l\'instant.</p>';
         if (countEl) countEl.style.display = 'none';
         return;
     }
@@ -396,7 +562,7 @@ function loadAdminMessages(user) {
     listEl.innerHTML = myMsgs.slice().reverse().map(m => `
         <div class="msg-item">
             <div class="msg-header">
-                <span class="msg-from">🏨 Direction · Golden Atlas</span>
+                <span class="msg-from">ðŸ¨ Direction Â· Golden Atlas</span>
                 <span class="msg-date">${new Date(m.date).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' })}</span>
             </div>
             <p class="msg-body">${m.message.replace(/\n/g, '<br>')}</p>
@@ -423,7 +589,7 @@ document.getElementById('forgot-pwd')?.addEventListener('click', (e) => {
     e.preventDefault();
     document.getElementById('login-view').style.display = 'none';
     document.getElementById('forgot-view').style.display = 'block';
-    document.getElementById('form-title').textContent = "Mot de passe oublié";
+    document.getElementById('form-title').textContent = "Mot de passe oubliÃ©";
 });
 
 document.getElementById('back-to-login-forgot')?.addEventListener('click', (e) => {
@@ -452,7 +618,7 @@ document.querySelectorAll('.toggle-pwd').forEach(btn => {
 document.getElementById('login-client-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = this.querySelector('.btn-submit');
-    btn.textContent = 'VÉRIFICATION...';
+    btn.textContent = 'VÃ‰RIFICATION...';
     
     const email = document.getElementById('login-email').value.trim();
     const pwd = document.getElementById('login-pwd').value;
@@ -464,18 +630,18 @@ document.getElementById('login-client-form').addEventListener('submit', async fu
     });
 
     if (authError || !authData.user) {
-        simToast("❌ Email ou mot de passe incorrect.", '#ef4444');
+        simToast("âŒ Email ou mot de passe incorrect.", '#ef4444');
     } else {
         // Fetch from custom table to see status
         const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
         const user = users && users.length > 0 ? users[0] : { 
             name: authData.user.user_metadata.full_name || email.split('@')[0], 
             email: email, 
-            status: 'Validée' 
+            status: 'ValidÃ©e' 
         };
 
         if (user.status === 'En attente') {
-            simToast("⏳ Compte en attente d'approbation.", '#fb923c');
+            simToast("â³ Compte en attente d'approbation.", '#fb923c');
         } else {
             localStorage.setItem('ga_current_user', JSON.stringify(user));
             showAccountDashboard(user);
@@ -498,9 +664,9 @@ document.getElementById('forgot-form')?.addEventListener('submit', async functio
     if(error) {
         console.error("Supabase Reset Error:", JSON.stringify(error));
         const msg = error.message || error.error_description || JSON.stringify(error);
-        simToast("❌ " + msg, '#ef4444');
+        simToast("âŒ " + msg, '#ef4444');
     } else {
-        simToast("✅ Lien de réinitialisation envoyé ! Vérifiez Gmail.", 'var(--gold)');
+        simToast("âœ… Lien de rÃ©initialisation envoyÃ© ! VÃ©rifiez Gmail.", 'var(--gold)');
         setTimeout(() => document.getElementById('back-to-login-forgot').click(), 2500);
     }
     btn.textContent = 'ENVOYER LE LIEN';
@@ -510,26 +676,26 @@ document.getElementById('reset-pwd-form')?.addEventListener('submit', async func
     e.preventDefault();
     const btn = this.querySelector('.btn-submit');
     const pwd = document.getElementById('reset-new-pwd').value;
-    btn.textContent = 'MISE À JOUR...';
+    btn.textContent = 'MISE Ã€ JOUR...';
     
     const { error } = await window.supabaseClient.auth.updateUser({ password: pwd });
     
     if(error) {
-        simToast("❌ Erreur lors de la mise à jour.", '#ef4444');
+        simToast("âŒ Erreur lors de la mise Ã  jour.", '#ef4444');
     } else {
-        simToast("✅ Mot de passe mis à jour avec succès !", 'var(--gold)');
+        simToast("âœ… Mot de passe mis Ã  jour avec succÃ¨s !", 'var(--gold)');
         setTimeout(() => {
             window.location.hash = '';
             location.reload();
         }, 1500);
     }
-    btn.textContent = 'METTRE À JOUR';
+    btn.textContent = 'METTRE Ã€ JOUR';
 });
 
 document.getElementById('register-client-form')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = this.querySelector('.btn-submit');
-    btn.textContent = 'CRÉATION...';
+    btn.textContent = 'CRÃ‰ATION...';
     
     const name = document.getElementById('reg-name').value.trim();
     const email = document.getElementById('reg-email').value.trim();
@@ -546,14 +712,14 @@ document.getElementById('register-client-form')?.addEventListener('submit', asyn
     });
 
     if (authError) {
-        simToast("❌ " + authError.message, '#ef4444');
+        simToast("âŒ " + authError.message, '#ef4444');
     } else {
-        const newUser = { name: name, email: email, cin: cin, status: 'Validée' };
+        const newUser = { name: name, email: email, cin: cin, status: 'ValidÃ©e' };
         await window.supabaseClient.from('ga_users').insert([newUser]);
-        simToast("✅ Compte créé avec succès ! Connectez-vous.", 'var(--gold)');
+        simToast("âœ… Compte crÃ©Ã© avec succÃ¨s ! Connectez-vous.", 'var(--gold)');
         setTimeout(() => document.getElementById('show-login').click(), 1000);
     }
-    btn.textContent = 'CRÉER MON COMPTE';
+    btn.textContent = 'CRÃ‰ER MON COMPTE';
 });
 
 document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -575,10 +741,54 @@ document.getElementById('btn-google-register')?.addEventListener('click', async 
     await window.supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: cleanRedirectUrl } });
 });
 
+async function loadActivePromotions() {
+    const section = document.getElementById('active-promotions-section');
+    const listEl = document.getElementById('active-promotions-list');
+    if (!section || !listEl) return;
+    
+    // Fetch active promotions
+    let promotions = [];
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('ga_promotions')
+            .select('*')
+            .eq('active', true)
+            .order('created_at', { ascending: false });
+        if (error) {
+            console.error("Supabase load active promotions error:", error);
+            promotions = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]').filter(p => p.active);
+        } else {
+            promotions = data || [];
+        }
+    } catch(e) {
+        console.error("Retrieve promotions catch block error:", e);
+        promotions = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]').filter(p => p.active);
+    }
+    
+    if (promotions.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+    
+    section.style.display = 'block';
+    listEl.innerHTML = promotions.map(p => `
+        <div class="msg-item" style="background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), rgba(0, 0, 0, 0.5)); border: 1px solid rgba(201, 168, 76, 0.25); display: flex; flex-direction: column; gap: 8px; padding: 18px; box-sizing: border-box; border-radius: 8px; position: relative; overflow: hidden; margin-top: 10px; margin-bottom: 2px;">
+            <div style="position: absolute; right: -15px; bottom: -25px; font-size: 5.5rem; font-weight: 900; color: rgba(201, 168, 76, 0.04); font-family: 'Playfair Display', serif; pointer-events: none; user-select: none;">
+                -${p.discount_pct}%
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; z-index: 1;">
+                <span style="font-size: 0.95rem; font-weight: 700; color: var(--gold-light); font-family: 'Playfair Display', serif; text-align: left;">${p.title}</span>
+                <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; white-space: nowrap;">-${p.discount_pct}% RÃ‰DUCTION</span>
+            </div>
+            <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); line-height: 1.5; z-index: 1; margin: 0; text-align: left;">${p.description.replace(/\n/g, '<br>')}</p>
+        </div>
+    `).join('');
+}
+
 window.addEventListener('load', async () => {
     const hash = window.location.hash;
     if (hash.includes('error=')) {
-        setTimeout(() => simToast("❌ Lien invalide ou expiré. Veuillez réessayer.", '#ef4444'), 1000);
+        setTimeout(() => simToast("âŒ Lien invalide ou expirÃ©. Veuillez rÃ©essayer.", '#ef4444'), 1000);
         window.history.replaceState(null, null, window.location.pathname);
     } else if (hash.includes('type=recovery')) {
         document.getElementById('login-view').style.display = 'none';
@@ -601,7 +811,7 @@ window.addEventListener('load', async () => {
                 const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
                 let user = users && users.length > 0 ? users[0] : null;
                 if (!user) {
-                    const newUser = { name: session.user.user_metadata.full_name, email, cin: 'G-' + Date.now().toString().slice(-6), status: 'Validée' };
+                    const newUser = { name: session.user.user_metadata.full_name, email, cin: 'G-' + Date.now().toString().slice(-6), status: 'ValidÃ©e' };
                     const { data: inserted } = await window.supabaseClient.from('ga_users').insert([newUser]).select();
                     user = inserted ? inserted[0] : null;
                 }

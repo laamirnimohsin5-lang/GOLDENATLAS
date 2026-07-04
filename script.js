@@ -740,23 +740,50 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
-     * ROOM PRICE MAP
+     * DYNAMIC ROOM PRICE MAP (Supabase)
      */
-    const ROOM_PRICES = {
-        'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
-        'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,
-        'Suite Céleste': 12000, 'Suite des Palmiers': 15500,
-        'Suite Zellige': 18000, 'Suite Midnight': 22000,
-        'Riad Al Andalous': 18000, 'Riad Majorelle': 22000,
-        'Riad des Jasmins': 16500, 'Riad Impérial': 25000,
-        'Le Marocain': 950, "L'Asiatique": 1200, "L'Italien": 1100,
-        'Le Churchill': 300, 'Bar Majorelle': 400, 'Le Pavillon': 850,
-        'Les Hammams': 800, 'Les Massages': 1200, 'Les Soins Visage': 1500,
-        'La Piscine & Sports': 600, 'VIP Presidential Suite': 15000,
-        'VIP Royal Palace': 12000, 'Générique': 1500
-    };
+    let dynamicRoomsDb = [];
+    async function fetchDynamicRooms() {
+        if (window.supabaseClient) {
+            try {
+                const { data, error } = await window.supabaseClient.from('ga_rooms').select('name, price');
+                if (error) {
+                    console.warn("Using local ga_rooms fallback on script.js");
+                    const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                    dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+                } else if (data && data.length > 0) {
+                    dynamicRoomsDb = data;
+                } else {
+                    const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                    dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+                }
+            } catch (e) {
+                console.error("Supabase dynamic rooms load error:", e);
+                const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+            }
+        } else {
+            const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+            dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+        }
+    }
+    fetchDynamicRooms();
+
     function getRoomPrice(roomName) {
         if (!roomName) return 1500;
+
+        // Try looking up from Supabase fetched data first
+        if (dynamicRoomsDb && dynamicRoomsDb.length > 0) {
+            const exact = dynamicRoomsDb.find(r => r.name.toLowerCase() === roomName.toLowerCase());
+            if (exact) return exact.price;
+
+            const partial = dynamicRoomsDb.find(r => 
+                roomName.toLowerCase().includes(r.name.toLowerCase()) ||
+                r.name.toLowerCase().includes(roomName.toLowerCase())
+            );
+            if (partial) return partial.price;
+        }
+
         const priceMap = {
             'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
             'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,

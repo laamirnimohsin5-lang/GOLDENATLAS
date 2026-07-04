@@ -167,43 +167,24 @@
     </div>
 
     <script>
-        // ========== PRICE MAP ==========
-        const ROOM_PRICES = {
-            // Hébergements
-            'Chambre Supérieure Atlas': 3200,
-            'Chambre Deluxe Jardin': 3950,
-            'Suite Junior Palmier': 4800,
-            'Suite Prestige Royale': 12000,
-            'Suite Céleste': 12000,
-            'Suite des Palmiers': 15500,
-            'Suite Zellige': 18000,
-            'Suite Midnight': 22000,
-            // Riads
-            'Riad Al Andalous': 18000,
-            'Riad Majorelle': 22000,
-            'Riad des Jasmins': 16500,
-            'Riad Impérial': 25000,
-            // Restaurants
-            'Le Marocain': 950,
-            "L'Asiatique": 1200,
-            "L'Italien": 1100,
-            'Le Churchill': 300,
-            'Bar Majorelle': 400,
-            'Le Pavillon': 850,
-            // Spa
-            'Les Hammams': 800,
-            'Les Massages': 1200,
-            'Les Soins Visage': 1500,
-            'La Piscine & Sports': 600,
-            // VIP
-            'VIP Presidential Suite': 15000,
-            'VIP Royal Palace': 12000,
-            // Default
-            'Générique': 1500
-        };
+        // ========== DYNAMIC PRICE MAP (Supabase) ==========
+        window.dynamicRoomsDb = [];
 
         function getRoomPrice(roomName) {
             if (!roomName) return 1500;
+
+            // Try looking up from Supabase fetched data first
+            if (window.dynamicRoomsDb && window.dynamicRoomsDb.length > 0) {
+                const exact = window.dynamicRoomsDb.find(r => r.name.toLowerCase() === roomName.toLowerCase());
+                if (exact) return exact.price;
+
+                const partial = window.dynamicRoomsDb.find(r => 
+                    roomName.toLowerCase().includes(r.name.toLowerCase()) ||
+                    r.name.toLowerCase().includes(roomName.toLowerCase())
+                );
+                if (partial) return partial.price;
+            }
+
             const priceMap = {
                 // Hébergements
                 'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
@@ -262,6 +243,30 @@
         window.addEventListener('load', async () => {
             const user = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
             if (!user) { window.location.href = 'login-client.html'; return; }
+
+            // Fetch dynamic rooms from Supabase
+            if (window.supabaseClient) {
+                try {
+                    const { data: dbRooms, error } = await window.supabaseClient.from('ga_rooms').select('name, price');
+                    if (error) {
+                        console.warn("Using local fallback for dynamic rooms on client");
+                        const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                        window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+                    } else if (dbRooms && dbRooms.length > 0) {
+                        window.dynamicRoomsDb = dbRooms;
+                    } else {
+                        const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                        window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+                    }
+                } catch(e) {
+                    console.error("Supabase dynamic rooms load error in client:", e);
+                    const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                    window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+                }
+            } else {
+                const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+                window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+            }
 
             document.getElementById('display-user-name').textContent = user.name;
             document.getElementById('display-user-email').textContent = user.email || user.cin;

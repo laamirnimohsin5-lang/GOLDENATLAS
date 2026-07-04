@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signaler un Problème · Golden Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-init.js"></script>
+<style>
+    :root {
+        --gold: #c9a84c;
+        --gold-light: #e8c97a;
+        --gold-dark: #8a6a20;
+        --dark: #050505;
+        --glass: rgba(12,11,10,0.85);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body {
+        font-family:'Montserrat',sans-serif; background:var(--dark); color:#fff;
+        min-height:100vh; overflow-x:hidden; display:flex; align-items:flex-start;
+        justify-content:center; padding:50px 20px;
+    }
+    #world { position:fixed; inset:0; z-index:0; }
+    .wrapper { position:relative; z-index:10; width:100%; max-width:820px; }
+
+    .card {
+        background:var(--glass); backdrop-filter:blur(40px);
+        border:1px solid rgba(201,168,76,0.2); padding:50px;
+        box-shadow:0 60px 120px rgba(0,0,0,0.9);
+        animation:fadeUp 0.8s ease;
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+    .back-link {
+        display:inline-flex; align-items:center; gap:10px;
+        color:rgba(201,168,76,0.7); text-decoration:none;
+        font-size:0.65rem; letter-spacing:3px; text-transform:uppercase;
+        margin-bottom:35px; transition:.4s; padding:8px 14px; background:rgba(201,168,76,0.05);
+    }
+    .back-link:hover { color:var(--gold); transform:translateX(-5px); }
+
+    .logo { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); text-align:center; display:block; letter-spacing:4px; }
+    .logo-sub { text-align:center; font-size:0.58rem; letter-spacing:6px; color:rgba(255,255,255,0.3); text-transform:uppercase; margin:8px 0 30px; }
+
+    /* Tabs */
+    .tabs { display:flex; border-bottom:1px solid rgba(201,168,76,0.2); margin-bottom:35px; }
+    .tab-btn {
+        flex:1; padding:14px; background:none; border:none; color:rgba(255,255,255,0.4);
+        font-family:inherit; font-size:0.68rem; letter-spacing:2px; text-transform:uppercase;
+        cursor:pointer; transition:.3s; font-weight:600; border-bottom:2px solid transparent;
+    }
+    .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .tab-btn:hover { color:#fff; }
+
+    .tab-panel { display:none; animation:fadeUp 0.4s ease; }
+    .tab-panel.active { display:block; }
+
+    /* Section title */
+    .section-hd { font-size:0.6rem; letter-spacing:5px; text-transform:uppercase; color:var(--gold); margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+    .section-hd::after { content:''; flex:1; height:1px; background:rgba(201,168,76,0.2); }
+
+    /* Form */
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .form-grid.full { grid-template-columns:1fr; }
+    .field { margin-bottom:0; }
+    .field label { display:block; font-size:0.62rem; letter-spacing:2px; color:var(--gold); text-transform:uppercase; margin-bottom:9px; font-weight:600; }
+    .field input, .field select, .field textarea {
+        width:100%; padding:14px 16px;
+        background:rgba(255,255,255,0.04); border:1px solid rgba(201,168,76,0.15);
+        color:#fff; border-radius:8px; outline:none; font-family:inherit; font-size:0.85rem; transition:.3s;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+        border-color:var(--gold); background:rgba(255,255,255,0.07); box-shadow:0 0 16px rgba(201,168,76,0.25);
+    }
+    .field input:disabled { opacity:.55; cursor:not-allowed; }
+    .field select option { background:#111; }
+    .field textarea { resize:vertical; min-height:110px; }
+
+    .btn-send {
+        width:100%; padding:17px; border:none;
+        background:linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+        color:#000; font-weight:800; letter-spacing:3px; text-transform:uppercase; font-size:0.78rem;
+        cursor:pointer; transition:.35s; border-radius:8px; margin-top:8px;
+        box-shadow:0 6px 25px rgba(0,0,0,0.5);
+    }
+    .btn-send:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(201,168,76,0.4); }
+    .btn-send:active { transform:scale(0.98); }
+    .btn-send:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    /* Claim cards (tracking) */
+    .claim-card {
+        background:rgba(255,255,255,0.03); border:1px solid rgba(201,168,76,0.12);
+        border-radius:10px; padding:22px; margin-bottom:14px; transition:.3s;
+        position:relative; overflow:hidden;
+    }
+    .claim-card:hover { border-color:rgba(201,168,76,0.28); background:rgba(255,255,255,0.05); }
+    .claim-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; gap:12px; flex-wrap:wrap; }
+
+    .claim-room { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); }
+    .claim-type { font-size:0.65rem; color:rgba(255,255,255,0.5); margin-top:3px; letter-spacing:1px; }
+
+    .st-badge { padding:5px 14px; border-radius:20px; font-size:0.62rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; display:inline-block; white-space:nowrap; }
+    .st-pending  { background:rgba(201,168,76,0.15); color:#c9a84c; border:1px solid rgba(201,168,76,0.3); }
+    .st-progress { background:rgba(59,130,246,0.15); color:#3b82f6; border:1px solid rgba(59,130,246,0.3); }
+    .st-done     { background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); }
+
+    .claim-body { font-size:0.8rem; color:rgba(255,255,255,0.6); margin-bottom:14px; line-height:1.5; }
+    .claim-meta { display:flex; gap:20px; flex-wrap:wrap; }
+    .claim-meta span { font-size:0.65rem; color:rgba(255,255,255,0.35); letter-spacing:1px; }
+    .claim-meta strong { color:rgba(255,255,255,0.6); }
+
+    /* Progress bar for status */
+    .progress-track { display:flex; align-items:center; gap:8px; margin-top:12px; }
+    .prog-step {
+        display:flex; align-items:center; gap:6px;
+        font-size:0.6rem; letter-spacing:1px; text-transform:uppercase;
+    }
+    .prog-dot { width:12px; height:12px; border-radius:50%; border:2px solid rgba(255,255,255,0.2); flex-shrink:0; }
+    .prog-dot.done { background:var(--gold); border-color:var(--gold); }
+    .prog-dot.active { background:#3b82f6; border-color:#3b82f6; box-shadow:0 0 8px #3b82f6; }
+    .prog-dot.complete { background:#22c55e; border-color:#22c55e; }
+    .prog-line { flex:1; height:2px; background:rgba(255,255,255,0.08); min-width:20px; }
+    .prog-line.filled { background:var(--gold); }
+
+    .empty-state { text-align:center; padding:50px 20px; color:rgba(255,255,255,0.3); border:1px dashed rgba(201,168,76,0.15); border-radius:8px; }
+    .empty-state p { font-size:0.8rem; margin-top:10px; }
+
+    .alert-box {
+        padding:16px 20px; border-radius:8px; margin-bottom:22px;
+        border:1px solid rgba(251,146,60,0.3); background:rgba(251,146,60,0.08);
+        font-size:0.8rem; color:rgba(255,255,255,0.7); line-height:1.5;
+    }
+
+    /* Toast */
+    .toast {
+        position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(60px);
+        background:var(--gold); color:#000; padding:14px 30px; border-radius:6px;
+        font-weight:800; font-size:0.78rem; letter-spacing:1px;
+        opacity:0; transition:.5s; z-index:9999;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    @media(max-width:600px){
+        body { padding:20px 12px; }
+        .card { padding:30px 18px; }
+        .form-grid { grid-template-columns:1fr; }
+        .claim-top { flex-direction:column; }
+        .progress-track { flex-wrap:wrap; }
+    }
+</style>
+</head>
+<body>
+<div id="world"></div>
+<div id="clToast" class="toast"></div>
+
+<div class="wrapper">
+    <div class="card">
+        <a href="login-client.html" class="back-link">← Retour · Mon Compte</a>
+        <span class="logo">GOLDEN ATLAS</span>
+        <p class="logo-sub">Service Client · Réclamations</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('form', this)" id="tab-form">📝 Signaler un Problème</button>
+            <button class="tab-btn" onclick="switchTab('tracking', this)" id="tab-tracking">📊 Suivi de mes Réclamations</button>
+        </div>
+
+        <!-- ── TAB 1 : FORM ── -->
+        <div class="tab-panel active" id="panel-form">
+            <p class="section-hd">Formulaire de Réclamation</p>
+
+            <div class="alert-box" id="no-res-alert" style="display:none;">
+                ⚠️ Vous devez avoir une <strong>réservation validée</strong> pour signaler un problème. Veuillez d'abord effectuer une réservation.
+            </div>
+
+            <form id="claim-form">
+                <div class="form-grid" style="margin-bottom:18px;">
+                    <div class="field">
+                        <label>Chambre / Hébergement réservé</label>
+                        <input type="text" id="cl-room" readonly disabled placeholder="Chargement…">
+                    </div>
+                    <div class="field">
+                        <label>Type de problème</label>
+                        <select id="cl-type" required>
+                            <option value="">— Sélectionner —</option>
+                            <option value="Climatisation">🌬️ Climatisation</option>
+                            <option value="Eau">💧 Eau</option>
+                            <option value="Électricité">⚡ Électricité</option>
+                            <option value="Télévision">📺 Télévision</option>
+                            <option value="Nettoyage">🧹 Nettoyage</option>
+                            <option value="Porte & Serrure">🚪 Porte &amp; Serrure</option>
+                            <option value="Autre">🔧 Autre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-grid full" style="margin-bottom:18px;">
+                    <div class="field">
+                        <label>Description du problème</label>
+                        <textarea id="cl-desc" placeholder="Décrivez le problème en détail…" required></textarea>
+                    </div>
+                </div>
+                <div class="form-grid" style="margin-bottom:24px;">
+                    <div class="field">
+                        <label>Date de signalement</label>
+                        <input type="text" id="cl-date" disabled>
+                    </div>
+                    <div class="field">
+                        <label>Client</label>
+                        <input type="text" id="cl-client" disabled>
+                    </div>
+                </div>
+                <button type="submit" class="btn-send" id="cl-submit-btn">📨 Envoyer la Réclamation</button>
+            </form>
+        </div>
+
+        <!-- ── TAB 2 : TRACKING ── -->
+        <div class="tab-panel" id="panel-tracking">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <p class="section-hd" style="margin-bottom:0;">Mes Réclamations</p>
+                <button onclick="loadMyClaims()" style="background:rgba(201,168,76,0.1); border:1px solid rgba(201,168,76,0.3); color:var(--gold); padding:8px 18px; border-radius:6px; cursor:pointer; font-size:0.7rem; font-family:inherit; letter-spacing:1px; transition:.3s;">🔄 Actualiser</button>
+            </div>
+            <div id="claims-list">
+                <div class="empty-state"><p>Chargement…</p></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// 3D Background
+(function(){
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 1, 2000);
+    camera.position.set(0,50,200);
+    const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+    renderer.setSize(innerWidth, innerHeight);
+    document.getElementById('world').appendChild(renderer.domElement);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+    const sea = new THREE.Mesh(
+        new THREE.CylinderGeometry(600,600,800,40),
+        new THREE.MeshPhongMaterial({ color:0xc9a84c, transparent:true, opacity:0.12 })
+    );
+    sea.rotation.x = -Math.PI/2; sea.position.y = -600; scene.add(sea);
+    function animate() { requestAnimationFrame(animate); sea.rotation.z += 0.002; renderer.render(scene, camera); }
+    animate();
+})();
+
+// Toast
+function clToast(msg, err=false) {
+    const t = document.getElementById('clToast');
+    t.textContent = msg;
+    t.style.background = err ? '#ef4444' : '#c9a84c';
+    t.style.color = err ? '#fff' : '#000';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// Tab switching
+function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    if (tab === 'tracking') loadMyClaims();
+}
+
+// ── INIT ──
+let currentUser = null;
+let userReservation = null;
+
+// Set today's date
+document.getElementById('cl-date').value = new Date().toLocaleDateString('fr-FR', {
+    day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'
+});
+
+window.addEventListener('load', async () => {
+    currentUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+    if (!currentUser) { window.location.href = 'login-client.html'; return; }
+
+    document.getElementById('cl-client').value = currentUser.name;
+
+    // Fetch user's most recent VALIDATED reservation
+    const { data: reservations } = await window.supabaseClient
+        .from('ga_reservations')
+        .select('*')
+        .or(`user_email.eq.${currentUser.email},name.ilike.%${currentUser.name.split(' ')[0]}%`)
+        .eq('status', 'Validée')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+    if (reservations && reservations.length > 0) {
+        userReservation = reservations[0];
+        document.getElementById('cl-room').value = userReservation.room;
+    } else {
+        document.getElementById('cl-room').value = 'Aucune réservation validée';
+        document.getElementById('no-res-alert').style.display = 'block';
+        document.getElementById('cl-submit-btn').disabled = true;
+        document.getElementById('cl-type').disabled = true;
+        document.getElementById('cl-desc').disabled = true;
+    }
+});
+
+// ── SUBMIT ──
+document.getElementById('claim-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!userReservation) { clToast('⚠️ Aucune réservation validée trouvée.', true); return; }
+
+    const btn = document.getElementById('cl-submit-btn');
+    btn.textContent = 'Envoi en cours…';
+    btn.disabled = true;
+
+    const claimData = {
+        room_number:       userReservation.room,
+        client_name:       currentUser.name,
+        client_email:      currentUser.email || '',
+        problem_type:      document.getElementById('cl-type').value,
+        description:       document.getElementById('cl-desc').value,
+        status:            'En attente',
+        assigned_employee: null
+    };
+
+    const { error } = await window.supabaseClient.from('ga_reclamations').insert([claimData]);
+    if (error) {
+        clToast('❌ Erreur lors de l\'envoi : ' + (error.message || 'Réessayez.'), true);
+        console.error(error);
+    } else {
+        clToast('✅ Réclamation envoyée ! Nous traiterons votre demande rapidement.');
+        document.getElementById('claim-form').reset();
+        document.getElementById('cl-room').value = userReservation.room;
+        document.getElementById('cl-client').value = currentUser.name;
+        document.getElementById('cl-date').value = new Date().toLocaleDateString('fr-FR', {
+            day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit'
+        });
+        // Switch to tracking tab after 1.5s
+        setTimeout(() => {
+            document.getElementById('tab-tracking').click();
+        }, 1600);
+    }
+    btn.textContent = '📨 Envoyer la Réclamation';
+    btn.disabled = false;
+});
+
+// ── LOAD MY CLAIMS ──
+async function loadMyClaims() {
+    const list = document.getElementById('claims-list');
+    list.innerHTML = '<div class="empty-state"><p>Chargement…</p></div>';
+    if (!currentUser) return;
+
+    const query = window.supabaseClient
+        .from('ga_reclamations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    // Filter by email or name
+    const { data, error } = await window.supabaseClient
+        .from('ga_reclamations')
+        .select('*')
+        .or(`client_email.eq.${currentUser.email},client_name.ilike.%${currentUser.name.split(' ')[0]}%`)
+        .order('created_at', { ascending: false });
+
+    if (error) { list.innerHTML = '<div class="empty-state"><p>Erreur de chargement.</p></div>'; return; }
+    if (!data || !data.length) {
+        list.innerHTML = '<div class="empty-state">😊<p>Aucune réclamation soumise pour le moment.</p></div>';
+        return;
+    }
+
+    list.innerHTML = data.map(c => {
+        const statusMap = {
+            'En attente': { cls:'st-pending',  label:'⏳ En attente', step:0 },
+            'En cours':   { cls:'st-progress', label:'🔧 En cours',   step:1 },
+            'Résolu':     { cls:'st-done',      label:'✅ Résolu',     step:2 },
+        };
+        const s = statusMap[c.status] || statusMap['En attente'];
+        return `
+        <div class="claim-card">
+            <div class="claim-top">
+                <div>
+                    <div class="claim-room">🏨 ${c.room_number}</div>
+                    <div class="claim-type">🔧 ${c.problem_type}</div>
+                </div>
+                <span class="st-badge ${s.cls}">${s.label}</span>
+            </div>
+            <div class="claim-body">${c.description || ''}</div>
+
+            <!-- Progress Steps -->
+            <div class="progress-track">
+                <div class="prog-step">
+                    <div class="prog-dot ${s.step >= 0 ? 'done' : ''}"></div>
+                    <span style="color:rgba(255,255,255,${s.step>=0?'0.7':'0.3'})">Envoyée</span>
+                </div>
+                <div class="prog-line ${s.step >= 1 ? 'filled' : ''}"></div>
+                <div class="prog-step">
+                    <div class="prog-dot ${s.step === 1 ? 'active' : s.step > 1 ? 'complete' : ''}"></div>
+                    <span style="color:rgba(255,255,255,${s.step>=1?'0.7':'0.3'})">En cours</span>
+                </div>
+                <div class="prog-line ${s.step >= 2 ? 'filled' : ''}"></div>
+                <div class="prog-step">
+                    <div class="prog-dot ${s.step >= 2 ? 'complete' : ''}"></div>
+                    <span style="color:rgba(255,255,255,${s.step>=2?'0.7':'0.3'})">Résolu</span>
+                </div>
+            </div>
+
+            <div class="claim-meta" style="margin-top:14px;">
+                <span>📅 <strong>${new Date(c.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'long',year:'numeric'})}</strong></span>
+                ${c.assigned_employee ? `<span>👷 Employé : <strong>${c.assigned_employee}</strong></span>` : ''}
+                <span>🆔 Réf : <strong>#${String(c.id).slice(0,8).toUpperCase()}</strong></span>
+            </div>
+        </div>`;
+    }).join('');
+}
+</script>
+</body>
+</html>

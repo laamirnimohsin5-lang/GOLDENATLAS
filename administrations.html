@@ -131,14 +131,137 @@
         /* ── Dashboard Layout ── */
         #admin-dashboard { display: none; min-height: 100vh; background: #020308; position: relative; z-index: 100; }
         
-        .sidebar { width: var(--sidebar-w); background: #000; border-right: 1px solid rgba(201,168,76,0.1); height: 100vh; position: fixed; left: 0; top: 0; padding: 40px 20px; }
-        .sidebar-logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--neon-gold); letter-spacing: 2px; margin-bottom: 50px; text-align: center; }
-        
-        .nav-item { display: flex; align-items: center; padding: 15px 20px; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; border-radius: 4px; transition: 0.3s; cursor: pointer; }
-        .nav-item:hover, .nav-item.active { background: rgba(201,168,76,0.1); color: var(--neon-gold); }
-        .nav-item i { margin-right: 15px; font-style: normal; font-size: 1.1rem; }
+        /* ── Sidebar (always visible) ── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: #000;
+            border-right: 1px solid rgba(201,168,76,0.12);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 40px 20px;
+            z-index: 500;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        /* Custom gold scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar { width: 4px; }
+        .sidebar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.4); border-radius: 4px; }
+        .sidebar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        .main-content { margin-left: var(--sidebar-w); padding: 50px; }
+        /* Three.js canvas inside sidebar */
+        #sidebar-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.45;
+        }
+        .sidebar-logo, .sidebar nav, .sidebar nav * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-w);
+            padding: 50px;
+        }
+
+
+
+
+        /* ── Nav Items (Sidebar Buttons) ── */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.55);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            background: transparent;
+            user-select: none;
+            overflow: hidden;
+        }
+
+        /* Shine sweep on hover */
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+            transform: scaleY(0);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(201,168,76,0.09);
+            border-color: rgba(201,168,76,0.18);
+            transform: translateX(4px);
+        }
+
+        .nav-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        .nav-item i {
+            font-style: normal;
+            font-size: 1rem;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        /* Active / selected state */
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(201,168,76,0.12);
+            border-color: rgba(201,168,76,0.25);
+            font-weight: 700;
+        }
+
+        .nav-item.active::before {
+            transform: scaleY(1);
+        }
+
+        /* Logout button overrides */
+        .nav-item[style*="#ef4444"]:hover {
+            background: rgba(239,68,68,0.1) !important;
+            border-color: rgba(239,68,68,0.25) !important;
+        }
+
+        .sidebar-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--primary);
+            letter-spacing: 3px;
+            text-align: center;
+            padding: 0 0 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(201,168,76,0.15);
+            position: sticky;
+            top: -40px;
+            background: #000;
+            z-index: 10;
+            padding-top: 40px;
+            margin-top: -40px;
+        }
+
         .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
         .header-bar h1 { font-family: 'Playfair Display', serif; font-size: 2rem; color: #fff; }
 
@@ -277,9 +400,10 @@
                 justify-content: center; 
             }
             .nav-item { 
-                margin-bottom: 0; 
-                padding: 8px 12px; 
-                font-size: 0.65rem; 
+                margin-bottom: 3px; 
+                padding: 9px 12px; 
+                font-size: 0.68rem; 
+                transform: none !important;
             }
             .nav-item[style*="margin-top: 50px"], .nav-item[style*="margin-top: 10px"] { 
                 margin-top: 0 !important; 
@@ -347,16 +471,19 @@
 </div>
 <!-- ── DASHBOARD VIEW ── -->
 <div id="admin-dashboard">
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar" style="position:fixed;">
+<canvas id="sidebar-canvas"></canvas>
 <div class="sidebar-logo">GOLDEN ATLAS</div>
 <nav>
-<div class="nav-item active" data-tab="dashboard"><i>📊</i> Tableau de Bord</div>
-<div class="nav-item" data-tab="reservations"><i>📅</i> Réservations</div>
-<div class="nav-item" data-tab="customers"><i>👤</i> Clients</div>
-<div class="nav-item" data-tab="messages"><i>✉️</i> Messages</div>
-<div class="nav-item" data-tab="hotel"><i>🏨</i> Gestion de l'Hôtel</div>
-<a class="nav-item" href="index.html" style="margin-top: 50px; text-decoration: none;"><i>🏠</i> Retour au Site</a>
-<div class="nav-item" onclick="location.reload()" style="color: #ef4444; margin-top: 10px;"><i>🔒</i> Déconnexion</div>
+<div class="nav-item active" data-tab="dashboard"> Tableau de Bord</div>
+<div class="nav-item" data-tab="reservations"> Réservations</div>
+<div class="nav-item" data-tab="customers"> Clients</div>
+<div class="nav-item" data-tab="messages"> Messages</div>
+<div class="nav-item" data-tab="hotel"> Gestion de l'Hôtel</div>
+<div class="nav-item" data-tab="reclamations"> Réclamations</div>
+<div class="nav-item" data-tab="promotions"> Offres Spéciales</div>
+<a class="nav-item" href="index.html" style="margin-top: 30px; text-decoration: none;"> Retour au Site</a>
+<div class="nav-item" onclick="sessionStorage.removeItem('ga_admin_logged'); location.reload()" style="color: #ef4444; margin-top: 8px; margin-bottom: 20px;"> Déconnexion</div>
 </nav>
 </aside>
 <main class="main-content">
@@ -610,7 +737,7 @@
 <div class="sub-tabs">
 <div class="sub-tab active" onclick="switchHotelTab('rooms')">Éléments Réservables</div>
 <div class="sub-tab" onclick="switchHotelTab('services')">Services de l'Hôtel</div>
-<div class="sub-tab" onclick="refreshSection('hotel')" style="color:#22c55e; margin-left:auto;">🔄 Actualiser</div>
+<div class="sub-tab" onclick="refreshHotel()" style="color:#22c55e; margin-left:auto; cursor:pointer;">🔄 Actualiser</div>
 </div>
 <!-- Rooms Management -->
 <div id="hotel-rooms">
@@ -661,9 +788,179 @@
 </div>
 </div>
 </div>
+
+<!-- ── ONGLET RECLAMATIONS ── -->
+<div class="tab-content" id="tab-reclamations">
+    <div class="data-card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:10px;">
+            <h3 style="margin:0; font-family:'Playfair Display',serif; color:var(--primary);">⚠️ Gestion des Réclamations</h3>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <div class="search-bar"><input id="srch-recl" placeholder="Rechercher..." type="text" oninput="renderReclamations()"/></div>
+                <button class="btn-gold" onclick="refreshReclamations()">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <!-- Mini Stats -->
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:22px;">
+            <div class="stat-box" style="border-color:rgba(201,168,76,0.2); padding:16px; text-align:center;">
+                <span class="stat-num" id="recl-count-total" style="font-size:1.6rem;">0</span>
+                <span class="stat-label">Total</span>
+            </div>
+            <div class="stat-box" style="border-color:rgba(201,168,76,0.2); padding:16px; text-align:center;">
+                <span class="stat-num" id="recl-count-pending" style="font-size:1.6rem; color:#c9a84c;">0</span>
+                <span class="stat-label">En attente</span>
+            </div>
+            <div class="stat-box" style="border-color:rgba(59,130,246,0.2); padding:16px; text-align:center;">
+                <span class="stat-num" id="recl-count-progress" style="font-size:1.6rem; color:#3b82f6;">0</span>
+                <span class="stat-label">En cours</span>
+            </div>
+            <div class="stat-box" style="border-color:rgba(34,197,94,0.2); padding:16px; text-align:center;">
+                <span class="stat-num" id="recl-count-done" style="font-size:1.6rem; color:#22c55e;">0</span>
+                <span class="stat-label">Résolues</span>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;">
+            <button class="action-btn" id="recl-f-all" onclick="setReclFilter('all',this)" style="border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.1);">Toutes</button>
+            <button class="action-btn" id="recl-f-pending" onclick="setReclFilter('En attente',this)" style="border-color:rgba(201,168,76,0.5); color:#c9a84c;">En attente</button>
+            <button class="action-btn" id="recl-f-progress" onclick="setReclFilter('En cours',this)" style="border-color:rgba(59,130,246,0.5); color:#3b82f6;">En cours</button>
+            <button class="action-btn" id="recl-f-done" onclick="setReclFilter('Résolu',this)" style="border-color:rgba(34,197,94,0.5); color:#22c55e;">Résolues</button>
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table id="recl-table">
+            <thead><tr>
+                <th>Chambre</th>
+                <th>Client</th>
+                <th>Type de Problème</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Employé Assigné</th>
+                <th>Actions</th>
+            </tr></thead>
+            <tbody id="recl-body">
+                <tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── ONGLET PROMOTIONS ── -->
+<div class="tab-content" id="tab-promotions">
+    <div class="data-card">
+        <!-- Header responsive -->
+        <div style="margin-bottom:20px;">
+            <h3 style="margin:0 0 15px 0; font-family:'Playfair Display',serif; color:var(--primary);">🏷️ Gestion des Offres Spéciales &amp; Promotions</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div class="search-bar" style="flex:1; min-width:180px;"><input id="srch-promo" placeholder="Rechercher..." type="text" oninput="renderPromotions()" style="width:100%;"/></div>
+                <button class="btn-gold" onclick="openPromotionModal()" style="white-space:nowrap;">+ Ajouter une Promotion / Offre</button>
+                <button class="btn-gold" style="background:transparent; border-color:var(--primary); color:var(--primary); white-space:nowrap;" onclick="refreshPromotions()">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table id="promo-table">
+            <thead>
+                <tr>
+                    <th>Titre de l'Offre</th>
+                    <th>Description de l'Offre</th>
+                    <th>Réduction (%)</th>
+                    <th>Date de Création</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="promo-body">
+                <tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
 </main>
 </div>
+
+<!-- ── FLOATING SCROLL BUTTON ── -->
+<div id="scroll-fab" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 9999;
+">
+    <button id="fab-up" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Monter en haut" style="
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #c9a84c, #a07c2e);
+        border: none;
+        color: #000;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+    " onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">↑</button>
+    <button id="fab-down" onclick="(function(){ var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight); window.scrollTo({top: h, behavior:'smooth'}); })()" title="Descendre en bas" style="
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #a07c2e, #c9a84c);
+        border: none;
+        color: #000;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(201,168,76,0.4);
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.2s, box-shadow 0.2s;
+    " onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform='scale(1)'">↓</button>
+</div>
 <!-- ── MODALS ── -->
+<!-- Promotion Modal -->
+<div class="modal" id="modal-promotion">
+    <div class="modal-content" style="max-width: 580px;">
+        <span class="close-modal" onclick="closeModal('modal-promotion')">×</span>
+        <h2 class="modal-title" id="promo-modal-title">Ajouter une Offre Spéciale / Promotion</h2>
+        <form id="form-promotion">
+            <input id="promo-id" type="hidden"/>
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label" style="color: var(--primary);">Titre de l'offre</label>
+                    <input class="form-input" id="promo-title" placeholder="Ex: Offre Spéciale Été ☀️, Remise Suite..." required type="text"/>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div>
+                    <label class="form-label" style="color: var(--primary);">Réduction / Taux (%)</label>
+                    <input class="form-input" id="promo-discount" placeholder="Ex: 25" required type="number" min="0" max="100"/>
+                </div>
+                <div>
+                    <label class="form-label" style="color: var(--primary);">Statut</label>
+                    <select class="form-input" id="promo-active">
+                        <option value="true">Actif (Tout le monde la verra)</option>
+                        <option value="false">Inactif</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label" style="color: var(--primary);">Description & Détails de l'offre</label>
+                    <textarea class="form-input" id="promo-desc" placeholder="Renseignez ici le texte de l'offre que tous les utilisateurs verront..." required rows="4"></textarea>
+                </div>
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn-gold" type="submit">Enregistrer l'offre</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Reply Modal -->
 <div class="modal" id="modal-reply">
 <div class="modal-content" style="max-width: 580px; max-height:90vh; overflow-y:auto;">
@@ -808,7 +1105,136 @@
 </div>
 </div>
 </div>
+<!-- Assign Employee Modal for Reclamations -->
+<div class="modal" id="modal-assign" style="z-index:2500;">
+<div class="modal-content" style="max-width: 460px;">
+<span class="close-modal" onclick="closeModal('modal-assign')">×</span>
+<h2 class="modal-title">👷 Assigner un Employé</h2>
+<div id="assign-claim-info" style="background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.15); border-radius:8px; padding:14px; margin-bottom:22px; font-size:0.82rem; color:rgba(255,255,255,0.75);"></div>
+<div class="form-grid full" style="margin-bottom:18px;">
+    <div>
+        <label class="form-label">Choisir un Employé</label>
+        <select class="form-input" id="assign-emp-select">
+            <option value="">— Sélectionner un employé —</option>
+            <option value="Ahmed Alaoui">Ahmed Alaoui</option>
+            <option value="Fatima Benali">Fatima Benali</option>
+            <option value="Youssef Idrissi">Youssef Idrissi</option>
+            <option value="Sara Mansouri">Sara Mansouri</option>
+            <option value="Technicien Chef">Technicien Chef</option>
+        </select>
+    </div>
+</div>
+<div class="form-grid full" style="margin-bottom:18px;">
+    <div>
+        <label class="form-label">Mettre à jour le Statut</label>
+        <select class="form-input" id="assign-status-select">
+            <option value="En attente">⏳ En attente</option>
+            <option value="En cours">🔧 En cours</option>
+            <option value="Résolu">✅ Résolu</option>
+        </select>
+    </div>
+</div>
+<div style="text-align:right; margin-top:20px; display:flex; gap:10px; justify-content:flex-end;">
+    <button class="btn-gold" onclick="closeModal('modal-assign')" style="background:#444; color:#fff;">Annuler</button>
+    <button class="btn-gold" onclick="confirmAssign()">💾 Confirmer l'Assignation</button>
+</div>
+</div>
+</div>
 <script>
+/* ── 3D Sidebar Particles (Three.js) ── */
+(function() {
+    const canvas = document.getElementById('sidebar-canvas');
+    if (!canvas) return;
+    
+    const sidebar = document.getElementById('sidebar');
+    let width = sidebar.clientWidth || 260;
+    let height = sidebar.clientHeight || window.innerHeight;
+
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100);
+    camera.position.z = 25;
+
+    // Create particles
+    const particleCount = 100;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const speeds = [];
+
+    for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 20;       // x
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 40;   // y
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 10;   // z
+        
+        speeds.push({
+            y: 0.03 + Math.random() * 0.04,
+            x: (Math.random() - 0.5) * 0.01
+        });
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    // Circle texture
+    const createCircleTexture = () => {
+        const matCanvas = document.createElement('canvas');
+        matCanvas.width = 16;
+        matCanvas.height = 16;
+        const matContext = matCanvas.getContext('2d');
+        const grad = matContext.createRadialGradient(8, 8, 0, 8, 8, 8);
+        grad.addColorStop(0, 'rgba(201, 168, 76, 1)');
+        grad.addColorStop(0.3, 'rgba(201, 168, 76, 0.6)');
+        grad.addColorStop(1, 'rgba(201, 168, 76, 0)');
+        matContext.fillStyle = grad;
+        matContext.fillRect(0, 0, 16, 16);
+        return new THREE.CanvasTexture(matCanvas);
+    };
+
+    const material = new THREE.PointsMaterial({
+        size: 0.9,
+        map: createCircleTexture(),
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    scene.add(particles);
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const posAttr = geometry.getAttribute('position');
+        const posArray = posAttr.array;
+
+        for (let i = 0; i < particleCount; i++) {
+            posArray[i * 3 + 1] += speeds[i].y;
+            posArray[i * 3] += speeds[i].x;
+
+            if (posArray[i * 3 + 1] > 20) {
+                posArray[i * 3 + 1] = -20;
+                posArray[i * 3] = (Math.random() - 0.5) * 20;
+            }
+        }
+
+        posAttr.needsUpdate = true;
+        particles.rotation.y += 0.0008;
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        const w = sidebar.clientWidth || 260;
+        const h = sidebar.clientHeight || window.innerHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+    });
+})();
+
 /* ── 3D Scene Initialization (Login) ── */
 (function() {
     const canvas = document.getElementById('world-canvas');
@@ -940,6 +1366,7 @@ adminLogin.addEventListener('submit', (e) => {
     const pass = document.getElementById('admin-pass').value;
 
     if (user === 'goldenatlas' && pass === 'admin2026') {
+        sessionStorage.setItem('ga_admin_logged', 'true');
         document.getElementById('login-view').style.display = 'none';
         document.getElementById('admin-dashboard').style.display = 'block';
         loadDashboardData().then(() => {
@@ -949,16 +1376,93 @@ adminLogin.addEventListener('submit', (e) => {
                 setTimeout(() => switchToTab(savedTab), 200);
             }
         });
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
     } else {
         alert('Accès refusé : Identifiants incorrects.');
     }
 });
+
+// Auto-login check on load (DOM is already ready since scripts are at end of body)
+(function() {
+    const isLogged = sessionStorage.getItem('ga_admin_logged');
+    if (isLogged === 'true') {
+        document.getElementById('login-view').style.display = 'none';
+        document.getElementById('admin-dashboard').style.display = 'block';
+        loadDashboardData().then(() => {
+            const savedTab = sessionStorage.getItem('ga_admin_tab');
+            if (savedTab && savedTab !== 'dashboard') {
+                setTimeout(() => switchToTab(savedTab), 200);
+            }
+        });
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    }
+})();
+
+// Helper functions for dynamic dashboard revenue calculation
+function calculateNights(arrival, departure) {
+    if (!arrival || !departure) return 1;
+    const a = new Date(arrival);
+    const d = new Date(departure);
+    const diff = d - a;
+    const nights = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return nights > 0 ? nights : 1;
+}
+
+function getRoomPrice(roomName, dbRooms = []) {
+    if (!roomName) return 1500;
+    if (dbRooms && dbRooms.length > 0) {
+        const exact = dbRooms.find(r => r.name.toLowerCase() === roomName.toLowerCase());
+        if (exact) return exact.price;
+
+        const partial = dbRooms.find(r => 
+            roomName.toLowerCase().includes(r.name.toLowerCase()) ||
+            r.name.toLowerCase().includes(roomName.toLowerCase())
+        );
+        if (partial) return partial.price;
+    }
+    const priceMap = {
+        'Chambre Supérieure Atlas': 3200, 'Chambre Deluxe Jardin': 3950,
+        'Suite Junior Palmier': 4800, 'Suite Prestige Royale': 12000,
+        'Suite Céleste': 12000, 'Suite des Palmiers': 15500,
+        'Suite Zellige': 18000, 'Suite Midnight': 22000,
+        'Riad Al Andalous': 18000, 'Riad Majorelle': 22000,
+        'Riad des Jasmins': 16500, 'Riad Impérial': 25000,
+        'Le Marocain': 950, "L'Asiatique": 1200, "L'Italien": 1100,
+        'Le Churchill': 300, 'Bar Majorelle': 400, 'Le Pavillon': 850,
+        'Les Hammams': 800, 'Les Massages': 1200, 'Les Soins Visage': 1500,
+        'La Piscine & Sports': 600, 'VIP Presidential Suite': 15000,
+        'VIP Royal Palace': 12000, 'Générique': 1500
+    };
+    const exact = priceMap[roomName];
+    if (exact) return exact;
+    const partial = Object.keys(priceMap).find(k =>
+        roomName.toLowerCase().includes(k.toLowerCase()) ||
+        k.toLowerCase().includes(roomName.toLowerCase())
+    );
+    return partial ? priceMap[partial] : 1500;
+}
 
 // 2. Load Data from LocalStorage -> Supabase
 async function loadDashboardData() {
     const { data: reservations } = await window.supabaseClient.from('ga_reservations').select('*') || {data: []};
     const { data: users } = await window.supabaseClient.from('ga_users').select('*') || {data: []};
     const { data: messages } = await window.supabaseClient.from('ga_feedback').select('*') || {data: []};
+    let dbRooms = [];
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_rooms').select('name, price');
+        if (error) {
+            const mock = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+            dbRooms = mock.map(r => ({ name: r.name, price: r.price }));
+        } else if (data && data.length > 0) {
+            dbRooms = data;
+        } else {
+            const mock = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+            dbRooms = mock.map(r => ({ name: r.name, price: r.price }));
+        }
+    } catch(e) {
+        const mock = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
+        dbRooms = mock.map(r => ({ name: r.name, price: r.price }));
+    }
 
     document.getElementById('stat-res').textContent = reservations ? reservations.length : 0;
     document.getElementById('stat-users').textContent = users ? users.length : 0;
@@ -986,8 +1490,18 @@ async function loadDashboardData() {
     document.getElementById('db-pending').textContent    = pending;
     document.getElementById('db-taux-valid').textContent = total > 0 ? tauxPct + '%' : '—';
 
-    // Estimated revenue: validated × avg price 5000 MAD (mock)
-    const revEst = validated * 5000;
+    // Estimated revenue: sum of validated reservations' actual prices * nights
+    let revEst = 0;
+    allRes.forEach(r => {
+        if (r.status === 'Validée') {
+            const pricePerUnit = getRoomPrice(r.room, dbRooms);
+            const nights = (r.room.includes('Chambre') || r.room.includes('Suite') || r.room.includes('Riad')) 
+                ? calculateNights(r.arrival, r.departure) 
+                : 1;
+            revEst += pricePerUnit * nights;
+        }
+    });
+
     document.getElementById('db-revenue').textContent = revEst > 0 ? revEst.toLocaleString('fr-FR') : '0';
 
     // Update donut center percentage
@@ -1471,7 +1985,8 @@ window.refreshSection = async function(section) {
     if (section === 'reservations') { renderReservations(reservations || []); }
     else if (section === 'customers') { renderUsers(users || []); }
     else if (section === 'messages') { renderMessages(messages || []); }
-    else if (section === 'hotel') { renderRooms(); renderServices(); }
+    else if (section === 'hotel') { await loadAndRenderRooms(); await loadAndRenderServices(); }
+    else if (section === 'promotions') { await loadAndRenderPromotions(); }
     else {
         // Full reload
         renderReservations(reservations || []);
@@ -1483,6 +1998,7 @@ window.refreshSection = async function(section) {
         document.getElementById('stat-msg').textContent   = messages ? messages.length : 0;
         initCharts(reservations || []);
         renderDetailTable(reservations || [], currentPeriod);
+        loadAndRenderPromotions();
     }
     showAdminToast('✅ Données actualisées !');
 };
@@ -1495,7 +2011,7 @@ function switchToTab(tab) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const activeTab = document.getElementById('tab-' + tab);
     if (activeTab) activeTab.classList.add('active');
-    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'messages': 'Messages', 'dashboard': 'Tableau de Bord' };
+    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'messages': 'Messages', 'dashboard': 'Tableau de Bord', 'promotions': 'Offres & Promotions' };
     document.getElementById('tab-title').textContent = tabTitles[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
     sessionStorage.setItem('ga_admin_tab', tab);
 }
@@ -1518,39 +2034,142 @@ let cachedServices = [];
 let deleteTarget   = null;
 let deleteType     = null;
 
+function getLocalRooms() {
+    let local = localStorage.getItem('ga_rooms_mock');
+    if (!local) {
+        const defaultRooms = [
+            { id: 'r-1', type: 'Chambre Standard', name: 'Chambre Supérieure Atlas', price: 3200, capacity: 2, description: 'Vue panoramique sur l\'Atlas.', img: 'assets/chambre_1.png', status: 'Disponible' },
+            { id: 'r-2', type: 'Chambre Deluxe', name: 'Chambre Deluxe Jardin', price: 3950, capacity: 2, description: 'Nichée au cœur de nos jardins chantants.', img: 'assets/chambre_2.png', status: 'Disponible' },
+            { id: 'r-3', type: 'Suite', name: 'Suite Junior Palmier', price: 4800, capacity: 3, description: 'Luxe soft et tradition marocaine.', img: 'assets/suites/suite1.jpg', status: 'Disponible' },
+            { id: 'r-4', type: 'Suite', name: 'Suite Prestige Royale', price: 12000, capacity: 4, description: 'Pour un séjour impérial inoubliable.', img: 'assets/suites/suite2.jpg', status: 'Disponible' },
+            { id: 'r-5', type: 'Suite', name: 'Suite Céleste', price: 12000, capacity: 4, description: 'Horizon au-delà de l\'imagination.', img: 'assets/suite_1.jpg', status: 'Disponible' },
+            { id: 'r-6', type: 'Suite', name: 'Suite des Palmiers', price: 15500, capacity: 4, description: 'Entre palmes et parures d\'or.', img: 'assets/suite_2.jpg', status: 'Disponible' },
+            { id: 'r-7', type: 'Suite', name: 'Suite Zellige', price: 18000, capacity: 4, description: 'Véritable chef-d\'œuvre d\'artisanat fassi.', img: 'assets/suite_3.jpg', status: 'Disponible' },
+            { id: 'r-8', type: 'Suite', name: 'Suite Midnight', price: 22000, capacity: 4, description: 'Magie du désert et douceur de la nuit.', img: 'assets/suite_4.jpg', status: 'Disponible' },
+            { id: 'r-9', type: 'Riad Privé', name: 'Riad Al Andalous', price: 18000, capacity: 6, description: 'Havre andalou sous le soleil d\'Errachidia.', img: 'assets/riads/riad1.jpg', status: 'Disponible' },
+            { id: 'r-10', type: 'Riad Privé', name: 'Riad Majorelle', price: 22000, capacity: 6, description: 'Couleurs vibrantes et intimité totale.', img: 'assets/riads/riad2.jpg', status: 'Disponible' },
+            { id: 'r-11', type: 'Riad Privé', name: 'Riad des Jasmins', price: 16500, capacity: 6, description: 'Parfums enivrants et sérénité absolue.', img: 'assets/riads/riad3.jpg', status: 'Disponible' },
+            { id: 'r-12', type: 'Riad Privé', name: 'Riad Impérial', price: 25000, capacity: 8, description: 'Le fleuron de nos résidences privées.', img: 'assets/riads/riad4.jpg', status: 'Disponible' },
+            { id: 'r-13', type: 'Table (Restaurant/Café)', name: 'Le Marocain', price: 950, capacity: 4, description: 'Gastronomie traditionnelle marocaine revisitée.', img: 'assets/restaurant1.jpg', status: 'Disponible' },
+            { id: 'r-14', type: 'Table (Restaurant/Café)', name: 'L\'Asiatique', price: 1200, capacity: 4, description: 'Saveurs d\'Asie par le Chef Jean-Georges.', img: 'assets/restaurant2.jpg', status: 'Disponible' },
+            { id: 'r-15', type: 'Table (Restaurant/Café)', name: 'L\'Italien', price: 1100, capacity: 4, description: 'Élégance de la dolce vita marocaine par Simone Zanoni.', img: 'assets/restaurant3.jpg', status: 'Disponible' },
+            { id: 'r-16', type: 'Table (Restaurant/Café)', name: 'Le Churchill', price: 300, capacity: 4, description: 'Atmosphère intimiste et feutrée historique.', img: 'assets/bar1.jpg', status: 'Disponible' },
+            { id: 'r-17', type: 'Table (Restaurant/Café)', name: 'Bar Majorelle', price: 400, capacity: 4, description: 'Cocktails signature au rythme du piano.', img: 'assets/bar2.jpg', status: 'Disponible' },
+            { id: 'r-18', type: 'Soin / Hammam (Spa)', name: 'Le Pavillon', price: 850, capacity: 4, description: 'Brunch ensoleillé sous les oliviers.', img: 'assets/pavillion.jpg', status: 'Disponible' },
+            { id: 'r-19', type: 'Soin / Hammam (Spa)', name: 'Les Hammams', price: 800, capacity: 2, description: 'Rituel de purification et gommage.', img: 'assets/spa-hammam.jpg', status: 'Disponible' },
+            { id: 'r-20', type: 'Soin / Hammam (Spa)', name: 'Les Massages', price: 1200, capacity: 2, description: 'Relâchement musculaire profond et huiles rares.', img: 'assets/spa-massage.jpg', status: 'Disponible' },
+            { id: 'r-21', type: 'Soin / Hammam (Spa)', name: 'Les Soins Visage', price: 1500, capacity: 2, description: 'Éclats et soins jeunesse d\'exception.', img: 'assets/spa-facial.jpg', status: 'Disponible' },
+            { id: 'r-22', type: 'Piscine / Salle de Sport', name: 'La Piscine & Sports', price: 600, capacity: 2, description: 'Détente aquatique et tennis.', img: 'assets/pool.jpg', status: 'Disponible' },
+            { id: 'r-23', type: 'Suite VIP Royale', name: 'VIP Presidential Suite', price: 15000, capacity: 4, description: 'Le luxe absolu pour nos hôtes de marque.', img: 'assets/vip_president.jpg', status: 'Disponible' },
+            { id: 'r-24', type: 'Suite VIP Royale', name: 'VIP Royal Palace', price: 12000, capacity: 4, description: 'Une immersion dans la royauté marocaine.', img: 'assets/vip_royal.jpg', status: 'Disponible' }
+        ];
+        localStorage.setItem('ga_rooms_mock', JSON.stringify(defaultRooms));
+        return defaultRooms;
+    }
+    return JSON.parse(local);
+}
+
+function getLocalServices() {
+    let local = localStorage.getItem('ga_services_mock');
+    if (!local) {
+        const defaultServices = [
+            { id: 's-1', name: 'Spa & Hammam Royal', description: 'Soins traditionnels, massages relaxants et piscine couverte.', status: 'Actif' },
+            { id: 's-2', name: 'Transfert Aéroport Limousine', description: 'Véhicules de luxe avec chauffeur privé 24/7.', status: 'Actif' },
+            { id: 's-3', name: 'Conciergerie VIP & Majordome', description: 'Organisation d\'excursions et réservations exclusives.', status: 'Actif' },
+            { id: 's-4', name: 'Chef Privé à Domicile', description: 'Un chef étoilé cuisine pour vous directement dans votre Riad.', status: 'Actif' },
+            { id: 's-5', name: 'Babysitting & Garde d\'Enfants', description: 'Garde d\'enfants professionnelle pour votre sérénité.', status: 'Actif' },
+            { id: 's-6', name: 'Lingerie & Blanchisserie Fine', description: 'Soin de vos vêtements les plus précieux.', status: 'Actif' }
+        ];
+        localStorage.setItem('ga_services_mock', JSON.stringify(defaultServices));
+        return defaultServices;
+    }
+    return JSON.parse(local);
+}
+
 // ── Supabase seed: insert default rooms/services if tables are empty ──
 async function seedDefaultHotelData() {
-    const { data: existingRooms } = await window.supabaseClient.from('ga_rooms').select('id').limit(1);
-    if (!existingRooms || existingRooms.length === 0) {
-        await window.supabaseClient.from('ga_rooms').insert([
-            { type: 'Suite',          name: 'Suite Al Mamoun',   price: 15000, capacity: 4, description: 'Luxe absolu avec vue sur les jardins.', img: 'assets/chambre_1.png',     status: 'Disponible' },
-            { type: 'Chambre Deluxe', name: 'Chambre Koutoubia', price: 4500,  capacity: 2, description: 'Élégance marocaine et confort moderne.', img: 'assets/chambre_2.png',   status: 'Occupée' },
-            { type: 'Riad',           name: 'Riad Privé Atlas',  price: 40000, capacity: 8, description: 'Expérience royale avec piscine privée.', img: 'assets/riads/riad1.jpg', status: 'Disponible' }
-        ]);
-    }
-    const { data: existingServices } = await window.supabaseClient.from('ga_services').select('id').limit(1);
-    if (!existingServices || existingServices.length === 0) {
-        await window.supabaseClient.from('ga_services').insert([
-            { name: 'Spa & Hammam Royal',  description: 'Soins traditionnels, massages relaxants et piscine couverte.', status: 'Actif' },
-            { name: 'Transfert Aéroport',  description: 'Véhicules de luxe avec chauffeur privé 24/7.',                status: 'Actif' },
-            { name: 'Conciergerie VIP',    description: "Organisation d'excursions et réservations exclusives.",        status: 'Actif' }
-        ]);
+    try {
+        const { data: roomsList, error: roomsError } = await window.supabaseClient.from('ga_rooms').select('id');
+        if (roomsError) {
+            console.warn('Backend ga_rooms table not available; using localStorage fallback.');
+            getLocalRooms();
+        } else {
+            const roomsCount = roomsList ? roomsList.length : 0;
+            if (roomsCount < 15) {
+                if (roomsCount > 0) {
+                    await window.supabaseClient.from('ga_rooms').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                }
+                const baseRooms = getLocalRooms().map(r => {
+                    const { id, ...rest } = r;
+                    return rest;
+                });
+                await window.supabaseClient.from('ga_rooms').insert(baseRooms);
+            }
+        }
+
+        const { data: servicesList, error: servicesError } = await window.supabaseClient.from('ga_services').select('id');
+        if (servicesError) {
+            console.warn('Backend ga_services table not available; using localStorage fallback.');
+            getLocalServices();
+        } else {
+            const servicesCount = servicesList ? servicesList.length : 0;
+            if (servicesCount < 6) {
+                if (servicesCount > 0) {
+                    await window.supabaseClient.from('ga_services').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                }
+                const baseServices = getLocalServices().map(s => {
+                    const { id, ...rest } = s;
+                    return rest;
+                });
+                await window.supabaseClient.from('ga_services').insert(baseServices);
+            }
+        }
+    } catch(err) {
+        console.error('Error during room/service seeding:', err);
     }
 }
 
-// ── Fetch Rooms from Supabase ──
+// ── Fetch Rooms from Supabase / Local fallback ──
 async function fetchRooms() {
-    const { data, error } = await window.supabaseClient.from('ga_rooms').select('*').order('id', { ascending: true });
-    if (error) { console.error('Rooms fetch error:', error); return []; }
-    return data || [];
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_rooms').select('*').order('name', { ascending: true });
+        if (error) { 
+            console.error('Rooms fetching from Supabase failed, using local storage:', error); 
+            return getLocalRooms(); 
+        }
+        return data && data.length > 0 ? data : getLocalRooms();
+    } catch(e) {
+        console.error('Rooms catch error:', e);
+        return getLocalRooms();
+    }
 }
 
-// ── Fetch Services from Supabase ──
+// ── Fetch Services from Supabase / Local fallback ──
 async function fetchServices() {
-    const { data, error } = await window.supabaseClient.from('ga_services').select('*').order('id', { ascending: true });
-    if (error) { console.error('Services fetch error:', error); return []; }
-    return data || [];
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_services').select('*').order('name', { ascending: true });
+        if (error) { 
+            console.error('Services fetching from Supabase failed, using local storage:', error); 
+            return getLocalServices(); 
+        }
+        return data && data.length > 0 ? data : getLocalServices();
+    } catch(e) {
+        console.error('Services catch error:', e);
+        return getLocalServices();
+    }
 }
+
+// ── Actualiser hotel sans quitter la section ──
+window.refreshHotel = async function() {
+    showAdminToast('🔄 Actualisation en cours...');
+    const roomsVisible = document.getElementById('hotel-rooms').style.display !== 'none';
+    if (roomsVisible) {
+        await loadAndRenderRooms();
+    } else {
+        await loadAndRenderServices();
+    }
+    showAdminToast('✅ Données actualisées !');
+};
 
 function switchHotelTab(view) {
     document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
@@ -1663,13 +2282,42 @@ document.getElementById('form-room').addEventListener('submit', async (e) => {
         status:      document.getElementById('room-status').value
     };
     if (id) {
-        const { error } = await window.supabaseClient.from('ga_rooms').update(roomData).eq('id', id);
-        if (error) { showAdminToast('❌ Erreur modification'); console.error(error); return; }
-        showAdminToast('Élément modifié ✓');
+        const isMock = String(id).startsWith('r-') || String(id).length < 10;
+        if (isMock) {
+            let mockData = getLocalRooms();
+            const idx = mockData.findIndex(r => String(r.id) === String(id));
+            if (idx !== -1) {
+                mockData[idx] = { ...mockData[idx], ...roomData };
+                localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
+            }
+            showAdminToast('Élément (local) modifié ✓');
+        } else {
+            const { error } = await window.supabaseClient.from('ga_rooms').update(roomData).eq('id', id);
+            if (error) {
+                console.error('Update room error, falling back locally:', error);
+                let mockData = getLocalRooms();
+                const idx = mockData.findIndex(r => String(r.id) === String(id));
+                if (idx !== -1) {
+                    mockData[idx] = { ...mockData[idx], ...roomData };
+                    localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
+                }
+                showAdminToast('Élément modifié localement ✓');
+            } else {
+                showAdminToast('Élément modifié ✓');
+            }
+        }
     } else {
         const { error } = await window.supabaseClient.from('ga_rooms').insert([roomData]);
-        if (error) { showAdminToast('❌ Erreur ajout'); console.error(error); return; }
-        showAdminToast('Élément ajouté ✓');
+        if (error) {
+            console.error('Insert room error, falling back locally:', error);
+            let mockData = getLocalRooms();
+            const newRoom = { id: 'r-' + Date.now(), ...roomData };
+            mockData.push(newRoom);
+            localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
+            showAdminToast('Élément ajouté localement ✓');
+        } else {
+            showAdminToast('Élément ajouté ✓');
+        }
     }
     closeModal('modal-room');
     loadAndRenderRooms();
@@ -1729,13 +2377,42 @@ document.getElementById('form-service').addEventListener('submit', async (e) => 
         status:      document.getElementById('service-status').value
     };
     if (id) {
-        const { error } = await window.supabaseClient.from('ga_services').update(serviceData).eq('id', id);
-        if (error) { showAdminToast('❌ Erreur modification'); console.error(error); return; }
-        showAdminToast('Service modifié ✓');
+        const isMock = String(id).startsWith('s-') || String(id).length < 10;
+        if (isMock) {
+            let mockData = getLocalServices();
+            const idx = mockData.findIndex(s => String(s.id) === String(id));
+            if (idx !== -1) {
+                mockData[idx] = { ...mockData[idx], ...serviceData };
+                localStorage.setItem('ga_services_mock', JSON.stringify(mockData));
+            }
+            showAdminToast('Service (local) modifié ✓');
+        } else {
+            const { error } = await window.supabaseClient.from('ga_services').update(serviceData).eq('id', id);
+            if (error) {
+                console.error('Update service error, falling back locally:', error);
+                let mockData = getLocalServices();
+                const idx = mockData.findIndex(s => String(s.id) === String(id));
+                if (idx !== -1) {
+                    mockData[idx] = { ...mockData[idx], ...serviceData };
+                    localStorage.setItem('ga_services_mock', JSON.stringify(mockData));
+                }
+                showAdminToast('Service modifié localement ✓');
+            } else {
+                showAdminToast('Service modifié ✓');
+            }
+        }
     } else {
         const { error } = await window.supabaseClient.from('ga_services').insert([serviceData]);
-        if (error) { showAdminToast('❌ Erreur ajout'); console.error(error); return; }
-        showAdminToast('Service ajouté ✓');
+        if (error) {
+            console.error('Insert service error, falling back locally:', error);
+            let mockData = getLocalServices();
+            const newService = { id: 's-' + Date.now(), ...serviceData };
+            mockData.push(newService);
+            localStorage.setItem('ga_services_mock', JSON.stringify(mockData));
+            showAdminToast('Service ajouté localement ✓');
+        } else {
+            showAdminToast('Service ajouté ✓');
+        }
     }
     closeModal('modal-service');
     loadAndRenderServices();
@@ -1750,13 +2427,47 @@ function promptDelete(type, id) {
 
 document.getElementById('btn-confirm-delete').addEventListener('click', async () => {
     if (deleteType === 'room') {
-        const { error } = await window.supabaseClient.from('ga_rooms').delete().eq('id', deleteTarget);
-        if (!error) { showAdminToast('Hébergement supprimé ✓'); loadAndRenderRooms(); }
-        else { showAdminToast('❌ Erreur suppression'); console.error(error); }
+        const isMock = String(deleteTarget).startsWith('r-') || String(deleteTarget).length < 10;
+        if (isMock) {
+            let mockData = getLocalRooms();
+            mockData = mockData.filter(r => String(r.id) !== String(deleteTarget));
+            localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
+            showAdminToast('Hébergement (local) supprimé ✓');
+            loadAndRenderRooms();
+        } else {
+            const { error } = await window.supabaseClient.from('ga_rooms').delete().eq('id', deleteTarget);
+            if (!error) {
+                showAdminToast('Hébergement supprimé ✓');
+            } else {
+                console.error('Delete room error, falling back locally:', error);
+                let mockData = getLocalRooms();
+                mockData = mockData.filter(r => String(r.id) !== String(deleteTarget));
+                localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
+                showAdminToast('Hébergement supprimé localement ✓');
+            }
+            loadAndRenderRooms();
+        }
     } else if (deleteType === 'service') {
-        const { error } = await window.supabaseClient.from('ga_services').delete().eq('id', deleteTarget);
-        if (!error) { showAdminToast('Service supprimé ✓'); loadAndRenderServices(); }
-        else { showAdminToast('❌ Erreur suppression'); console.error(error); }
+        const isMock = String(deleteTarget).startsWith('s-') || String(deleteTarget).length < 10;
+        if (isMock) {
+            let mockData = getLocalServices();
+            mockData = mockData.filter(s => String(s.id) !== String(deleteTarget));
+            localStorage.setItem('ga_services_mock', JSON.stringify(mockData));
+            showAdminToast('Service (local) supprimé ✓');
+            loadAndRenderServices();
+        } else {
+            const { error } = await window.supabaseClient.from('ga_services').delete().eq('id', deleteTarget);
+            if (!error) {
+                showAdminToast('Service supprimé ✓');
+            } else {
+                console.error('Delete service error, falling back locally:', error);
+                let mockData = getLocalServices();
+                mockData = mockData.filter(s => String(s.id) !== String(deleteTarget));
+                localStorage.setItem('ga_services_mock', JSON.stringify(mockData));
+                showAdminToast('Service supprimé localement ✓');
+            }
+            loadAndRenderServices();
+        }
     }
     closeModal('modal-confirm');
 });
@@ -1770,6 +2481,357 @@ document.addEventListener('DOMContentLoaded', async () => {
     await seedDefaultHotelData();
     loadAndRenderRooms();
     loadAndRenderServices();
+});
+
+/* ═══════════════════════════════════════════════════
+   ── MODULE RÉCLAMATIONS ──
+   ═══════════════════════════════════════════════════ */
+
+let cachedReclamations = [];
+let reclFilter = 'all';
+let assignTarget = null;
+
+// ── Fetch ──
+async function fetchReclamations() {
+    const { data, error } = await window.supabaseClient
+        .from('ga_reclamations')
+        .select('*')
+        .order('created_at', { ascending: false });
+    if (error) { console.error('Réclamations error:', error); return []; }
+    return data || [];
+}
+
+// ── Load & render ──
+async function loadAndRenderReclamations() {
+    const tbody = document.getElementById('recl-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>';
+    cachedReclamations = await fetchReclamations();
+    updateReclStats();
+    renderReclamations();
+}
+
+function updateReclStats() {
+    const total    = cachedReclamations.length;
+    const pending  = cachedReclamations.filter(c => c.status === 'En attente').length;
+    const progress = cachedReclamations.filter(c => c.status === 'En cours').length;
+    const done     = cachedReclamations.filter(c => c.status === 'Résolu').length;
+    const t = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+    t('recl-count-total',    total);
+    t('recl-count-pending',  pending);
+    t('recl-count-progress', progress);
+    t('recl-count-done',     done);
+}
+
+window.setReclFilter = function(filter, btn) {
+    reclFilter = filter;
+    document.querySelectorAll('[id^="recl-f-"]').forEach(b => {
+        b.style.opacity = '0.5'; b.style.fontWeight = '400';
+    });
+    if (btn) { btn.style.opacity = '1'; btn.style.fontWeight = '800'; }
+    renderReclamations();
+};
+
+function renderReclamations() {
+    const tbody = document.getElementById('recl-body');
+    if (!tbody) return;
+    const term = (document.getElementById('srch-recl')?.value || '').toLowerCase();
+
+    let filtered = cachedReclamations;
+    if (reclFilter !== 'all') filtered = filtered.filter(c => c.status === reclFilter);
+    if (term) filtered = filtered.filter(c =>
+        (c.room_number   || '').toLowerCase().includes(term) ||
+        (c.client_name   || '').toLowerCase().includes(term) ||
+        (c.problem_type  || '').toLowerCase().includes(term) ||
+        (c.description   || '').toLowerCase().includes(term)
+    );
+
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Aucune réclamation trouvée.</td></tr>';
+        return;
+    }
+
+    const statusBadge = (s) => {
+        const map = {
+            'En attente': 'badge-pending',
+            'En cours':   'badge',
+            'Résolu':     'badge-success'
+        };
+        const cls = s === 'En cours' ? 'badge' : (map[s] || 'badge-pending');
+        const style = s === 'En cours' ? 'background:rgba(59,130,246,0.2); color:#3b82f6;' : '';
+        return `<span class="${cls}" style="${style}">${s}</span>`;
+    };
+
+    tbody.innerHTML = filtered.map(c => `
+        <tr>
+            <td style="font-family:'Playfair Display',serif; color:var(--primary); font-size:0.95rem; font-weight:700;">🏨 ${c.room_number}</td>
+            <td>
+                <div style="font-weight:600;">${c.client_name}</div>
+                <div style="font-size:0.65rem; color:rgba(255,255,255,0.35);">${c.client_email || ''}</div>
+            </td>
+            <td>
+                <span style="font-weight:600; font-size:0.8rem;">${c.problem_type}</span>
+            </td>
+            <td style="max-width:200px; font-size:0.78rem; color:rgba(255,255,255,0.6); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${(c.description||'').replace(/"/g,'&quot;')}">${c.description || '—'}</td>
+            <td style="font-size:0.75rem; color:rgba(255,255,255,0.45); white-space:nowrap;">${c.created_at ? new Date(c.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) : '—'}</td>
+            <td>${statusBadge(c.status)}</td>
+            <td>
+                ${c.assigned_employee
+                    ? `<span style="font-size:0.78rem; color:#22c55e;">👷 ${c.assigned_employee}</span>`
+                    : `<span style="font-size:0.75rem; color:rgba(255,255,255,0.3); font-style:italic;">Non assigné</span>`}
+            </td>
+            <td>
+                <div class="action-container">
+                    <button class="action-btn" style="border-color:#c9a84c; color:#c9a84c;" onclick="openAssignModal('${c.id}')">👷 Assigner</button>
+                    <button class="action-btn btn-reject" onclick="deleteReclamation('${c.id}')">Sup.</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ── Assign Modal ──
+window.openAssignModal = function(id) {
+    assignTarget = cachedReclamations.find(c => String(c.id) === String(id));
+    if (!assignTarget) return;
+    document.getElementById('assign-claim-info').innerHTML =
+        `<strong style="color:var(--primary);">🏨 ${assignTarget.room_number}</strong> · ${assignTarget.problem_type}<br>
+         <span style="font-size:0.78rem;">${assignTarget.client_name}</span><br>
+         <span style="font-size:0.72rem; color:rgba(255,255,255,0.4);">${(assignTarget.description||'').slice(0,120)}…</span>`;
+    document.getElementById('assign-emp-select').value    = assignTarget.assigned_employee || '';
+    document.getElementById('assign-status-select').value = assignTarget.status || 'En attente';
+    openModal('modal-assign');
+};
+
+window.confirmAssign = async function() {
+    if (!assignTarget) return;
+    const employee = document.getElementById('assign-emp-select').value;
+    const status   = document.getElementById('assign-status-select').value;
+    if (!employee) { showAdminToast('⚠️ Veuillez sélectionner un employé !'); return; }
+
+    const { error } = await window.supabaseClient.from('ga_reclamations')
+        .update({ assigned_employee: employee, status })
+        .eq('id', assignTarget.id);
+
+    if (error) { showAdminToast('❌ Erreur assignation'); console.error(error); return; }
+    showAdminToast(`✅ Assignée à ${employee} – Statut : ${status}`);
+    closeModal('modal-assign');
+    loadAndRenderReclamations();
+};
+
+window.deleteReclamation = async function(id) {
+    if (!confirm('Supprimer cette réclamation ?')) return;
+    const { error } = await window.supabaseClient.from('ga_reclamations').delete().eq('id', id);
+    if (error) { showAdminToast('❌ Erreur suppression'); return; }
+    showAdminToast('Réclamation supprimée ✓');
+    loadAndRenderReclamations();
+};
+
+window.refreshReclamations = async function() {
+    showAdminToast('🔄 Actualisation...');
+    await loadAndRenderReclamations();
+    showAdminToast('✅ Réclamations actualisées !');
+};
+
+// ── Auto-load réclamations & promotions when tab is activated ──
+const _origSwitchToTab = switchToTab;
+window.switchToTab = function(tab) {
+    _origSwitchToTab(tab);
+    if (tab === 'reclamations') loadAndRenderReclamations();
+    if (tab === 'promotions') loadAndRenderPromotions();
+    if (tab === 'hotel') { loadAndRenderRooms(); loadAndRenderServices(); }
+};
+
+/* ═══════════════════════════════════════════════════
+   ── MODULE OFFRES SPÉCIALES & PROMOTIONS ──
+   ═══════════════════════════════════════════════════ */
+
+let cachedPromotions = [];
+
+// Fetch from Supabase
+async function fetchPromotions() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('ga_promotions')
+            .select('*')
+            .order('created_at', { ascending: false });
+        if (error) {
+            console.error('Promotions error:', error);
+            // Fallback mock data in case table is not ready yet
+            return JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+        }
+        // Fallback to local mock data if remote database exists but has no records (helps in testing)
+        if (!data || data.length === 0) {
+            const localData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+            if (localData.length > 0) return localData;
+        }
+        return data || [];
+    } catch (e) {
+        console.error('Promotions catch error:', e);
+        return JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+    }
+}
+
+// Load and render
+async function loadAndRenderPromotions() {
+    const tbody = document.getElementById('promo-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>';
+    cachedPromotions = await fetchPromotions();
+    renderPromotions();
+}
+
+window.renderPromotions = function() {
+    const tbody = document.getElementById('promo-body');
+    if (!tbody) return;
+    const term = (document.getElementById('srch-promo')?.value || '').toLowerCase();
+
+    let filtered = cachedPromotions;
+    if (term) {
+        filtered = filtered.filter(p =>
+            (p.title || '').toLowerCase().includes(term) ||
+            (p.description || '').toLowerCase().includes(term)
+        );
+    }
+
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Aucune offre trouvée.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(p => `
+        <tr>
+            <td style="font-weight:700; color:var(--primary); font-size:0.95rem;">🏷️ ${p.title}</td>
+            <td style="max-width:300px; font-size:0.8rem; color:rgba(255,255,255,0.7); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${(p.description||'').replace(/"/g,'&quot;')}">${p.description}</td>
+            <td style="font-weight:800; color:#22c55e; font-size:1.05rem;">-${p.discount_pct}%</td>
+            <td style="font-size:0.75rem; color:rgba(255,255,255,0.45); white-space:nowrap;">${p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR', {day:'2-digit',month:'short',year:'numeric'}) : '—'}</td>
+            <td>
+                <span class="badge ${p.active ? 'badge-success' : 'badge-danger'}">
+                    ${p.active ? 'Actif' : 'Inactif'}
+                </span>
+            </td>
+            <td>
+                <div class="action-container">
+                    <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="editPromotion('${p.id}')">Éditer</button>
+                    <button class="action-btn btn-reject" onclick="deletePromotion('${p.id}')">Sup.</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+};
+
+window.openPromotionModal = function(promo = null) {
+    if (promo) {
+        document.getElementById('promo-modal-title').textContent = 'Modifier une Offre / Promotion';
+        document.getElementById('promo-id').value = promo.id;
+        document.getElementById('promo-title').value = promo.title;
+        document.getElementById('promo-discount').value = promo.discount_pct;
+        document.getElementById('promo-active').value = String(promo.active);
+        document.getElementById('promo-desc').value = promo.description;
+    } else {
+        document.getElementById('promo-modal-title').textContent = 'Ajouter une Offre / Promotion';
+        document.getElementById('form-promotion').reset();
+        document.getElementById('promo-id').value = '';
+    }
+    openModal('modal-promotion');
+};
+
+window.editPromotion = function(id) {
+    const promo = cachedPromotions.find(p => String(p.id) === String(id));
+    if (promo) openPromotionModal(promo);
+};
+
+window.deletePromotion = async function(id) {
+    if (!confirm('Voulez-vous vraiment supprimer cette promotion ?')) return;
+
+    // Check if mock
+    const isMock = String(id).length < 10;
+    if (isMock) {
+        let mockData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+        mockData = mockData.filter(p => String(p.id) !== String(id));
+        localStorage.setItem('ga_promotions_mock', JSON.stringify(mockData));
+        showAdminToast('Promotion (local) supprimée ✓');
+        loadAndRenderPromotions();
+        return;
+    }
+
+    const { error } = await window.supabaseClient.from('ga_promotions').delete().eq('id', id);
+    if (error) {
+        console.error('Delete promotion error:', error);
+        let mockData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+        mockData = mockData.filter(p => String(p.id) !== String(id));
+        localStorage.setItem('ga_promotions_mock', JSON.stringify(mockData));
+        showAdminToast('Promotion supprimée localement ✓');
+    } else {
+        showAdminToast('Promotion supprimée ✓');
+    }
+    loadAndRenderPromotions();
+};
+
+window.refreshPromotions = async function() {
+    showAdminToast('🔄 Actualisation...');
+    await loadAndRenderPromotions();
+    showAdminToast('✅ Promotions actualisées !');
+};
+
+// Form submit event listener
+document.addEventListener('DOMContentLoaded', () => {
+    const formPromo = document.getElementById('form-promotion');
+    if (formPromo) {
+        formPromo.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('promo-id').value;
+            const promoData = {
+                title: document.getElementById('promo-title').value.trim(),
+                discount_pct: parseInt(document.getElementById('promo-discount').value),
+                active: document.getElementById('promo-active').value === 'true',
+                description: document.getElementById('promo-desc').value.trim()
+            };
+
+            if (id) {
+                const isMock = String(id).length < 10;
+                if (isMock) {
+                    let mockData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+                    const idx = mockData.findIndex(p => String(p.id) === String(id));
+                    if (idx !== -1) {
+                        mockData[idx] = { ...mockData[idx], ...promoData };
+                        localStorage.setItem('ga_promotions_mock', JSON.stringify(mockData));
+                    }
+                    showAdminToast('Offre (local) modifiée ✓');
+                } else {
+                    const { error } = await window.supabaseClient.from('ga_promotions').update(promoData).eq('id', id);
+                    if (error) {
+                        console.error('Update promotion error:', error);
+                        let mockData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+                        const idx = mockData.findIndex(p => String(p.id) === String(id));
+                        if (idx !== -1) {
+                            mockData[idx] = { ...mockData[idx], ...promoData };
+                            localStorage.setItem('ga_promotions_mock', JSON.stringify(mockData));
+                        }
+                        showAdminToast('Offre modifiée localement ✓');
+                    } else {
+                        showAdminToast('Offre modifiée ✓');
+                    }
+                }
+            } else {
+                const { error } = await window.supabaseClient.from('ga_promotions').insert([promoData]);
+                if (error) {
+                    console.error('Insert promotion error:', error);
+                    let mockData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+                    const newPromo = { 
+                        id: 'm-' + Date.now(), 
+                        ...promoData, 
+                        created_at: new Date().toISOString() 
+                    };
+                    mockData.push(newPromo);
+                    localStorage.setItem('ga_promotions_mock', JSON.stringify(mockData));
+                    showAdminToast('Offre ajoutée localement ✓');
+                } else {
+                    showAdminToast('Offre ajoutée ✓');
+                }
+            }
+            closeModal('modal-promotion');
+            loadAndRenderPromotions();
+        });
+    }
 });
 </script>
 </body>
