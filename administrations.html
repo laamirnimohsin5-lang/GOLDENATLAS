@@ -478,6 +478,7 @@
 <div class="nav-item active" data-tab="dashboard"> Tableau de Bord</div>
 <div class="nav-item" data-tab="reservations"> Réservations</div>
 <div class="nav-item" data-tab="customers"> Clients</div>
+<div class="nav-item" data-tab="employees"> Employés</div>
 <div class="nav-item" data-tab="messages"> Messages</div>
 <div class="nav-item" data-tab="hotel"> Gestion de l'Hôtel</div>
 <div class="nav-item" data-tab="reclamations"> Réclamations</div>
@@ -881,6 +882,40 @@
     </div>
 </div>
 
+<!-- ── ONGLET EMPLOYÉS ── -->
+<div class="tab-content" id="tab-employees">
+    <div class="data-card">
+        <div style="margin-bottom:20px;">
+            <h3 style="margin:0 0 15px 0; font-family:'Playfair Display',serif; color:var(--primary);">👥 Gestion des Employés</h3>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div class="search-bar" style="flex:1; min-width:180px;">
+                    <input id="srch-employees" placeholder="Rechercher un employé..." type="text" oninput="renderEmployees()" style="width:100%;"/>
+                </div>
+                <button class="btn-gold" onclick="openEmployeeModal()" style="white-space:nowrap;">+ Ajouter un Employé</button>
+                <button class="btn-gold" style="background:transparent; border-color:var(--primary); color:var(--primary); white-space:nowrap;" onclick="refreshEmployees()">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table id="emp-table">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Nom Complet</th>
+                    <th>Poste</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employees-body">
+                <tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
 </main>
 </div>
 
@@ -1138,6 +1173,191 @@
     <button class="btn-gold" onclick="closeModal('modal-assign')" style="background:#444; color:#fff;">Annuler</button>
     <button class="btn-gold" onclick="confirmAssign()">💾 Confirmer l'Assignation</button>
 </div>
+</div>
+</div>
+
+<!-- Employee Details Modal -->
+<div class="modal" id="modal-employee-details" style="z-index: 2100;">
+    <div class="modal-content" style="max-width: 580px; padding: 0; background: #0b0c14; border-radius: 20px; overflow: hidden; border: 1px solid rgba(201,168,76,0.25);">
+        <!-- Top banner backgound with profile photo/initials -->
+        <div style="background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(10,11,20,0.95)); padding: 40px 30px 35px; border-bottom: 1px solid rgba(201,168,76,0.15); position: relative; text-align: center;">
+            <span class="close-modal" onclick="closeModal('modal-employee-details')" style="top: 15px; right: 20px; font-size: 1.8rem;">&times;</span>
+            <div id="emp-detail-avatar-container" style="width: 110px; height: 110px; border-radius: 50%; border: 3px solid var(--primary); margin: 0 auto 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #222; box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 15px var(--primary-glow);">
+                <!-- Img or initials will be set dynamically -->
+            </div>
+            <h2 id="emp-detail-name" style="font-family: 'Playfair Display', serif; color: #fff; margin-bottom: 5px; font-size: 1.6rem; letter-spacing: 0.5px;"></h2>
+            <p id="emp-detail-position" style="font-size: 0.72rem; letter-spacing: 2px; color: var(--primary); font-weight: 700; text-transform: uppercase; margin-bottom: 0;"></p>
+        </div>
+
+        <!-- Detail info list -->
+        <div style="padding: 30px; max-height: 50vh; overflow-y: auto;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px 30px;">
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">CIN</span>
+                    <p id="emp-detail-cin" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Sexe</span>
+                    <p id="emp-detail-gender" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Date de Naissance</span>
+                    <p id="emp-detail-dob" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Téléphone</span>
+                    <p id="emp-detail-phone" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div style="grid-column: span 2;">
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">E-mail</span>
+                    <p id="emp-detail-email" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div style="grid-column: span 2;">
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Adresse Résidence</span>
+                    <p id="emp-detail-address" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Date d'embauche</span>
+                    <p id="emp-detail-hiredate" style="font-size: 0.85rem; color: #fff; font-weight: 600; margin-top: 3px;"></p>
+                </div>
+                <div>
+                    <span style="font-size: 0.6rem; letter-spacing: 1px; color: rgba(255,255,255,0.35); text-transform: uppercase;">Salaire mensuel</span>
+                    <p id="emp-detail-salary" style="font-size: 0.9rem; color: #22c55e; font-weight: 700; margin-top: 3px;"></p>
+                </div>
+
+                <!-- Credentials block (premium info) -->
+                <div style="grid-column: span 2; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.55rem; letter-spacing: 1px; color: var(--primary); text-transform: uppercase; font-weight: 700;">Identifiant Espace Employé</span>
+                        <p id="emp-detail-username" style="font-size: 0.82rem; color: #fff; font-weight: 600; margin-top: 2px;"></p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.55rem; letter-spacing: 1px; color: var(--primary); text-transform: uppercase; font-weight: 700;">Mot de passe</span>
+                        <div style="display: flex; align-items: center; gap: 8px; justify-content: flex-end; margin-top: 2px;">
+                            <span id="emp-detail-pass" style="-webkit-text-security: disc; text-security: disc; font-size: 0.82rem; color: #fff; font-weight: 600;"></span>
+                            <button id="btn-toggle-pass" onclick="togglePassVisibility()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 0.72rem; padding: 2px 5px; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Afficher</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 20px 30px; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 12px;">
+            <button class="btn-gold" id="btn-edit-from-details" style="background: transparent; border: 1px solid var(--primary); color: var(--primary);" onclick="editEmployeeFromDetails()">Modifier</button>
+            <button class="btn-gold" onclick="closeModal('modal-employee-details')">Fermer</button>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Add/Edit Modal -->
+<div class="modal" id="modal-employee">
+    <div class="modal-content" style="max-width: 650px;">
+        <span class="close-modal" onclick="closeModal('modal-employee')">&times;</span>
+        <h2 class="modal-title" id="emp-modal-title">Ajouter un Employé</h2>
+        <form id="form-employee">
+            <input id="emp-id" type="hidden"/>
+            <!-- Name & Profile Pic -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Nom complet</label>
+                    <input class="form-input" id="emp-name" placeholder="Ex: Ahmed Alaoui" required type="text"/>
+                </div>
+                <div>
+                    <label class="form-label">Poste / Fonction</label>
+                    <input class="form-input" id="emp-position" placeholder="Ex: Technicien Électricien" required type="text"/>
+                </div>
+            </div>
+            
+            <!-- Dates & Gender -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Date de Naissance</label>
+                    <input class="form-input" id="emp-dob" required type="date"/>
+                </div>
+                <div>
+                    <label class="form-label">Sexe</label>
+                    <select class="form-input" id="emp-gender" required>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- CIN & Phone -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">CIN (Carte d'Identité)</label>
+                    <input class="form-input" id="emp-cin" placeholder="Ex: JB123456" required type="text"/>
+                </div>
+                <div>
+                    <label class="form-label">Téléphone</label>
+                    <input class="form-input" id="emp-phone" placeholder="Ex: +212 612-345678" required type="tel"/>
+                </div>
+            </div>
+
+            <!-- Email & Rent details -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">E-mail</label>
+                    <input class="form-input" id="emp-email" placeholder="Ex: ahmed@goldenatlas.ma" required type="email"/>
+                </div>
+                <div>
+                    <label class="form-label">Salaire mensuel (MAD, optionnel)</label>
+                    <input class="form-input" id="emp-salary" placeholder="Ex: 6500" type="number" min="0"/>
+                </div>
+            </div>
+
+            <!-- Address and Hire Date -->
+            <div class="form-grid">
+                <div>
+                    <label class="form-label">Date d'embauche</label>
+                    <input class="form-input" id="emp-hiredate" required type="date"/>
+                </div>
+                <div>
+                    <label class="form-label">Photo (Fichier ou URL optionnelle)</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input accept="image/*" class="form-input" id="emp-img-file" style="flex:1.2; padding:9px;" type="file"/>
+                        <span style="font-size:0.6rem; color:rgba(255,255,255,0.4); text-transform:uppercase;">OU</span>
+                        <input class="form-input" id="emp-photo-url" placeholder="https://..." style="flex:1.8;" type="text"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Address (Full Row) -->
+            <div class="form-grid full">
+                <div>
+                    <label class="form-label">Adresse de résidence</label>
+                    <input class="form-input" id="emp-address" placeholder="Ex: Rue Hassan II, No 16, Errachidia" required type="text"/>
+                </div>
+            </div>
+
+            <!-- Username & Password (for login credentials) -->
+            <div style="border-top: 1px solid rgba(201,168,76,0.15); margin-top:20px; padding-top:15px;">
+                <h4 style="color:var(--primary); font-size:0.75rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:12px;">Accès à l'Espace Employé (Identifiants)</h4>
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Identifiant (Username)</label>
+                        <input class="form-input" id="emp-username" placeholder="Ex: ahmed.alaoui" required type="text"/>
+                    </div>
+                    <div>
+                        <label class="form-label">Mot de passe</label>
+                        <input class="form-input" id="emp-password" placeholder="Saisir un mot de passe" required type="text"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview box -->
+            <div id="emp-img-preview-container" style="display:none; text-align:center; margin-top:15px;">
+                <img id="emp-form-img-preview" style="max-height:80px; border-radius:50%; border:2px solid var(--primary); object-fit:cover; width:80px; height:80px;"/>
+            </div>
+
+            <div style="text-align: right; margin-top: 25px;">
+                <button class="btn-gold" type="submit">Enregistrer l'Employé</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 </div>
 </div>
 <script>
@@ -1985,6 +2205,7 @@ window.refreshSection = async function(section) {
     if (section === 'reservations') { renderReservations(reservations || []); }
     else if (section === 'customers') { renderUsers(users || []); }
     else if (section === 'messages') { renderMessages(messages || []); }
+    else if (section === 'employees') { await loadAndRenderEmployees(); }
     else if (section === 'hotel') { await loadAndRenderRooms(); await loadAndRenderServices(); }
     else if (section === 'promotions') { await loadAndRenderPromotions(); }
     else {
@@ -1999,6 +2220,7 @@ window.refreshSection = async function(section) {
         initCharts(reservations || []);
         renderDetailTable(reservations || [], currentPeriod);
         loadAndRenderPromotions();
+        await loadAndRenderEmployees();
     }
     showAdminToast('✅ Données actualisées !');
 };
@@ -2011,7 +2233,7 @@ function switchToTab(tab) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const activeTab = document.getElementById('tab-' + tab);
     if (activeTab) activeTab.classList.add('active');
-    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'messages': 'Messages', 'dashboard': 'Tableau de Bord', 'promotions': 'Offres & Promotions' };
+    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'employees': 'Employés', 'messages': 'Messages', 'dashboard': 'Tableau de Bord', 'promotions': 'Offres & Promotions', 'reclamations': 'Réclamations' };
     document.getElementById('tab-title').textContent = tabTitles[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
     sessionStorage.setItem('ga_admin_tab', tab);
 }
@@ -2025,6 +2247,263 @@ const savedTab = sessionStorage.getItem('ga_admin_tab');
 if (savedTab) {
     // Applied after login with a small delay so dashboard is visible
     window._pendingTab = savedTab;
+}
+
+// ── LOCAL EMPLOYEES FALLBACK SCHEMA ──
+function getLocalEmployees() {
+    let local = localStorage.getItem('ga_employees_mock');
+    if (!local) {
+        const defaultEmployees = [
+            { id: 'emp-1', name: 'Ahmed Alaoui', username: 'ahmed.alaoui', password: 'emp123', photo: '', dob: '1990-05-15', gender: 'Homme', cin: 'JB123456', phone: '+212 611-223344', address: 'Rue Hassan II, Errachidia', email: 'ahmed.alaoui@goldenatlas.ma', hire_date: '2022-01-10', position: 'Technicien Plombier', salary: 6500.00 },
+            { id: 'emp-2', name: 'Fatima Benali', username: 'fatima.benali', password: 'emp456', photo: '', dob: '1993-08-22', gender: 'Femme', cin: 'K345678', phone: '+212 622-334455', address: 'Av. Moulay Ismail, Errachidia', email: 'fatima.benali@goldenatlas.ma', hire_date: '2023-03-15', position: 'Réceptionniste / Standardiste', salary: 5500.00 },
+            { id: 'emp-3', name: 'Youssef Idrissi', username: 'youssef.idrissi', password: 'emp789', photo: '', dob: '1988-11-02', gender: 'Homme', cin: 'LE987654', phone: '+212 633-445566', address: 'Quartier Oasis, Errachidia', email: 'youssef.idrissi@goldenatlas.ma', hire_date: '2020-06-01', position: 'Technicien Électricien', salary: 7000.00 },
+            { id: 'emp-4', name: 'Sara Mansouri', username: 'sara.mansouri', password: 'emp101', photo: '', dob: '1995-12-10', gender: 'Femme', cin: 'G456123', phone: '+212 644-556677', address: 'Hay Riad, Errachidia', email: 'sara.mansouri@goldenatlas.ma', hire_date: '2024-02-20', position: 'Agente d\'entretien', salary: 5000.00 },
+            { id: 'emp-5', name: 'Technicien Chef', username: 'admin', password: 'emp000', photo: '', dob: '1985-04-30', gender: 'Homme', cin: 'U112233', phone: '+212 655-667788', address: 'Avenue de la Marche Verte, Errachidia', email: 'chef.technique@goldenatlas.ma', hire_date: '2018-09-01', position: 'Chef d\'Équipe Technique', salary: 10000.00 }
+        ];
+        localStorage.setItem('ga_employees_mock', JSON.stringify(defaultEmployees));
+        return defaultEmployees;
+    }
+    return JSON.parse(local);
+}
+
+async function seedDefaultEmployeeData() {
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_employees').select('id');
+        if (error) {
+            console.warn('Backend ga_employees table not available; using localStorage fallback.');
+            getLocalEmployees();
+        } else {
+            const count = data ? data.length : 0;
+            if (count === 0) {
+                const base = getLocalEmployees().map(e => {
+                    const { id, ...rest } = e;
+                    return rest;
+                });
+                await window.supabaseClient.from('ga_employees').insert(base);
+            }
+        }
+    } catch(err) {
+        console.error('Error seeding employees:', err);
+    }
+}
+
+async function fetchEmployees() {
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_employees').select('*').order('name', { ascending: true });
+        if (error) {
+            console.error('Employees fetching failed, using local storage:', error);
+            return getLocalEmployees();
+        }
+        return data && data.length > 0 ? data : getLocalEmployees();
+    } catch(e) {
+        console.error('Employees catch error:', e);
+        return getLocalEmployees();
+    }
+}
+
+let cachedEmployees = [];
+let currentViewedEmployee = null;
+
+async function loadAndRenderEmployees() {
+    const tbody = document.getElementById('employees-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>';
+    cachedEmployees = await fetchEmployees();
+    renderEmployees();
+    updateAssignEmployeeDropdowns();
+}
+
+function renderEmployees() {
+    const tbody = document.getElementById('employees-body');
+    if (!tbody) return;
+    const term = (document.getElementById('srch-employees')?.value || '').toLowerCase();
+    
+    let filtered = cachedEmployees;
+    if (term) {
+        filtered = filtered.filter(e =>
+            (e.name || '').toLowerCase().includes(term) ||
+            (e.position || '').toLowerCase().includes(term) ||
+            (e.cin || '').toLowerCase().includes(term) ||
+            (e.email || '').toLowerCase().includes(term) ||
+            (e.phone || '').toLowerCase().includes(term)
+        );
+    }
+
+    if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Aucun employé trouvé.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(e => {
+        const avatarHtml = e.photo
+            ? `<img src="${e.photo}" class="img-preview" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:1px solid rgba(201,168,76,0.3);" onerror="this.src='https://via.placeholder.com/40/0a0a0a/c9a84c?text=${e.name ? e.name[0] : 'EMP'}'">`
+            : `<div style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05)); border:1px solid rgba(201,168,76,0.3); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:1rem; color:var(--primary);">${e.name ? e.name[0] : '?'}</div>`;
+            
+        return `
+            <tr>
+                <td>${avatarHtml}</td>
+                <td style="font-weight:700; color:#fff;">${e.name}</td>
+                <td><span style="font-size:0.8rem; font-weight:600; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">${e.position || '—'}</span></td>
+                <td>${e.email || '—'}</td>
+                <td>${e.phone || '—'}</td>
+                <td>
+                    <div class="action-container">
+                        <button class="action-btn" style="border-color:var(--primary); color:var(--primary);" onclick="viewEmployeeDetails('${e.id}')">Informations personnelles</button>
+                        <button class="action-btn" style="border-color:#3b82f6; color:#3b82f6;" onclick="editEmployee('${e.id}')">Éditer</button>
+                        <button class="action-btn btn-reject" onclick="deleteEmployee('${e.id}')">Sup.</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+window.viewEmployeeDetails = function(id) {
+    const e = cachedEmployees.find(emp => String(emp.id) === String(id));
+    if (!e) return;
+    currentViewedEmployee = e;
+
+    const avatarContainer = document.getElementById('emp-detail-avatar-container');
+    if (e.photo) {
+        avatarContainer.innerHTML = `<img src="${e.photo}" style="width:100%; height:100%; object-fit:cover;" onerror="this.innerHTML='<span style=\x22font-family:\\'Playfair Display\\',serif; font-size:3rem; color:var(--primary); font-weight:700;\x22>${e.name ? e.name[0] : '?'}</span>'">`;
+    } else {
+        avatarContainer.innerHTML = `<span style="font-family:'Playfair Display',serif; font-size:3rem; color:var(--primary); font-weight:700;">${e.name ? e.name[0] : '?'}</span>`;
+    }
+
+    document.getElementById('emp-detail-name').textContent = e.name;
+    document.getElementById('emp-detail-position').textContent = e.position || 'Non spécifié';
+    document.getElementById('emp-detail-cin').textContent = e.cin || 'Non spécifié';
+    document.getElementById('emp-detail-gender').textContent = e.gender || 'Non spécifié';
+    document.getElementById('emp-detail-dob').textContent = e.dob ? new Date(e.dob).toLocaleDateString('fr-FR') : 'Non spécifié';
+    document.getElementById('emp-detail-phone').textContent = e.phone || 'Non spécifié';
+    document.getElementById('emp-detail-email').textContent = e.email || 'Non spécifié';
+    document.getElementById('emp-detail-address').textContent = e.address || 'Non spécifié';
+    document.getElementById('emp-detail-hiredate').textContent = e.hire_date ? new Date(e.hire_date).toLocaleDateString('fr-FR') : 'Non spécifié';
+    document.getElementById('emp-detail-salary').textContent = e.salary ? Number(e.salary).toLocaleString('fr-FR') + ' DH' : 'Non disponible';
+
+    document.getElementById('emp-detail-username').textContent = e.username || 'Non créé';
+    const passEl = document.getElementById('emp-detail-pass');
+    passEl.textContent = e.password || '';
+    passEl.style.textSecurity = 'disc';
+    passEl.style.webkitTextSecurity = 'disc';
+    
+    const btnToggle = document.getElementById('btn-toggle-pass');
+    btnToggle.textContent = 'Afficher';
+
+    openModal('modal-employee-details');
+};
+
+window.togglePassVisibility = function() {
+    const passEl = document.getElementById('emp-detail-pass');
+    const btnToggle = document.getElementById('btn-toggle-pass');
+    if (passEl.style.textSecurity === 'none' || passEl.style.webkitTextSecurity === 'none') {
+        passEl.style.textSecurity = 'disc';
+        passEl.style.webkitTextSecurity = 'disc';
+        btnToggle.textContent = 'Afficher';
+    } else {
+        passEl.style.textSecurity = 'none';
+        passEl.style.webkitTextSecurity = 'none';
+        btnToggle.textContent = 'Masquer';
+    }
+};
+
+window.openEmployeeModal = function(employee = null) {
+    const previewContainer = document.getElementById('emp-img-preview-container');
+    const previewImg = document.getElementById('emp-form-img-preview');
+    const form = document.getElementById('form-employee');
+    form.reset();
+    
+    if (employee) {
+        document.getElementById('emp-modal-title').textContent = 'Modifier un Employé';
+        document.getElementById('emp-id').value         = employee.id;
+        document.getElementById('emp-name').value       = employee.name;
+        document.getElementById('emp-position').value   = employee.position || '';
+        document.getElementById('emp-dob').value        = employee.dob || '';
+        document.getElementById('emp-gender').value     = employee.gender || 'Homme';
+        document.getElementById('emp-cin').value        = employee.cin || '';
+        document.getElementById('emp-phone').value      = employee.phone || '';
+        document.getElementById('emp-email').value      = employee.email || '';
+        document.getElementById('emp-salary').value     = employee.salary || '';
+        document.getElementById('emp-hiredate').value   = employee.hire_date || '';
+        document.getElementById('emp-photo-url').value  = employee.photo || '';
+        document.getElementById('emp-username').value   = employee.username || '';
+        document.getElementById('emp-password').value   = employee.password || '';
+        document.getElementById('emp-address').value    = employee.address || '';
+        
+        if (employee.photo) {
+            previewContainer.style.display = 'block';
+            previewImg.src = employee.photo;
+        } else {
+            previewContainer.style.display = 'none';
+            previewImg.src = '';
+        }
+    } else {
+        document.getElementById('emp-modal-title').textContent = 'Ajouter un Employé';
+        document.getElementById('emp-id').value = '';
+        previewContainer.style.display = 'none';
+        previewImg.src = '';
+    }
+    openModal('modal-employee');
+};
+
+window.editEmployee = function(id) {
+    const employee = cachedEmployees.find(e => String(e.id) === String(id));
+    if (employee) openEmployeeModal(employee);
+};
+
+window.editEmployeeFromDetails = function() {
+    if (currentViewedEmployee) {
+        closeModal('modal-employee-details');
+        openEmployeeModal(currentViewedEmployee);
+    }
+};
+
+window.deleteEmployee = async function(id) {
+    if (!confirm('Voulez-vous vraiment supprimer cet employé ? Cette action est irréversible.')) return;
+    const isMock = String(id).startsWith('emp-') || String(id).length < 10;
+    if (isMock) {
+        let mockData = getLocalEmployees();
+        mockData = mockData.filter(em => String(em.id) !== String(id));
+        localStorage.setItem('ga_employees_mock', JSON.stringify(mockData));
+        showAdminToast('Employé (local) supprimé ✓');
+        loadAndRenderEmployees();
+    } else {
+        const { error } = await window.supabaseClient.from('ga_employees').delete().eq('id', id);
+        if (error) {
+            console.error('Delete employee error, falling back locally:', error);
+            let mockData = getLocalEmployees();
+            mockData = mockData.filter(em => String(em.id) !== String(id));
+            localStorage.setItem('ga_employees_mock', JSON.stringify(mockData));
+            showAdminToast('Employé supprimé localement ✓');
+        } else {
+            showAdminToast('Employé supprimé ✓');
+        }
+        loadAndRenderEmployees();
+    }
+};
+
+window.refreshEmployees = async function() {
+    showAdminToast('🔄 Actualisation...');
+    await loadAndRenderEmployees();
+    showAdminToast('✅ Employés actualisés !');
+};
+
+function updateAssignEmployeeDropdowns() {
+    const select = document.getElementById('assign-emp-select');
+    if (!select) return;
+    const val = select.value;
+    select.innerHTML = '<option value="">— Sélectionner un employé —</option>';
+    cachedEmployees.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e.name;
+        opt.textContent = `${e.name} (${e.position})`;
+        select.appendChild(opt);
+    });
+    if (val) select.value = val;
+}
+
+async function loadEmployeesForAssign() {
+    cachedEmployees = await fetchEmployees();
+    updateAssignEmployeeDropdowns();
 }
 
 /* ── Hotel Management Logic (Supabase) ── */
@@ -2479,8 +2958,10 @@ document.getElementById('srch-service')?.addEventListener('input', renderService
 // ── Init on DOMContentLoaded ──
 document.addEventListener('DOMContentLoaded', async () => {
     await seedDefaultHotelData();
+    await seedDefaultEmployeeData();
     loadAndRenderRooms();
     loadAndRenderServices();
+    await loadEmployeesForAssign();
 });
 
 /* ═══════════════════════════════════════════════════
@@ -2639,6 +3120,7 @@ window.switchToTab = function(tab) {
     if (tab === 'reclamations') loadAndRenderReclamations();
     if (tab === 'promotions') loadAndRenderPromotions();
     if (tab === 'hotel') { loadAndRenderRooms(); loadAndRenderServices(); }
+    if (tab === 'employees') loadAndRenderEmployees();
 };
 
 /* ═══════════════════════════════════════════════════
@@ -2830,6 +3312,96 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             closeModal('modal-promotion');
             loadAndRenderPromotions();
+        });
+    }
+
+    // Employee photo/initials event listeners
+    const empImgFile = document.getElementById('emp-img-file');
+    if (empImgFile) {
+        empImgFile.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = evt => {
+                    document.getElementById('emp-img-preview-container').style.display = 'block';
+                    document.getElementById('emp-form-img-preview').src = evt.target.result;
+                    document.getElementById('emp-photo-url').value = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    const empPhotoUrl = document.getElementById('emp-photo-url');
+    if (empPhotoUrl) {
+        empPhotoUrl.addEventListener('input', function(e) {
+            const val = e.target.value.trim();
+            document.getElementById('emp-img-preview-container').style.display = val ? 'block' : 'none';
+            if (val) document.getElementById('emp-form-img-preview').src = val;
+        });
+    }
+
+    const formEmp = document.getElementById('form-employee');
+    if (formEmp) {
+        formEmp.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('emp-id').value;
+            const empData = {
+                name:        document.getElementById('emp-name').value.trim(),
+                position:    document.getElementById('emp-position').value.trim(),
+                dob:         document.getElementById('emp-dob').value,
+                gender:      document.getElementById('emp-gender').value,
+                cin:         document.getElementById('emp-cin').value.trim().toUpperCase(),
+                phone:       document.getElementById('emp-phone').value.trim(),
+                email:       document.getElementById('emp-email').value.trim(),
+                salary:      document.getElementById('emp-salary').value ? parseFloat(document.getElementById('emp-salary').value) : null,
+                hire_date:   document.getElementById('emp-hiredate').value,
+                photo:       document.getElementById('emp-photo-url').value.trim(),
+                username:    document.getElementById('emp-username').value.trim(),
+                password:    document.getElementById('emp-password').value,
+                address:     document.getElementById('emp-address').value.trim()
+            };
+
+            if (id) {
+                const isMock = String(id).startsWith('emp-') || String(id).length < 10;
+                if (isMock) {
+                    let mockData = getLocalEmployees();
+                    const idx = mockData.findIndex(em => String(em.id) === String(id));
+                    if (idx !== -1) {
+                        mockData[idx] = { ...mockData[idx], ...empData };
+                        localStorage.setItem('ga_employees_mock', JSON.stringify(mockData));
+                    }
+                    showAdminToast('Employé (local) modifié ✓');
+                } else {
+                    const { error } = await window.supabaseClient.from('ga_employees').update(empData).eq('id', id);
+                    if (error) {
+                        console.error('Update employee error, falling back locally:', error);
+                        let mockData = getLocalEmployees();
+                        const idx = mockData.findIndex(em => String(em.id) === String(id));
+                        if (idx !== -1) {
+                            mockData[idx] = { ...mockData[idx], ...empData };
+                            localStorage.setItem('ga_employees_mock', JSON.stringify(mockData));
+                        }
+                        showAdminToast('Employé modifié localement ✓');
+                    } else {
+                        showAdminToast('Employé modifié ✓');
+                    }
+                }
+            } else {
+                const { error } = await window.supabaseClient.from('ga_employees').insert([empData]);
+                if (error) {
+                    console.error('Insert employee error, falling back locally:', error);
+                    let mockData = getLocalEmployees();
+                    const newEmp = { id: 'emp-' + Date.now(), ...empData };
+                    mockData.push(newEmp);
+                    localStorage.setItem('ga_employees_mock', JSON.stringify(mockData));
+                    showAdminToast('Employé ajouté localement ✓');
+                } else {
+                    showAdminToast('Employé ajouté ✓');
+                }
+            }
+            closeModal('modal-employee');
+            loadAndRenderEmployees();
         });
     }
 });

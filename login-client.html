@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrÃ©er un compte Â· Golden Atlas Errachidia</title>
+    <title>Créer un compte · Golden Atlas Errachidia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -243,6 +243,26 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-init.js"></script>
+<script>
+// ── Register auth listener IMMEDIATELY after Supabase init ──
+// Supabase auto-processes #access_token hash and fires SIGNED_IN.
+// We must listen BEFORE the load event to catch it.
+window._authListenerReady = false;
+window._pendingAuthSession = null;
+
+window.supabaseClient.auth.onAuthStateChange((event, session) => {
+    console.log('[Early Auth]', event, session ? session.user?.email : 'null');
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user) {
+        if (window._authListenerReady) {
+            // Page is ready, handle immediately
+            window.handleAuthSession(session);
+        } else {
+            // Page not ready yet, store for later
+            window._pendingAuthSession = session;
+        }
+    }
+});
+</script>
 </head>
 <body>
 
@@ -275,7 +295,7 @@
                     </div>
                 </div>
                 <div style="text-align: right; margin-bottom: 20px;">
-                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oubliÃ© ?</a>
+                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oublié ?</a>
                 </div>
                 <button type="submit" class="btn-submit">SE CONNECTER</button>
             </form>
@@ -292,7 +312,7 @@
             </button>
 
             <div class="register-footer">
-                Pas encore de compte ? <a href="#" id="show-register">CrÃ©er un compte â†’</a>
+                Pas encore de compte ? <a href="#" id="show-register">Créer un compte →</a>
             </div>
         </div>
 
@@ -309,21 +329,21 @@
                 <div class="form-group">
                     <label>Mot de passe</label>
                     <div style="position: relative;">
-                        <input type="password" id="reg-pwd" placeholder="CrÃ©er votre mot de passe" required style="padding-right: 45px;">
+                        <input type="password" id="reg-pwd" placeholder="Créer votre mot de passe" required style="padding-right: 45px;">
                         <span class="toggle-pwd" data-target="reg-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
                             <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                         </span>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>NÂ° CIN / Passport</label>
+                    <label>N° CIN / Passport</label>
                     <input type="text" id="reg-cin" placeholder="CIN ou Passport" required>
                 </div>
                 <div class="form-group">
-                    <label>TÃ©lÃ©phone</label>
+                    <label>Téléphone</label>
                     <input type="text" id="reg-phone" placeholder="+212 ..." required>
                 </div>
-                <button type="submit" class="btn-submit">CRÃ‰ER MON COMPTE</button>
+                <button type="submit" class="btn-submit">CRÉER MON COMPTE</button>
             </form>
             
             <div style="display: flex; align-items: center; margin: 25px 0;">
@@ -338,7 +358,7 @@
             </button>
 
             <div class="register-footer">
-                DÃ©jÃ  inscrit ? <a href="#" id="show-login">Se connecter â†’</a>
+                Déjà inscrit ? <a href="#" id="show-login">Se connecter →</a>
             </div>
         </div>
 
@@ -357,8 +377,8 @@
 
             <!-- Loyalty Offer Message -->
             <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
-                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">ðŸŽ‰ FÃ‰LICITATIONS ! VOUS AVEZ 10 POINTS.</p>
-                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">BÃ©nÃ©ficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÃ‰DUCTION</span> sur votre prochain sÃ©jour !</p>
+                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">ðŸŽ‰ FÉLICITATIONS ! VOUS AVEZ 10 POINTS.</p>
+                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
             </div>
             <style>
                 @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(201, 168, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); } }
@@ -376,11 +396,11 @@
             <div class="dashboard-actions">
                 <a href="mes-reservations.html" class="btn-dash btn-dash-primary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-                    Voir mes rÃ©servations
+                    Voir mes réservations
                 </a>
                 <a href="reclamations-client.html" class="btn-dash btn-dash-danger">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-                    Signaler un problÃ¨me
+                    Signaler un problème
                 </a>
                 <a href="index.html" class="btn-dash btn-dash-secondary">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -388,26 +408,26 @@
                 </a>
                 <button type="button" class="btn-dash btn-dash-outline" id="btn-logout">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                    Se dÃ©connecter
+                    Se déconnecter
                 </button>
             </div>
 
             <!-- MESSAGES INBOX FROM ADMIN -->
             <div class="msg-inbox">
                 <h3>âœ‰ï¸ Mes Messages <span class="badge-count" id="msg-inbox-count" style="display:none;">0</span></h3>
-                <div id="msg-inbox-list"><p class="msg-empty">Aucun message reÃ§u pour l'instant.</p></div>
+                <div id="msg-inbox-list"><p class="msg-empty">Aucun message reçu pour l'instant.</p></div>
             </div>
 
             <!-- RECLAMATIONS QUICK STATUS -->
             <div class="msg-inbox" id="recl-inbox-section" style="display:none;">
-                <h3>âš ï¸ Mes RÃ©clamations <span class="badge-count" id="recl-inbox-count" style="display:none;">0</span></h3>
+                <h3>âš ï¸ Mes Réclamations <span class="badge-count" id="recl-inbox-count" style="display:none;">0</span></h3>
                 <div id="recl-inbox-list"></div>
-                <a href="reclamations-client.html" style="display:block; text-align:center; margin-top:12px; font-size:0.68rem; color:var(--gold); text-decoration:none; letter-spacing:2px;">VOIR TOUTES MES RÃ‰CLAMATIONS â†’</a>
+                <a href="reclamations-client.html" style="display:block; text-align:center; margin-top:12px; font-size:0.68rem; color:var(--gold); text-decoration:none; letter-spacing:2px;">VOIR TOUTES MES RÉCLAMATIONS →</a>
             </div>
         </div>
 
         <div id="forgot-view" style="display: none;">
-            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de rÃ©initialisation.</p>
+            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
             <form id="forgot-form">
                 <div class="form-group">
                     <label>Adresse Email</label>
@@ -416,7 +436,7 @@
                 <button type="submit" class="btn-submit">ENVOYER LE LIEN</button>
             </form>
             <div class="register-footer" style="margin-top: 20px;">
-                <a href="#" id="back-to-login-forgot">â† Retour Ã  la connexion</a>
+                <a href="#" id="back-to-login-forgot">â† Retour à la connexion</a>
             </div>
         </div>
 
@@ -432,7 +452,7 @@
                         </span>
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">METTRE Ã€ JOUR</button>
+                <button type="submit" class="btn-submit">METTRE À JOUR</button>
             </form>
         </div>
     </div>
@@ -530,7 +550,7 @@ async function loadClientReclamations(user) {
     const statusStyles = {
         'En attente': 'background:rgba(201,168,76,0.15); color:#c9a84c;',
         'En cours':   'background:rgba(59,130,246,0.15); color:#3b82f6;',
-        'RÃ©solu':     'background:rgba(34,197,94,0.15); color:#22c55e;'
+        'Résolu':     'background:rgba(34,197,94,0.15); color:#22c55e;'
     };
     listEl.innerHTML = data.map(c => `
         <div class="msg-item">
@@ -539,7 +559,7 @@ async function loadClientReclamations(user) {
                 <span style="${statusStyles[c.status]||''} padding:3px 10px; border-radius:12px; font-size:0.6rem; font-weight:700; text-transform:uppercase;">${c.status}</span>
             </div>
             <p class="msg-body" style="font-size:0.78rem;">${(c.description||'').slice(0,100)}${(c.description||'').length>100?'â€¦':''}</p>
-            ${c.assigned_employee ? `<p style="font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:5px;">ðŸ‘· AssignÃ©e Ã  : ${c.assigned_employee}</p>` : ''}
+            ${c.assigned_employee ? `<p style="font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:5px;">ðŸ‘· Assigné à : ${c.assigned_employee}</p>` : ''}
         </div>
     `).join('');
 }
@@ -554,7 +574,7 @@ function loadAdminMessages(user) {
     const countEl = document.getElementById('msg-inbox-count');
     if (!listEl) return;
     if (myMsgs.length === 0) {
-        listEl.innerHTML = '<p class="msg-empty">Aucun message reÃ§u pour l\'instant.</p>';
+        listEl.innerHTML = '<p class="msg-empty">Aucun message reçu pour l\'instant.</p>';
         if (countEl) countEl.style.display = 'none';
         return;
     }
@@ -565,7 +585,7 @@ function loadAdminMessages(user) {
                 <span class="msg-from">ðŸ¨ Direction Â· Golden Atlas</span>
                 <span class="msg-date">${new Date(m.date).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' })}</span>
             </div>
-            <p class="msg-body">${m.message.replace(/\n/g, '<br>')}</p>
+            <p class="msg-body">${(m.message || '').replace(/\n/g, '<br>')}</p>
         </div>
     `).join('');
 }
@@ -689,7 +709,7 @@ document.getElementById('reset-pwd-form')?.addEventListener('submit', async func
             location.reload();
         }, 1500);
     }
-    btn.textContent = 'METTRE Ã€ JOUR';
+    btn.textContent = 'METTRE À JOUR';
 });
 
 document.getElementById('register-client-form')?.addEventListener('submit', async function(e) {
@@ -719,7 +739,7 @@ document.getElementById('register-client-form')?.addEventListener('submit', asyn
         simToast("âœ… Compte crÃ©Ã© avec succÃ¨s ! Connectez-vous.", 'var(--gold)');
         setTimeout(() => document.getElementById('show-login').click(), 1000);
     }
-    btn.textContent = 'CRÃ‰ER MON COMPTE';
+    btn.textContent = 'CRÉER MON COMPTE';
 });
 
 document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -778,53 +798,77 @@ async function loadActivePromotions() {
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; z-index: 1;">
                 <span style="font-size: 0.95rem; font-weight: 700; color: var(--gold-light); font-family: 'Playfair Display', serif; text-align: left;">${p.title}</span>
-                <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; white-space: nowrap;">-${p.discount_pct}% RÃ‰DUCTION</span>
+                <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; white-space: nowrap;">-${p.discount_pct}% RÉDUCTION</span>
             </div>
-            <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); line-height: 1.5; z-index: 1; margin: 0; text-align: left;">${p.description.replace(/\n/g, '<br>')}</p>
+            <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); line-height: 1.5; z-index: 1; margin: 0; text-align: left;">${(p.description || '').replace(/\n/g, '<br>')}</p>
         </div>
     `).join('');
 }
 
+// ── Auth Session Handler ──
+async function handleAuthSession(session) {
+    if (!session || !session.user) return false;
+    const email = session.user.email;
+    const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
+    let user = users && users.length > 0 ? users[0] : null;
+    if (!user) {
+        const fullName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0];
+        const newUser = { name: fullName, email, cin: 'G-' + Date.now().toString().slice(-6), status: 'Validée' };
+        const { data: inserted } = await window.supabaseClient.from('ga_users').insert([newUser]).select();
+        user = (inserted && inserted[0]) ? inserted[0] : newUser;
+    }
+    if (user) {
+        localStorage.setItem('ga_current_user', JSON.stringify(user));
+        showAccountDashboard(user);
+        return true;
+    }
+    return false;
+}
+
 window.addEventListener('load', async () => {
     const hash = window.location.hash;
+
+    // ── Handle error/recovery hashes ──
     if (hash.includes('error=')) {
-        setTimeout(() => simToast("âŒ Lien invalide ou expirÃ©. Veuillez rÃ©essayer.", '#ef4444'), 1000);
+        setTimeout(() => simToast("❌ Lien invalide ou expiré. Veuillez réessayer.", '#ef4444'), 1000);
         window.history.replaceState(null, null, window.location.pathname);
     } else if (hash.includes('type=recovery')) {
         document.getElementById('login-view').style.display = 'none';
         document.getElementById('register-view').style.display = 'none';
         document.getElementById('account-view').style.display = 'none';
-        
         const forgotView = document.getElementById('forgot-view');
-        if(forgotView) forgotView.style.display = 'none';
-        
+        if (forgotView) forgotView.style.display = 'none';
         document.getElementById('reset-pwd-view').style.display = 'block';
         document.getElementById('form-title').textContent = "Nouveau mot de passe";
+        return;
     }
 
-    setTimeout(async () => {
-        if (!window.supabaseClient) return;
-        
-        window.supabaseClient.auth.onAuthStateChange(async (event, session) => {
-            if (session && session.user && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
-                const email = session.user.email;
-                const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
-                let user = users && users.length > 0 ? users[0] : null;
-                if (!user) {
-                    const newUser = { name: session.user.user_metadata.full_name, email, cin: 'G-' + Date.now().toString().slice(-6), status: 'ValidÃ©e' };
-                    const { data: inserted } = await window.supabaseClient.from('ga_users').insert([newUser]).select();
-                    user = inserted ? inserted[0] : null;
-                }
-                if (user) {
-                    localStorage.setItem('ga_current_user', JSON.stringify(user));
-                    showAccountDashboard(user);
-                }
-            }
-        });
+    if (!window.supabaseClient) return;
 
-        const localUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
-        if (localUser) showAccountDashboard(localUser);
-    }, 500);
+    // ── Clean OAuth hash from URL if present ──
+    if (hash && hash.includes('access_token=')) {
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+
+    // ── Mark page as ready and handle any pending OAuth session ──
+    window._authListenerReady = true;
+    if (window._pendingAuthSession) {
+        console.log('Processing pending OAuth session...');
+        await handleAuthSession(window._pendingAuthSession);
+        window._pendingAuthSession = null;
+        return;
+    }
+
+    // ── Check existing session (normal page load / already logged in) ──
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (session && session.user) {
+        await handleAuthSession(session);
+        return;
+    }
+
+    // ── Fallback to localStorage ──
+    const localUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+    if (localUser) showAccountDashboard(localUser);
 });
 </script>
 </body>

@@ -294,15 +294,36 @@
 </div>
 
 <script>
-// ── Employee accounts (stored locally for simplicity) ──
-// In production these would be stored in Supabase
-const EMP_ACCOUNTS = [
-    { id: 'emp1', username: 'ahmed.alaoui',   password: 'emp123', name: 'Ahmed Alaoui' },
-    { id: 'emp2', username: 'fatima.benali',  password: 'emp456', name: 'Fatima Benali' },
-    { id: 'emp3', username: 'youssef.idrissi',password: 'emp789', name: 'Youssef Idrissi' },
-    { id: 'emp4', username: 'sara.mansouri',  password: 'emp101', name: 'Sara Mansouri' },
-    { id: 'emp5', username: 'admin',          password: 'emp000', name: 'Technicien Chef' },
-];
+// ── Employee accounts (stored locally for simplicity if DB not available) ──
+function getLocalEmployees() {
+    let local = localStorage.getItem('ga_employees_mock');
+    if (!local) {
+        const defaultEmployees = [
+            { id: 'emp-1', name: 'Ahmed Alaoui', username: 'ahmed.alaoui', password: 'emp123', photo: '', dob: '1990-05-15', gender: 'Homme', cin: 'JB123456', phone: '+212 611-223344', address: 'Rue Hassan II, Errachidia', email: 'ahmed.alaoui@goldenatlas.ma', hire_date: '2022-01-10', position: 'Technicien Plombier', salary: 6500.00 },
+            { id: 'emp-2', name: 'Fatima Benali', username: 'fatima.benali', password: 'emp456', photo: '', dob: '1993-08-22', gender: 'Femme', cin: 'K345678', phone: '+212 622-334455', address: 'Av. Moulay Ismail, Errachidia', email: 'fatima.benali@goldenatlas.ma', hire_date: '2023-03-15', position: 'Réceptionniste / Standardiste', salary: 5500.00 },
+            { id: 'emp-3', name: 'Youssef Idrissi', username: 'youssef.idrissi', password: 'emp789', photo: '', dob: '1988-11-02', gender: 'Homme', cin: 'LE987654', phone: '+212 633-445566', address: 'Quartier Oasis, Errachidia', email: 'youssef.idrissi@goldenatlas.ma', hire_date: '2020-06-01', position: 'Technicien Électricien', salary: 7000.00 },
+            { id: 'emp-4', name: 'Sara Mansouri', username: 'sara.mansouri', password: 'emp101', photo: '', dob: '1995-12-10', gender: 'Femme', cin: 'G456123', phone: '+212 644-556677', address: 'Hay Riad, Errachidia', email: 'sara.mansouri@goldenatlas.ma', hire_date: '2024-02-20', position: 'Agente d\'entretien', salary: 5000.00 },
+            { id: 'emp-5', name: 'Technicien Chef', username: 'admin', password: 'emp000', photo: '', dob: '1985-04-30', gender: 'Homme', cin: 'U112233', phone: '+212 655-667788', address: 'Avenue de la Marche Verte, Errachidia', email: 'chef.technique@goldenatlas.ma', hire_date: '2018-09-01', position: 'Chef d\'Équipe Technique', salary: 10000.00 }
+        ];
+        localStorage.setItem('ga_employees_mock', JSON.stringify(defaultEmployees));
+        return defaultEmployees;
+    }
+    return JSON.parse(local);
+}
+
+async function getEmployeesForLogin() {
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_employees').select('*');
+        if (error) {
+            console.warn('Backend ga_employees table not available, using localStorage fallback.');
+            return getLocalEmployees();
+        }
+        return data && data.length > 0 ? data : getLocalEmployees();
+    } catch (e) {
+        console.error('Employees load error:', e);
+        return getLocalEmployees();
+    }
+}
 
 let currentEmp = null;
 let allEmpClaims = [];
@@ -324,11 +345,14 @@ function empToast(msg, isError = false) {
 }
 
 // ── LOGIN ──
-document.getElementById('emp-login-form').addEventListener('submit', (e) => {
+document.getElementById('emp-login-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const username = document.getElementById('emp-user').value.trim();
     const password = document.getElementById('emp-pass').value;
-    const found = EMP_ACCOUNTS.find(a => a.username === username && a.password === password);
+    
+    empToast('Connexion en cours...');
+    const employees = await getEmployeesForLogin();
+    const found = employees.find(a => a.username === username && a.password === password);
     if (!found) {
         empToast('❌ Identifiants incorrects.', true);
         return;
@@ -342,7 +366,17 @@ function showEmpDashboard() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('emp-dashboard').style.display = 'block';
     document.getElementById('emp-display-name').textContent = currentEmp.name;
-    document.getElementById('emp-avatar-initials').textContent = currentEmp.name[0];
+    document.querySelector('.emp-role').textContent = `${currentEmp.position || 'Employé'} · Golden Atlas`;
+    
+    const avatar = document.getElementById('emp-avatar-initials');
+    if (currentEmp.photo) {
+        avatar.innerHTML = `<img src="${currentEmp.photo}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        avatar.style.border = '2px solid rgba(201,168,76,0.8)';
+    } else {
+        avatar.textContent = currentEmp.name ? currentEmp.name[0] : 'E';
+        avatar.style.border = '2px solid rgba(201,168,76,0.4)';
+    }
+    
     loadEmpClaims();
 }
 
