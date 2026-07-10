@@ -3113,11 +3113,35 @@ window.refreshReclamations = async function() {
     showAdminToast('✅ Réclamations actualisées !');
 };
 
+// ── Load Employees for Assign Modal ──
+async function loadEmployeesForAssign() {
+    const select = document.getElementById('assign-emp-select');
+    if (!select) return;
+
+    let employees = [];
+    try {
+        const { data, error } = await window.supabaseClient.from('ga_employees').select('id, name');
+        if (!error && data && data.length > 0) {
+            employees = data;
+        } else {
+            // fallback to localStorage
+            employees = (JSON.parse(localStorage.getItem('ga_employees_mock') || '[]')).map(e => ({ id: e.id, name: e.name }));
+        }
+    } catch(e) {
+        employees = (JSON.parse(localStorage.getItem('ga_employees_mock') || '[]')).map(e => ({ id: e.id, name: e.name }));
+    }
+
+    // Keep the first default option, then add employee options
+    const defaultOpt = '<option value="">— Sélectionner un employé —</option>';
+    const opts = employees.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
+    select.innerHTML = defaultOpt + opts;
+}
+
 // ── Auto-load réclamations & promotions when tab is activated ──
 const _origSwitchToTab = switchToTab;
 window.switchToTab = function(tab) {
     _origSwitchToTab(tab);
-    if (tab === 'reclamations') loadAndRenderReclamations();
+    if (tab === 'reclamations') { loadAndRenderReclamations(); loadEmployeesForAssign(); }
     if (tab === 'promotions') loadAndRenderPromotions();
     if (tab === 'hotel') { loadAndRenderRooms(); loadAndRenderServices(); }
     if (tab === 'employees') loadAndRenderEmployees();

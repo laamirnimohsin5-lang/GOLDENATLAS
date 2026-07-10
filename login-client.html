@@ -3,24 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Créer un compte · Golden Atlas Errachidia</title>
+    <title>Espace Client · Golden Atlas Errachidia</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --gold: #c9a84c;
-            --gold-light: #e8c97a;
-            --gold-dark: #8a6a20;
+            --gold: #c5a059;
+            --gold-light: #e8d5a3;
+            --gold-dark: #a8873e;
             --dark: #050505;
-            --glass: rgba(12, 11, 10, 0.82);
+            --glass: rgba(12, 11, 10, 0.85);
+            --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
             background: var(--dark);
@@ -30,846 +29,415 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 50px 20px;
+            padding: 40px 20px;
         }
-
-        #world { position: fixed; inset: 0; z-index: 0; }
-
-        .login-wrapper { position: relative; z-index: 10; width: 100%; max-width: 500px; }
-        .login-wrapper.wide { max-width: 760px; }
-        .login-card {
+        #world { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+        .auth-wrapper { position: relative; z-index: 10; width: 100%; max-width: 520px; }
+        
+        .auth-card {
             background: var(--glass);
             backdrop-filter: blur(40px);
             -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(201, 168, 76, 0.2);
-            padding: 50px;
-            box-shadow: 0 60px 120px rgba(0,0,0,0.9);
-            animation: fadeIn 1.5s ease-out;
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            padding: 45px 40px;
+            box-shadow: 0 45px 90px rgba(0,0,0,0.85);
+            border-radius: 4px;
+            animation: fadeIn 1.2s ease-out;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .back-link {
             display: inline-flex; align-items: center; gap: 10px;
-            color: rgba(201,168,76,0.7); text-decoration: none;
-            font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase;
-            margin-bottom: 35px; transition: 0.4s; padding: 8px 14px; background: rgba(201,168,76,0.05);
+            color: rgba(197, 160, 89, 0.7); text-decoration: none;
+            font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase;
+            margin-bottom: 30px; transition: var(--transition); padding: 8px 14px; background: rgba(197, 160, 89, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.15);
         }
-        .back-link:hover { color: var(--gold); transform: translateX(-5px); }
+        .back-link:hover { color: var(--gold); transform: translateX(-5px); background: rgba(197, 160, 89, 0.1); }
+        
+        .logo-block { text-align: center; margin-bottom: 35px; }
+        .logo-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); letter-spacing: 4px; }
+        .logo-subtitle { font-size: 0.6rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 8px; }
 
-        .login-logo { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); letter-spacing: 4px; text-align: center; display: block; }
-        .login-subtitle { text-align: center; font-size: 0.62rem; letter-spacing: 6px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-top: 10px; margin-bottom: 25px; }
+        .auth-tabs { display: flex; border-bottom: 1px solid rgba(197, 160, 89, 0.15); margin-bottom: 30px; }
+        .tab-btn {
+            flex: 1; padding: 14px; background: none; border: none; color: rgba(255,255,255,0.4);
+            font-family: inherit; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase;
+            cursor: pointer; transition: var(--transition); border-bottom: 2px solid transparent; font-weight: 600;
+        }
+        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+        .tab-btn:hover { color: #fff; }
 
-        .login-title { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 400; text-align: center; margin-bottom: 35px; color: #fff; }
+        .form-panel { display: none; }
+        .form-panel.active { display: block; animation: fadeSlide 0.5s ease; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.62rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 0.6rem; letter-spacing: 2px; color: var(--gold); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
         .form-group input {
-            width: 100%; height: 50px; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2);
-            padding: 0 20px; color: #fff; font-family: inherit; font-size: 0.85rem; outline: none; transition: 0.3s;
+            width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(197, 160, 89, 0.15); color: #fff; outline: none;
+            font-family: inherit; font-size: 0.9rem; transition: var(--transition);
         }
-        .form-group input:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); }
-
+        .form-group input:focus { border-color: var(--gold); background: rgba(255,255,255,0.06); box-shadow: 0 0 15px rgba(197,160,89,0.2); }
+        
         .btn-submit {
-            width: 100%; height: 60px;
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-            background-size: 200% 200%; border: none; color: #000;
-            font-size: 0.75rem; font-weight: 800; letter-spacing: 5px; text-transform: uppercase;
-            cursor: pointer; transition: 0.4s; animation: gradShift 5s ease infinite;
+            width: 100%; height: 50px; background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+            border: none; color: #000; font-size: 0.75rem; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+            cursor: pointer; transition: var(--transition); margin-top: 10px; border-radius: 2px;
         }
-        @keyframes gradShift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197,160,89,0.3); }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        .register-footer { text-align: center; margin-top: 30px; font-size: 0.75rem; color: rgba(255,255,255,0.3); }
-        .register-footer a { color: var(--gold); text-decoration: none; font-weight: 600; margin-left: 8px; }
+        .google-auth-btn {
+            width: 100%; height: 50px; background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; font-size: 0.75rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+            display: flex; align-items: center; justify-content: center; gap: 12px; cursor: pointer;
+            transition: var(--transition); margin-bottom: 25px; border-radius: 2px;
+        }
+        .google-auth-btn:hover { background: rgba(255,255,255,0.05); border-color: #fff; }
+        .google-icon { width: 18px; height: 18px; }
 
+        .forgot-link { display: block; text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.4); text-decoration: none; margin-top: 15px; letter-spacing: 1px; transition: var(--transition); }
+        .forgot-link:hover { color: var(--gold-light); }
+
+        .divider { display: flex; align-items: center; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.65rem; letter-spacing: 2px; margin: 25px 0; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .divider:not(:empty)::before { margin-right: 15px; }
+        .divider:not(:empty)::after { margin-left: 15px; }
+
+        /* Loader */
+        .spinner {
+            display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: #000; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;
+        }
+        .btn-submit.loading .spinner { display: block; }
+        .btn-submit.loading span { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Toast notifications */
         .toast {
-            position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--gold); color: #000; padding: 15px 35px; font-weight: 700; opacity: 0; transition: 0.5s; z-index: 1000;
-            border-radius: 4px; pointer-events: none;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(40px);
+            padding: 15px 30px; border-radius: 4px; font-weight: 700; font-size: 0.8rem; letter-spacing: 1px;
+            opacity: 0; transition: var(--transition); z-index: 9999; text-align: center; min-width: 300px;
         }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-        .account-header {
-            display: flex; align-items: center; gap: 20px;
-            background: rgba(201,168,76,0.05);
-            border: 1px solid rgba(201,168,76,0.15);
-            padding: 25px; margin-bottom: 30px;
-        }
-        .account-avatar {
-            width: 65px; height: 65px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Playfair Display', serif; font-size: 1.6rem; color: #000;
-            flex-shrink: 0;
-        }
-        .account-meta { flex: 1; }
-        .account-meta h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #fff; letter-spacing: 2px; }
-        .account-meta p { font-size: 0.65rem; letter-spacing: 3px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-top: 5px; }
-        .status-badge {
-            display: inline-block; padding: 5px 14px;
-            font-size: 0.58rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 700;
-            border-radius: 30px; margin-top: 8px;
-        }
-        .status-badge.approved { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
-        .status-badge.pending  { background: rgba(251,146,60,0.15); color: #fb923c; border: 1px solid rgba(251,146,60,0.3); }
-        .status-badge.rejected { background: rgba(239,68,68,0.15);  color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-
-        /* Unified Dashboard Actions Grid */
-        .dashboard-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .btn-dash {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            height: 56px;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            user-select: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.35);
-            border: 1px solid transparent;
-        }
-        
-        /* 1. Primary Gold Button */
-        .btn-dash-primary {
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
-            background-size: 200% 200%;
-            color: #000;
-            animation: gradShift 5s ease infinite;
-        }
-        .btn-dash-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.35);
-        }
-        .btn-dash-primary:active {
-            transform: scale(0.98);
-        }
-        
-        /* 2. Danger Red Button */
-        .btn-dash-danger {
-            background: rgba(239, 68, 68, 0.05);
-            border: 1px solid rgba(239, 68, 68, 0.35);
-            color: #ef8888;
-        }
-        .btn-dash-danger:hover {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: rgba(239, 68, 68, 0.6);
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.2);
-        }
-        .btn-dash-danger:active {
-            transform: scale(0.98);
-        }
-        
-        /* 3. Secondary Gold Border Button */
-        .btn-dash-secondary {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(201, 168, 76, 0.3);
-            color: var(--gold-light);
-        }
-        .btn-dash-secondary:hover {
-            background: rgba(201, 168, 76, 0.08);
-            border-color: var(--gold);
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(201, 168, 76, 0.15);
-        }
-        .btn-dash-secondary:active {
-            transform: scale(0.98);
-        }
-        
-        /* 4. Outline/Muted Logout Button */
-        .btn-dash-outline {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .btn-dash-outline:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.1);
-        }
-        .btn-dash-outline:active {
-            transform: scale(0.98);
-        }
-
-        .btn-dash svg {
-            transition: transform 0.3s ease;
-        }
-        .btn-dash:hover svg {
-            transform: scale(1.15);
-        }
-
-        /* Messages inbox */
-        .msg-inbox { margin-top: 30px; border-top: 1px solid rgba(201,168,76,0.15); padding-top: 25px; }
-        .msg-inbox h3 { font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .msg-inbox h3 .badge-count { background: var(--gold); color: #000; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 900; }
-        .msg-item { background: rgba(201,168,76,0.04); border: 1px solid rgba(201,168,76,0.12); border-radius: 8px; padding: 15px; margin-bottom: 12px; animation: fadeIn 0.4s ease; }
-        .msg-item .msg-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .msg-item .msg-from { font-size: 0.65rem; letter-spacing: 2px; color: var(--gold); font-weight: 700; text-transform: uppercase; }
-        .msg-item .msg-date { font-size: 0.6rem; color: rgba(255,255,255,0.3); }
-        .msg-item .msg-body { font-size: 0.82rem; color: rgba(255,255,255,0.85); line-height: 1.6; }
-        .msg-empty { text-align: center; padding: 20px; font-size: 0.75rem; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
+        .toast.success { background: var(--gold); color: #000; opacity: 1; transform: translateX(-50%) translateY(0); box-shadow: 0 10px 30px rgba(197,160,89,0.3); }
+        .toast.error { background: #ef4444; color: #fff; opacity: 1; transform: translateX(-50%) translateY(0); box-shadow: 0 10px 30px rgba(239,68,68,0.3); }
 
         @media (max-width: 600px) {
-            body { padding: 20px 10px; }
-            .login-card { padding: 30px 20px; }
-            .dashboard-actions { grid-template-columns: 1fr; gap: 12px; }
-            .btn-dash { height: 50px; font-size: 0.68rem; letter-spacing: 1px; }
-            .btn-submit, a.btn-submit { height: 50px; font-size: 0.7rem; letter-spacing: 2px; }
-            .account-header { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
-            .account-avatar { margin: 0 auto; }
-            .account-meta { display: flex; flex-direction: column; align-items: center; }
-            .account-meta h2 { font-size: 1.1rem; }
-            .login-logo { font-size: 1.8rem; }
-            .login-title { font-size: 1.1rem; margin-bottom: 25px; }
-            .msg-item .msg-header { flex-direction: column; align-items: flex-start; gap: 5px; }
+            body { padding: 25px 12px; }
+            .auth-card { padding: 35px 20px; }
+            .logo-title { font-size: 1.8rem; }
         }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-init.js"></script>
-<script>
-// ── Register auth listener IMMEDIATELY after Supabase init ──
-// Supabase auto-processes #access_token hash and fires SIGNED_IN.
-// We must listen BEFORE the load event to catch it.
-window._authListenerReady = false;
-window._pendingAuthSession = null;
-
-window.supabaseClient.auth.onAuthStateChange((event, session) => {
-    console.log('[Early Auth]', event, session ? session.user?.email : 'null');
-    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user) {
-        if (window._authListenerReady) {
-            // Page is ready, handle immediately
-            window.handleAuthSession(session);
-        } else {
-            // Page not ready yet, store for later
-            window._pendingAuthSession = session;
-        }
-    }
-});
-</script>
+    </style>
 </head>
 <body>
+    <div id="world"></div>
+    <div class="toast" id="notify-toast"></div>
 
-<div id="world"></div>
-<div id="toast" class="toast"></div>
-
-<div class="login-wrapper">
-    <div class="login-card">
-        <a href="index.html" class="back-link">← RETOUR · BACK</a>
-
-        <div class="login-header">
-            <span class="login-logo">GOLDEN ATLAS</span>
-            <p class="login-subtitle">Espace Privilège · Client</p>
-            <h1 id="form-title">Espace Client</h1>
-        </div>
-
-        <div id="login-view">
-            <form id="login-client-form">
-                <div class="form-group">
-                    <label>Adresse Email</label>
-                    <input type="email" id="login-email" placeholder="votre@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <div style="position: relative;">
-                        <input type="password" id="login-pwd" placeholder="Votre mot de passe" required style="padding-right: 45px;">
-                        <span class="toggle-pwd" data-target="login-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
-                    </div>
-                </div>
-                <div style="text-align: right; margin-bottom: 20px;">
-                    <a href="#" id="forgot-pwd" style="color: var(--gold); text-decoration: none; font-size: 0.65rem; font-weight: 600; letter-spacing: 1px;">Mot de passe oublié ?</a>
-                </div>
-                <button type="submit" class="btn-submit">SE CONNECTER</button>
-            </form>
-            
-            <div style="display: flex; align-items: center; margin: 25px 0;">
-                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
-                <span style="padding: 0 15px; font-size: 0.65rem; color: rgba(201,168,76,0.5); letter-spacing: 2px;">OU</span>
-                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <a href="index.html" class="back-link">← Retour · Accueil</a>
+            <div class="logo-block">
+                <span class="logo-title">GOLDEN ATLAS</span>
+                <p class="logo-subtitle">PORTAIL PRIVÉ HÔTES</p>
             </div>
 
-            <button id="btn-google-login" style="width: 100%; height: 50px; background: #fff; border: none; color: #333; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; border-radius: 4px; transition: 0.3s;">
-                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.78 17.77 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                CONTINUER AVEC GOOGLE
+            <!-- Google Login Button -->
+            <button class="google-auth-btn" id="btn-google">
+                <svg class="google-icon" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5.04c1.64 0 3.12.56 4.28 1.67l3.2-3.2C17.52 1.58 14.96 1 12 1 7.35 1 3.4 3.65 1.5 7.5l3.86 3C6.28 7.57 8.91 5.04 12 5.04z"/><path fill="#4285F4" d="M23.14 12.27c0-.76-.08-1.53-.2-2.27H12v4.51h6.25c-.27 1.42-1.08 2.63-2.29 3.44l3.56 2.76c2.08-1.92 3.28-4.74 3.28-8.44z"/><path fill="#FBBC05" d="M5.36 14.5c-.24-.72-.38-1.49-.38-2.5s.14-1.78.38-2.5L1.5 6.5C.54 8.44 0 10.61 0 13s.54 4.56 1.5 6.5l3.86-3z"/><path fill="#34A853" d="M12 23c3.24 0 5.97-1.08 7.96-2.92l-3.56-2.76c-1.1.74-2.52 1.18-4.4 1.18-3.09 0-5.72-2.53-6.64-5.46L1.5 16.5C3.4 20.35 7.35 23 12 23z"/></svg>
+                Continuer avec Google
             </button>
 
-            <div class="register-footer">
-                Pas encore de compte ? <a href="#" id="show-register">Créer un compte →</a>
-            </div>
-        </div>
+            <div class="divider">OU</div>
 
-        <div id="register-view" style="display: none;">
-            <form id="register-client-form">
-                <div class="form-group">
-                    <label>Nom Complet</label>
-                    <input type="text" id="reg-name" placeholder="Votre nom" required>
-                </div>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="reg-email" placeholder="votre@email.com" required>
-                </div>
-                <div class="form-group">
-                    <label>Mot de passe</label>
-                    <div style="position: relative;">
-                        <input type="password" id="reg-pwd" placeholder="Créer votre mot de passe" required style="padding-right: 45px;">
-                        <span class="toggle-pwd" data-target="reg-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
+            <!-- Tabs -->
+            <div class="auth-tabs">
+                <button class="tab-btn active" onclick="switchPanel('login')">Se connecter</button>
+                <button class="tab-btn" onclick="switchPanel('register')">S'enregistrer</button>
+            </div>
+
+            <!-- PANEL 1: LOGIN -->
+            <div class="form-panel active" id="panel-login">
+                <form id="form-login-email">
+                    <div class="form-group">
+                        <label>Adresse E-mail</label>
+                        <input type="email" id="login-email" required placeholder="nom@exemple.com">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label>N° CIN / Passport</label>
-                    <input type="text" id="reg-cin" placeholder="CIN ou Passport" required>
-                </div>
-                <div class="form-group">
-                    <label>Téléphone</label>
-                    <input type="text" id="reg-phone" placeholder="+212 ..." required>
-                </div>
-                <button type="submit" class="btn-submit">CRÉER MON COMPTE</button>
-            </form>
-            
-            <div style="display: flex; align-items: center; margin: 25px 0;">
-                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
-                <span style="padding: 0 15px; font-size: 0.65rem; color: rgba(201,168,76,0.5); letter-spacing: 2px;">OU</span>
-                <div style="flex-grow: 1; height: 1px; background: rgba(201,168,76,0.2);"></div>
-            </div>
-
-            <button id="btn-google-register" style="width: 100%; height: 50px; background: #fff; border: none; color: #333; font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 15px; border-radius: 4px; transition: 0.3s;">
-                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.78 17.77 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-                CONTINUER AVEC GOOGLE
-            </button>
-
-            <div class="register-footer">
-                Déjà inscrit ? <a href="#" id="show-login">Se connecter →</a>
-            </div>
-        </div>
-
-        <div id="account-view" style="display: none;">
-            <div class="account-header">
-                <div class="account-avatar" id="acc-initials">G</div>
-                <div class="account-meta">
-                    <h2 id="display-user-name">CHARGEMENT...</h2>
-                    <p id="display-user-email"></p>
-                    <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
-                        <span class="status-badge pending" id="display-user-status">En attente</span>
-                        <span id="loyalty-points" style="font-size: 0.65rem; background: rgba(201,168,76,0.15); color: var(--gold); padding: 5px 12px; border-radius: 30px; letter-spacing: 1px; font-weight: 700; border: 1px solid rgba(201,168,76,0.3);">⭐ 0 POINTS</span>
+                    <div class="form-group">
+                        <label>Mot de passe</label>
+                        <input type="password" id="login-password" required placeholder="Votre mot de passe">
                     </div>
-                </div>
+                    <button type="submit" class="btn-submit" id="btn-login-submit">
+                        <span>Se Connecter</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                <a href="#" class="forgot-link" onclick="switchPanel('reset')">Mot de passe oublié ?</a>
             </div>
 
-            <!-- Loyalty Offer Message -->
-            <div id="loyalty-offer" style="display: none; background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05)); border: 1px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; text-align: center; animation: pulseGold 2s infinite;">
-                <p style="color: var(--gold); font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;">ðŸŽ‰ FÉLICITATIONS ! VOUS AVEZ 10 POINTS.</p>
-                <p style="color: #fff; font-size: 0.85rem; margin-top: 5px;">Bénéficiez de <span style="color: var(--gold-light); font-weight: 900;">-25% DE RÉDUCTION</span> sur votre prochain séjour !</p>
-            </div>
-            <style>
-                @keyframes pulseGold { 0% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(201, 168, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0); } }
-            </style>
-            <!-- Active General Promotions -->
-            <div id="active-promotions-section" style="display: none; margin-bottom: 25px;">
-                <h3 style="font-size: 0.7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 10px;">
-                    🏷️ Offres Spéciales & Promotions du Moment
-                </h3>
-                <div id="active-promotions-list" style="display: flex; flex-direction: column; gap: 12px;">
-                    <!-- Dynamically populated -->
-                </div>
-            </div>
-
-            <div class="dashboard-actions">
-                <a href="mes-reservations.html" class="btn-dash btn-dash-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
-                    Voir mes réservations
-                </a>
-                <a href="reclamations-client.html" class="btn-dash btn-dash-danger">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
-                    Signaler un problème
-                </a>
-                <a href="index.html" class="btn-dash btn-dash-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    Retour au site
-                </a>
-                <button type="button" class="btn-dash btn-dash-outline" id="btn-logout">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
-                    Se déconnecter
-                </button>
-            </div>
-
-            <!-- MESSAGES INBOX FROM ADMIN -->
-            <div class="msg-inbox">
-                <h3>âœ‰ï¸ Mes Messages <span class="badge-count" id="msg-inbox-count" style="display:none;">0</span></h3>
-                <div id="msg-inbox-list"><p class="msg-empty">Aucun message reçu pour l'instant.</p></div>
-            </div>
-
-            <!-- RECLAMATIONS QUICK STATUS -->
-            <div class="msg-inbox" id="recl-inbox-section" style="display:none;">
-                <h3>âš ï¸ Mes Réclamations <span class="badge-count" id="recl-inbox-count" style="display:none;">0</span></h3>
-                <div id="recl-inbox-list"></div>
-                <a href="reclamations-client.html" style="display:block; text-align:center; margin-top:12px; font-size:0.68rem; color:var(--gold); text-decoration:none; letter-spacing:2px;">VOIR TOUTES MES RÉCLAMATIONS →</a>
-            </div>
-        </div>
-
-        <div id="forgot-view" style="display: none;">
-            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
-            <form id="forgot-form">
-                <div class="form-group">
-                    <label>Adresse Email</label>
-                    <input type="email" id="forgot-email" placeholder="votre@email.com" required>
-                </div>
-                <button type="submit" class="btn-submit">ENVOYER LE LIEN</button>
-            </form>
-            <div class="register-footer" style="margin-top: 20px;">
-                <a href="#" id="back-to-login-forgot">← Retour à la connexion</a>
-            </div>
-        </div>
-
-        <div id="reset-pwd-view" style="display: none;">
-            <p style="font-size:0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 25px; line-height: 1.5; text-align: center;">Veuillez entrer votre nouveau mot de passe.</p>
-            <form id="reset-pwd-form">
-                <div class="form-group">
-                    <label>Nouveau mot de passe</label>
-                    <div style="position: relative;">
-                        <input type="password" id="reset-new-pwd" placeholder="Créer votre nouveau mot de passe" required style="padding-right: 45px;">
-                        <span class="toggle-pwd" data-target="reset-new-pwd" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); display: flex;">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        </span>
+            <!-- PANEL 2: REGISTER -->
+            <div class="form-panel" id="panel-register">
+                <form id="form-register-email">
+                    <div class="form-group">
+                        <label>Nom complet</label>
+                        <input type="text" id="reg-name" required placeholder="Prénom et nom">
                     </div>
-                </div>
-                <button type="submit" class="btn-submit">METTRE À JOUR</button>
-            </form>
+                    <div class="form-group">
+                        <label>Adresse E-mail</label>
+                        <input type="email" id="reg-email" required placeholder="nom@exemple.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone (Optionnel)</label>
+                        <input type="tel" id="reg-phone" placeholder="Ex: +212 600-000000">
+                    </div>
+                    <div class="form-group">
+                        <label>Mot de passe</label>
+                        <input type="password" id="reg-password" required placeholder="Min 6 caractères">
+                    </div>
+                    <button type="submit" class="btn-submit" id="btn-register-submit">
+                        <span>Créer un Compte</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- PANEL 3: RESET PASSWORD -->
+            <div class="form-panel" id="panel-reset">
+                <form id="form-reset-password">
+                    <div class="form-group">
+                        <label>Adresse E-mail du compte</label>
+                        <input type="email" id="reset-email" required placeholder="nom@exemple.com">
+                    </div>
+                    <button type="submit" class="btn-submit" id="btn-reset-submit">
+                        <span>Envoyer le lien de réinitialisation</span>
+                        <div class="spinner"></div>
+                    </button>
+                </form>
+                <a href="#" class="forgot-link" onclick="switchPanel('login')">Retour à la connexion</a>
+            </div>
+
         </div>
     </div>
-</div>
 
-<script>
-/* ── Engine 3D ── */
-(function() {
-    const world = document.getElementById('world');
-    const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x050505, 100, 950);
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000);
-    camera.position.set(0, 50, 200);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    world.appendChild(renderer.domElement);
+    <script>
+        // ── 3D Particles Background ──
+        (function() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.set(0, 50, 200);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('world').appendChild(renderer.domElement);
+            
+            const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambient);
 
-    scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-    scene.add(new THREE.HemisphereLight(0xaaaaaa, 0x000000, 0.9));
+            // Ring cylinders (Golden Plexus Theme)
+            const cylinder = new THREE.Mesh(
+                new THREE.CylinderGeometry(400, 400, 600, 30, 20, true),
+                new THREE.MeshBasicMaterial({ color: 0xc5a059, wireframe: true, transparent: true, opacity: 0.05 })
+            );
+            cylinder.rotation.x = -Math.PI / 4;
+            scene.add(cylinder);
 
-    const seaGeo = new THREE.CylinderGeometry(600, 600, 800, 40, 10);
-    seaGeo.applyMatrix4(new THREE.Matrix4().makeRotationX(-Math.PI/2));
-    const sea = new THREE.Mesh(seaGeo, new THREE.MeshPhongMaterial({ color: 0xc9a84c, transparent: true, opacity: 0.15, flatShading: true }));
-    sea.position.y = -600; scene.add(sea);
+            function animate() {
+                requestAnimationFrame(animate);
+                cylinder.rotation.y += 0.001;
+                renderer.render(scene, camera);
+            }
+            animate();
 
-    function animate() {
-        requestAnimationFrame(animate);
-        sea.rotation.z += 0.005;
-        renderer.render(scene, camera);
-    }
-    animate();
-})();
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        })();
 
-const toast = document.getElementById('toast');
-function simToast(msg, bg = 'var(--gold)') {
-    toast.innerHTML = msg;
-    toast.style.background = bg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-async function showAccountDashboard(user) {
-    document.querySelector('.login-wrapper').classList.add('wide');
-    document.getElementById('display-user-name').textContent = user.name || '';
-    document.getElementById('display-user-email').textContent = user.email || '';
-    document.getElementById('acc-initials').textContent = (user.name || 'G')[0].toUpperCase();
-    const statusEl = document.getElementById('display-user-status');
-    const st = user.status || 'En attente';
-    statusEl.textContent = st;
-    statusEl.className = 'status-badge ' + (st.includes('Valid') ? 'approved' : st.includes('Refus') ? 'rejected' : 'pending');
-
-    // Calculate Loyalty Points (1 point per reservation)
-    const { count } = await window.supabaseClient.from('ga_reservations')
-        .select('*', { count: 'exact', head: true })
-        .or(`user_email.eq.${user.email},name.ilike.%${(user.name || '').split(' ')[0]}%`);
-    
-    const points = count || 0;
-    const pointsEl = document.getElementById('loyalty-points');
-    if (pointsEl) {
-        pointsEl.textContent = `⭐ ${points} POINT${points > 1 ? 'S' : ''}`;
-    }
-    
-    const offerEl = document.getElementById('loyalty-offer');
-    if (offerEl && points >= 10) {
-        offerEl.style.display = 'block';
-    }
-
-    document.getElementById('login-view').style.display = 'none';
-    document.getElementById('register-view').style.display = 'none';
-    document.getElementById('account-view').style.display = 'block';
-    loadAdminMessages(user);
-    loadClientReclamations(user);
-    loadActivePromotions();
-}
-
-async function loadClientReclamations(user) {
-    const { data } = await window.supabaseClient
-        .from('ga_reclamations')
-        .select('*')
-        .or(`client_email.eq.${user.email},client_name.ilike.%${(user.name||'').split(' ')[0]}%`)
-        .order('created_at', { ascending: false })
-        .limit(3);
-
-    if (!data || data.length === 0) return;
-
-    const section = document.getElementById('recl-inbox-section');
-    const listEl  = document.getElementById('recl-inbox-list');
-    const countEl = document.getElementById('recl-inbox-count');
-    if (!section || !listEl) return;
-
-    section.style.display = 'block';
-    countEl.textContent = data.length;
-    countEl.style.display = 'inline-flex';
-
-    const statusStyles = {
-        'En attente': 'background:rgba(201,168,76,0.15); color:#c9a84c;',
-        'En cours':   'background:rgba(59,130,246,0.15); color:#3b82f6;',
-        'Résolu':     'background:rgba(34,197,94,0.15); color:#22c55e;'
-    };
-    listEl.innerHTML = data.map(c => `
-        <div class="msg-item">
-            <div class="msg-header">
-                <span class="msg-from">🏨 ${c.room_number} · ${c.problem_type}</span>
-                <span style="${statusStyles[c.status]||''} padding:3px 10px; border-radius:12px; font-size:0.6rem; font-weight:700; text-transform:uppercase;">${c.status}</span>
-            </div>
-            <p class="msg-body" style="font-size:0.78rem;">${(c.description||'').slice(0,100)}${(c.description||'').length>100?'…':''}</p>
-            ${c.assigned_employee ? `<p style="font-size:0.62rem; color:rgba(255,255,255,0.35); margin-top:5px;">👷 Assigné à : ${c.assigned_employee}</p>` : ''}
-        </div>
-    `).join('');
-}
-
-function loadAdminMessages(user) {
-    const all = JSON.parse(localStorage.getItem('ga_admin_replies') || '[]');
-    const myMsgs = all.filter(m =>
-        (m.to_email && user.email && m.to_email.toLowerCase() === user.email.toLowerCase()) ||
-        (m.to_name && user.name && m.to_name.toLowerCase() === user.name.toLowerCase())
-    );
-    const listEl = document.getElementById('msg-inbox-list');
-    const countEl = document.getElementById('msg-inbox-count');
-    if (!listEl) return;
-    if (myMsgs.length === 0) {
-        listEl.innerHTML = '<p class="msg-empty">Aucun message reçu pour l\'instant.</p>';
-        if (countEl) countEl.style.display = 'none';
-        return;
-    }
-    if (countEl) { countEl.textContent = myMsgs.length; countEl.style.display = 'inline-flex'; }
-    listEl.innerHTML = myMsgs.slice().reverse().map(m => `
-        <div class="msg-item">
-            <div class="msg-header">
-                <span class="msg-from">🏨 Direction · Golden Atlas</span>
-                <span class="msg-date">${new Date(m.date).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', year:'numeric' })}</span>
-            </div>
-            <p class="msg-body">${(m.message || '').replace(/\n/g, '<br>')}</p>
-        </div>
-    `).join('');
-}
-
-// Auth Handlers
-document.getElementById('show-register').addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('login-view').style.display = 'none';
-    document.getElementById('register-view').style.display = 'block';
-    document.getElementById('form-title').textContent = "Rejoindre l'excellence";
-});
-
-document.getElementById('show-login').addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('register-view').style.display = 'none';
-    document.getElementById('login-view').style.display = 'block';
-    document.getElementById('form-title').textContent = "Espace Client";
-});
-
-document.getElementById('forgot-pwd')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('login-view').style.display = 'none';
-    document.getElementById('forgot-view').style.display = 'block';
-    document.getElementById('form-title').textContent = "Mot de passe oublié";
-});
-
-document.getElementById('back-to-login-forgot')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    document.getElementById('forgot-view').style.display = 'none';
-    document.getElementById('login-view').style.display = 'block';
-    document.getElementById('form-title').textContent = "Espace Client";
-});
-
-// Password Toggle Logic
-document.querySelectorAll('.toggle-pwd').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const target = document.getElementById(this.getAttribute('data-target'));
-        if (target.type === 'password') {
-            target.type = 'text';
-            this.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24M1 1l22 22"></path></svg>';
-            this.style.color = 'var(--gold)';
-        } else {
-            target.type = 'password';
-            this.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
-            this.style.color = 'rgba(255,255,255,0.4)';
+        // ── Toast System ──
+        function showNotification(message, status = 'success') {
+            const toast = document.getElementById('notify-toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + status;
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 5000);
         }
-    });
-});
 
-document.getElementById('login-client-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('.btn-submit');
-    btn.textContent = 'VÃ‰RIFICATION...';
-    
-    const email = document.getElementById('login-email').value.trim();
-    const pwd = document.getElementById('login-pwd').value;
-    
-    // Auth Supabase
-    const { data: authData, error: authError } = await window.supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: pwd
-    });
+        // ── Tabs Switch ──
+        window.switchPanel = function(panel) {
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
-    if (authError || !authData.user) {
-        simToast("❌ Email ou mot de passe incorrect.", '#ef4444');
-    } else {
-        // Fetch from custom table to see status
-        const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
-        const user = users && users.length > 0 ? users[0] : { 
-            name: authData.user.user_metadata.full_name || email.split('@')[0], 
-            email: email, 
-            status: 'Validée' 
+            if (panel === 'login') {
+                document.getElementById('panel-login').classList.add('active');
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+            } else if (panel === 'register') {
+                document.getElementById('panel-register').classList.add('active');
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            } else if (panel === 'reset') {
+                document.getElementById('panel-reset').classList.add('active');
+            }
         };
 
-        if (user.status === 'En attente') {
-            simToast("⏳ Compte en attente d'approbation.", '#fb923c');
-        } else {
-            localStorage.setItem('ga_current_user', JSON.stringify(user));
-            showAccountDashboard(user);
+        // ── Supabase Auth Logic ──
+        window.addEventListener('load', async () => {
+            const client = window.supabaseClient;
+            if (!client) {
+                showNotification("Erreur de configuration Supabase.", "error");
+                return;
+            }
+
+            // check active session
+            const { data: { session } } = await client.auth.getSession();
+            if (session?.user) {
+                // Pre-fill local storage cache for compatibility
+                await fetchAndCacheProfile(session.user);
+                window.location.href = 'dashboard-client.html';
+            }
+
+            // listen to auth state changes
+            client.auth.onAuthStateChange(async (event, session) => {
+                if (event === 'SIGNED_IN' && session?.user) {
+                    await fetchAndCacheProfile(session.user);
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard-client.html';
+                }
+            });
+        });
+
+        // Helper to fetch/create profile details to cache locally
+        async function fetchAndCacheProfile(user) {
+            const client = window.supabaseClient;
+            // Fetch profile
+            let { data: profile } = await client.from('profiles').select('*').eq('id', user.id).single();
+            
+            // If profile does not exist yet (OAuth might take a second, or trigger is slow), wait a moment or create fallback
+            if (!profile) {
+                const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0];
+                profile = {
+                    id: user.id,
+                    name: name,
+                    email: user.email,
+                    phone: user.phone || user.user_metadata?.phone || '',
+                    avatar_url: user.user_metadata?.avatar_url || ''
+                };
+            } else {
+                // Map columns to match local cache variable format
+                profile = {
+                    id: profile.id,
+                    name: profile.full_name,
+                    email: profile.email,
+                    phone: profile.phone || '',
+                    avatar_url: profile.avatar_url || ''
+                };
+            }
+            localStorage.setItem('ga_current_user', JSON.stringify(profile));
         }
-    }
-    btn.textContent = 'SE CONNECTER';
-});
 
-document.getElementById('forgot-form')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('.btn-submit');
-    const email = document.getElementById('forgot-email').value.trim();
-    if(!email) return;
-    btn.textContent = 'ENVOI EN COURS...';
-    
-    const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname
-    });
-    
-    if(error) {
-        console.error("Supabase Reset Error:", JSON.stringify(error));
-        const msg = error.message || error.error_description || JSON.stringify(error);
-        simToast("❌ " + msg, '#ef4444');
-    } else {
-        simToast("✅ Lien de réinitialisation envoyé ! Vérifiez Gmail.", 'var(--gold)');
-        setTimeout(() => document.getElementById('back-to-login-forgot').click(), 2500);
-    }
-    btn.textContent = 'ENVOYER LE LIEN';
-});
+        // Action: Sign In
+        document.getElementById('form-login-email').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login-submit');
 
-document.getElementById('reset-pwd-form')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('.btn-submit');
-    const pwd = document.getElementById('reset-new-pwd').value;
-    btn.textContent = 'MISE Ã€ JOUR...';
-    
-    const { error } = await window.supabaseClient.auth.updateUser({ password: pwd });
-    
-    if(error) {
-        simToast("❌ Erreur lors de la mise à jour.", '#ef4444');
-    } else {
-        simToast("✅ Mot de passe mis à jour avec succès !", 'var(--gold)');
-        setTimeout(() => {
-            window.location.hash = '';
-            location.reload();
-        }, 1500);
-    }
-    btn.textContent = 'METTRE À JOUR';
-});
+            btn.classList.add('loading');
+            btn.disabled = true;
 
-document.getElementById('register-client-form')?.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const btn = this.querySelector('.btn-submit');
-    btn.textContent = 'CRÃ‰ATION...';
-    
-    const name = document.getElementById('reg-name').value.trim();
-    const email = document.getElementById('reg-email').value.trim();
-    const pwd = document.getElementById('reg-pwd').value;
-    const cin = document.getElementById('reg-cin').value.trim();
-    const phone = document.getElementById('reg-phone').value.trim();
+            const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
 
-    const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
-        email: email,
-        password: pwd,
-        options: {
-            data: { full_name: name, cin: cin, phone: phone }
-        }
-    });
+            if (error) {
+                showNotification(error.message, "error");
+                btn.classList.remove('loading');
+                btn.disabled = false;
+            } else {
+                showNotification("Connexion réussie. Redirection...");
+                // Handled by onAuthStateChange or redirect immediately
+                await fetchAndCacheProfile(data.user);
+                window.location.href = 'dashboard-client.html';
+            }
+        });
 
-    if (authError) {
-        simToast("❌ " + authError.message, '#ef4444');
-    } else {
-        const newUser = { name: name, email: email, cin: cin, status: 'Validée' };
-        await window.supabaseClient.from('ga_users').insert([newUser]);
-        simToast("✅ Compte créé avec succès ! Connectez-vous.", 'var(--gold)');
-        setTimeout(() => document.getElementById('show-login').click(), 1000);
-    }
-    btn.textContent = 'CRÉER MON COMPTE';
-});
+        // Action: Register / Sign Up
+        document.getElementById('form-register-email').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-phone').value;
+            const password = document.getElementById('reg-password').value;
+            const btn = document.getElementById('btn-register-submit');
 
-document.getElementById('btn-logout').addEventListener('click', async () => {
-    localStorage.removeItem('ga_current_user');
-    await window.supabaseClient.auth.signOut();
-    location.reload();
-});
+            btn.classList.add('loading');
+            btn.disabled = true;
 
-// Google OAuth
-const cleanRedirectUrl = window.location.origin + window.location.pathname;
+            const { data, error } = await window.supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: {
+                        full_name: fullName,
+                        phone: phone
+                    }
+                }
+            });
 
-document.getElementById('btn-google-login')?.addEventListener('click', async (e) => {
-    e.preventDefault();
-    await window.supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: cleanRedirectUrl } });
-});
+            btn.classList.remove('loading');
+            btn.disabled = false;
 
-document.getElementById('btn-google-register')?.addEventListener('click', async (e) => {
-    e.preventDefault();
-    await window.supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: cleanRedirectUrl } });
-});
+            if (error) {
+                showNotification(error.message, "error");
+            } else {
+                // If sign-up confirmation is required
+                if (data.session === null) {
+                    showNotification("Inscription réussie ! Veuillez vérifier vos e-mails pour confirmer votre inscription.", "success");
+                } else {
+                    showNotification("Compte créé avec succès. Connexion...");
+                    await fetchAndCacheProfile(data.user);
+                    window.location.href = 'dashboard-client.html';
+                }
+            }
+        });
 
-async function loadActivePromotions() {
-    const section = document.getElementById('active-promotions-section');
-    const listEl = document.getElementById('active-promotions-list');
-    if (!section || !listEl) return;
-    
-    // Fetch active promotions
-    let promotions = [];
-    try {
-        const { data, error } = await window.supabaseClient
-            .from('ga_promotions')
-            .select('*')
-            .eq('active', true)
-            .order('created_at', { ascending: false });
-        if (error) {
-            console.error("Supabase load active promotions error:", error);
-            promotions = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]').filter(p => p.active);
-        } else {
-            promotions = data || [];
-        }
-    } catch(e) {
-        console.error("Retrieve promotions catch block error:", e);
-        promotions = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]').filter(p => p.active);
-    }
-    
-    if (promotions.length === 0) {
-        section.style.display = 'none';
-        return;
-    }
-    
-    section.style.display = 'block';
-    listEl.innerHTML = promotions.map(p => `
-        <div class="msg-item" style="background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), rgba(0, 0, 0, 0.5)); border: 1px solid rgba(201, 168, 76, 0.25); display: flex; flex-direction: column; gap: 8px; padding: 18px; box-sizing: border-box; border-radius: 8px; position: relative; overflow: hidden; margin-top: 10px; margin-bottom: 2px;">
-            <div style="position: absolute; right: -15px; bottom: -25px; font-size: 5.5rem; font-weight: 900; color: rgba(201, 168, 76, 0.04); font-family: 'Playfair Display', serif; pointer-events: none; user-select: none;">
-                -${p.discount_pct}%
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; z-index: 1;">
-                <span style="font-size: 0.95rem; font-weight: 700; color: var(--gold-light); font-family: 'Playfair Display', serif; text-align: left;">${p.title}</span>
-                <span style="background: rgba(34, 197, 94, 0.15); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; white-space: nowrap;">-${p.discount_pct}% RÉDUCTION</span>
-            </div>
-            <p style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.72); line-height: 1.5; z-index: 1; margin: 0; text-align: left;">${(p.description || '').replace(/\n/g, '<br>')}</p>
-        </div>
-    `).join('');
-}
+        // Action: Google Auth
+        document.getElementById('btn-google').addEventListener('click', async () => {
+            const redirectUrl = window.location.origin + window.location.pathname.replace('login-client.html', 'dashboard-client.html');
+            const { error } = await window.supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: redirectUrl
+                }
+            });
+            if (error) {
+                showNotification(error.message, "error");
+            }
+        });
 
-// ── Auth Session Handler ──
-async function handleAuthSession(session) {
-    if (!session || !session.user) return false;
-    const email = session.user.email;
-    const { data: users } = await window.supabaseClient.from('ga_users').select('*').eq('email', email);
-    let user = users && users.length > 0 ? users[0] : null;
-    if (!user) {
-        const fullName = session.user.user_metadata?.full_name || session.user.user_metadata?.name || email.split('@')[0];
-        const newUser = { name: fullName, email, cin: 'G-' + Date.now().toString().slice(-6), status: 'Validée' };
-        const { data: inserted } = await window.supabaseClient.from('ga_users').insert([newUser]).select();
-        user = (inserted && inserted[0]) ? inserted[0] : newUser;
-    }
-    if (user) {
-        localStorage.setItem('ga_current_user', JSON.stringify(user));
-        showAccountDashboard(user);
-        return true;
-    }
-    return false;
-}
+        // Action: Password Reset
+        document.getElementById('form-reset-password').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('reset-email').value;
+            const btn = document.getElementById('btn-reset-submit');
 
-window.addEventListener('load', async () => {
-    const hash = window.location.hash;
+            btn.classList.add('loading');
+            btn.disabled = true;
 
-    // ── Handle error/recovery hashes ──
-    if (hash.includes('error=')) {
-        setTimeout(() => simToast("❌ Lien invalide ou expiré. Veuillez réessayer.", '#ef4444'), 1000);
-        window.history.replaceState(null, null, window.location.pathname);
-    } else if (hash.includes('type=recovery')) {
-        document.getElementById('login-view').style.display = 'none';
-        document.getElementById('register-view').style.display = 'none';
-        document.getElementById('account-view').style.display = 'none';
-        const forgotView = document.getElementById('forgot-view');
-        if (forgotView) forgotView.style.display = 'none';
-        document.getElementById('reset-pwd-view').style.display = 'block';
-        document.getElementById('form-title').textContent = "Nouveau mot de passe";
-        return;
-    }
+            const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + window.location.pathname.replace('login-client.html', 'dashboard-client.html') + '?type=recovery'
+            });
 
-    if (!window.supabaseClient) return;
+            btn.classList.remove('loading');
+            btn.disabled = false;
 
-    // ── Clean OAuth hash from URL if present ──
-    if (hash && hash.includes('access_token=')) {
-        window.history.replaceState(null, null, window.location.pathname);
-    }
-
-    // ── Mark page as ready and handle any pending OAuth session ──
-    window._authListenerReady = true;
-    if (window._pendingAuthSession) {
-        console.log('Processing pending OAuth session...');
-        await handleAuthSession(window._pendingAuthSession);
-        window._pendingAuthSession = null;
-        return;
-    }
-
-    // ── Check existing session (normal page load / already logged in) ──
-    const { data: { session } } = await window.supabaseClient.auth.getSession();
-    if (session && session.user) {
-        await handleAuthSession(session);
-        return;
-    }
-
-    // ── Fallback to localStorage ──
-    const localUser = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
-    if (localUser) showAccountDashboard(localUser);
-});
-</script>
+            if (error) {
+                showNotification(error.message, "error");
+            } else {
+                showNotification("Un lien de réinitialisation vous a été envoyé par e-mail.", "success");
+                document.getElementById('form-reset-password').reset();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -159,7 +159,7 @@
 
 <div class="wrapper">
     <div class="card">
-        <a href="login-client.html" class="back-link">← Retour · Mon Compte</a>
+        <a href="#" onclick="if(document.referrer){history.back();}else{window.location.href='dashboard-client.html';}return false;" class="back-link">← Retour · Mon Compte</a>
         <span class="logo">GOLDEN ATLAS</span>
         <p class="logo-sub">Service Client · Réclamations</p>
 

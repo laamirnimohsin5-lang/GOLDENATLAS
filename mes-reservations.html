@@ -125,7 +125,7 @@
     <div id="world"></div>
     <div class="login-wrapper">
         <div class="login-card">
-            <a href="index.html" class="back-link">← RETOUR · BACK</a>
+            <a href="#" onclick="if(document.referrer){history.back();}else{window.location.href='dashboard-client.html';}return false;" class="back-link">← RETOUR · BACK</a>
             <div class="login-header">
                 <span class="login-logo">GOLDEN ATLAS</span>
                 <p class="login-subtitle">VOS SÉJOURS D'EXCEPTION</p>

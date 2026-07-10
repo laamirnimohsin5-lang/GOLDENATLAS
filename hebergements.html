@@ -649,8 +649,12 @@ function openRoomModal(roomName) {
     document.getElementById('modal-details-view').style.display = 'none';
     document.getElementById('modal-booking-view').style.display = 'block';
     
-    // Optional: Add the room name to the booking form context if we want
-    // But since the form has generic 'Réserver votre séjour', it is fine
+    // Populate the room name so script.js can insert it correctly
+    const modalRoom = document.getElementById('modal-room-name');
+    if (modalRoom && roomName) {
+        modalRoom.textContent = roomName;
+        modalRoom.style.display = 'block';
+    }
 }
 
 // ── Editorial CTA buttons ─────────────────────────────────────────

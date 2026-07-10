@@ -544,7 +544,7 @@ const translations = {
         cafe_espresso_desc: "الجوهر النقي للقهوة مستخلص تحت الضغط.",
         spa_hammam_title: "الحمامات",
         spa_hammam_desc: "طقس أصيل في ديكور فخم.",
-        spa_massage_title: "المساج",
+spa_massage_title: "المساج",
         spa_massage_desc: "من التدليك الخفيف إلى التدليك العميق.",
         spa_facials_title: "علاجات الوجه",
         spa_facials_desc: "عناية مخصصة بأفضل الماركات العالمية.",
@@ -649,52 +649,77 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     if (currentUser && loginBtn) {
-        loginBtn.innerHTML = `
-            <div id="user-profile-trigger" style="display:flex; align-items:center; gap:10px; cursor:pointer; position:relative;">
-                <div style="width:32px; height:32px; background:var(--gold); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem;">
-                    ${currentUser.name.charAt(0).toUpperCase()}
-                </div>
-                <div style="text-align:left; line-height:1.1;">
-                     <span style="display:block; font-size:0.6rem; opacity:0.6; letter-spacing:1px;">MOHSIN</span>
-                     <span style="display:block; font-size:0.75rem; font-weight:600; letter-spacing:1px;">BIENVENUE</span>
-                </div>
-                <ul id="user-dropdown" style="display:none; position:absolute; top:40px; right:0; background:#111; border:1px solid rgba(255,255,255,0.1); width:200px; padding:10px 0; list-style:none; z-index:2001; animation: fadeIn 0.3s ease;">
-                    <li id="show-my-account" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; cursor:pointer; transition:0.3s; border-bottom:1px solid rgba(255,255,255,0.05);">👤 MON COMPTE</li>
-                    <li id="show-my-res" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; cursor:pointer; transition:0.3s; border-bottom:1px solid rgba(255,255,255,0.05);">MES RÉSERVATIONS</li>
-                    <li id="client-logout" style="padding:12px 20px; font-size:0.7rem; letter-spacing:1px; color:#ef4444; cursor:pointer; transition:0.3s;">DÉCONNEXION</li>
-                </ul>
-            </div>
-        `;
-        loginBtn.removeAttribute('data-i18n');
-        loginBtn.style.background = 'none';
-        loginBtn.style.border = 'none';
-        loginBtn.style.padding = '0';
-        loginBtn.style.boxShadow = 'none';
+        renderHeaderUser(currentUser, loginBtn);
+    }
 
-        // Dropdown toggle
-        const trigger = document.getElementById('user-profile-trigger');
-        const dropdown = document.getElementById('user-dropdown');
-        trigger?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-        });
-        document.addEventListener('click', () => { if (dropdown) dropdown.style.display = 'none'; });
+    // ── Helper: render logged-in user avatar in header ──
+    function renderHeaderUser(user, btn) {
+        if (!btn || !user) return;
+        var name = user.name || user.full_name || user.email || '?';
+        var initial = name.charAt(0).toUpperCase();
+        var avatar = user.avatar_url || '';
+        var avatarTag = avatar
+            ? '<img src="' + avatar + '" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #c5a059;" onerror="this.style.display=\'none\'">'
+            : '<div style="width:32px;height:32px;background:#c5a059;color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">' + initial + '</div>';
+        btn.innerHTML =
+            '<div id="user-profile-trigger" style="display:flex;align-items:center;gap:10px;cursor:pointer;position:relative;">' +
+            avatarTag +
+            '<div style="text-align:left;line-height:1.1;">' +
+            '<span style="display:block;font-size:0.6rem;opacity:0.6;letter-spacing:1px;">' + name.split(' ')[0].toUpperCase() + '</span>' +
+            '<span style="display:block;font-size:0.75rem;font-weight:600;letter-spacing:1px;">BIENVENUE</span>' +
+            '</div>' +
+            '<ul id="user-dropdown" style="display:none;position:absolute;top:44px;right:0;background:#111;border:1px solid rgba(255,255,255,0.12);width:215px;padding:10px 0;list-style:none;z-index:2001;box-shadow:0 15px 40px rgba(0,0,0,0.6);border-radius:4px;">' +
+            '<li style="padding:9px 16px;font-size:0.58rem;color:rgba(255,255,255,0.3);letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,0.07);">' + (user.email || '') + '</li>' +
+            '<li id="show-my-account" style="padding:12px 20px;font-size:0.7rem;letter-spacing:1px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">👤 MON COMPTE</li>' +
+            '<li id="show-my-res" style="padding:12px 20px;font-size:0.7rem;letter-spacing:1px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);">📅 MES RÉSERVATIONS</li>' +
+            '<li id="client-logout" style="padding:12px 20px;font-size:0.7rem;letter-spacing:1px;color:#ef4444;cursor:pointer;">🚪 DÉCONNEXION</li>' +
+            '</ul></div>';
+        btn.removeAttribute('data-i18n');
+        btn.style.background = 'none';
+        btn.style.border = 'none';
+        btn.style.padding = '0';
+        btn.style.boxShadow = 'none';
 
-        // Mon Compte
-        document.getElementById('show-my-account')?.addEventListener('click', () => {
-            window.location.href = 'login-client.html';
-        });
-
-        // Logout
-        document.getElementById('client-logout')?.addEventListener('click', () => {
+        var trg = document.getElementById('user-profile-trigger');
+        var drp = document.getElementById('user-dropdown');
+        if (trg) trg.addEventListener('click', function(e) { e.stopPropagation(); drp.style.display = drp.style.display === 'none' ? 'block' : 'none'; });
+        document.addEventListener('click', function() { if (drp) drp.style.display = 'none'; });
+        var acctEl = document.getElementById('show-my-account');
+        if (acctEl) acctEl.addEventListener('click', function() { window.location.href = 'dashboard-client.html'; });
+        var resEl = document.getElementById('show-my-res');
+        if (resEl) resEl.addEventListener('click', function() { window.location.href = 'dashboard-client.html'; });
+        var logoutEl = document.getElementById('client-logout');
+        if (logoutEl) logoutEl.addEventListener('click', async function() {
             localStorage.removeItem('ga_current_user');
+            if (window.supabaseClient) await window.supabaseClient.auth.signOut();
             location.reload();
         });
+    }
 
-        // Show Reservations (Redirect to Dedicated Page)
-        document.getElementById('show-my-res')?.addEventListener('click', () => {
-            window.location.href = 'mes-reservations.html';
-        });
+    // ── ASYNC: verify Supabase session → update header if cache missing ──
+    if (window.supabaseClient) {
+        window.supabaseClient.auth.getSession().then(async function(resp) {
+            var session = resp && resp.data && resp.data.session;
+            if (!session || !session.user) return;
+            var user = session.user;
+            var cached = JSON.parse(localStorage.getItem('ga_current_user') || 'null');
+            // Already rendered from cache and emails match → nothing to do
+            if (cached && cached.email === user.email && document.getElementById('user-profile-trigger')) return;
+            // Fetch profile from Supabase
+            var name = (user.user_metadata && (user.user_metadata.full_name || user.user_metadata.name)) || user.email.split('@')[0];
+            var avatarUrl = (user.user_metadata && user.user_metadata.avatar_url) || '';
+            try {
+                var res = await window.supabaseClient.from('profiles').select('full_name,email,phone,avatar_url').eq('id', user.id).single();
+                if (res.data) { name = res.data.full_name || name; avatarUrl = res.data.avatar_url || avatarUrl; }
+            } catch(e2) {}
+            var userObj = { id: user.id, name: name, email: user.email, avatar_url: avatarUrl };
+            localStorage.setItem('ga_current_user', JSON.stringify(userObj));
+            var btn2 = document.getElementById('btn-top-login');
+            if (btn2) renderHeaderUser(userObj, btn2);
+            // Unlock feedback textarea
+            var fb = document.getElementById('feedback-msg');
+            if (fb) { fb.readOnly = false; fb.style.cursor = ''; }
+        }).catch(function() {});
     }
 
     async function loadUserReservations(email) {
@@ -1093,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const { error } = await window.supabaseClient.from('ga_reservations').insert([{
             name, arrival: arr, departure: dep, guests, room, status: 'En attente',
-            user_email: currentUser ? currentUser.email : null
+            user_email: activeUser ? activeUser.email : null
         }]);
 
         if (error) {
@@ -1808,7 +1833,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCancel.addEventListener('mouseleave', () => { btnCancel.style.color = '#71717a'; });
 
     btnLogin.addEventListener('click', () => window.location.href = 'login-client.html');
-    btnSignup.addEventListener('click', () => window.location.href = 'creer-compte.html');
+    btnSignup.addEventListener('click', () => window.location.href = 'login-client.html#register');
     btnCancel.addEventListener('click', closeAuthModal);
     
     // Intercept clicks
