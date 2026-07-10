@@ -2649,6 +2649,7 @@ async function seedDefaultHotelData() {
                     description: r.description || '',
                     category:    r.type || '',
                     image_url:   r.img || '',
+                    capacity:    r.capacity || 2,
                     available:   r.status !== 'Indisponible'
                 }));
                 await window.supabaseClient.from('ga_rooms').insert(baseRooms);
@@ -2686,13 +2687,19 @@ async function fetchRooms() {
             return getLocalRooms(); 
         }
         if (data && data.length > 0) {
-            // Normalize Supabase fields to local field names
-            return data.map(r => ({
-                ...r,
-                img: r.image_url || r.img || '',
-                type: r.category || r.type || '',
-                status: r.available === false ? 'Indisponible' : (r.status || 'Disponible')
-            }));
+            // Get local mock to fill in any fields missing from Supabase (capacity, image_url)
+            const localMock = getLocalRooms();
+            return data.map(r => {
+                // Find matching local room by name to fill missing fields
+                const local = localMock.find(l => l.name.toLowerCase() === (r.name || '').toLowerCase());
+                return {
+                    ...r,
+                    img:      r.image_url || (local && local.img) || '',
+                    type:     r.category  || (local && local.type) || '',
+                    capacity: r.capacity  || (local && local.capacity) || 2,
+                    status:   r.available === false ? 'Indisponible' : (r.status || 'Disponible')
+                };
+            });
         }
         return getLocalRooms();
     } catch(e) {
@@ -2843,11 +2850,12 @@ document.getElementById('form-room').addEventListener('submit', async (e) => {
         img:         imgVal,
         status:      statusVal
     };
-    // Fields for Supabase (uses: category, image_url, available)
+    // Fields for Supabase (uses: category, image_url, capacity, available)
     const dbData = {
         category:    typeVal,
         name:        localData.name,
         price:       localData.price,
+        capacity:    localData.capacity,
         description: localData.description,
         image_url:   imgVal,
         available:   statusVal === 'Disponible'

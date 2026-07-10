@@ -86,9 +86,12 @@ CREATE TABLE IF NOT EXISTS public.ga_rooms (
     description TEXT,
     category    TEXT,
     image_url   TEXT,
+    capacity    INTEGER DEFAULT 2,
     available   BOOLEAN DEFAULT true,
     created_at  TIMESTAMPTZ DEFAULT NOW()
 );
+-- Add capacity if it didn't exist before (idempotent patch)
+ALTER TABLE public.ga_rooms ADD COLUMN IF NOT EXISTS capacity INTEGER DEFAULT 2;
 
 -- ════════════════════════════════════
 -- 7. TABLE: ga_services
