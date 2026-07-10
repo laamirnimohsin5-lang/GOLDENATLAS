@@ -196,6 +196,10 @@
                         <label>Mot de passe</label>
                         <input type="password" id="reg-password" required placeholder="Min 6 caractères">
                     </div>
+                    <div class="form-group">
+                        <label>Confirmer le mot de passe</label>
+                        <input type="password" id="reg-confirm-password" required placeholder="Répéter le mot de passe">
+                    </div>
                     <button type="submit" class="btn-submit" id="btn-register-submit">
                         <span>Créer un Compte</span>
                         <div class="spinner"></div>
@@ -368,7 +372,13 @@
             const email = document.getElementById('reg-email').value;
             const phone = document.getElementById('reg-phone').value;
             const password = document.getElementById('reg-password').value;
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
             const btn = document.getElementById('btn-register-submit');
+
+            if (password !== confirmPassword) {
+                showNotification("Les mots de passe ne correspondent pas.", "error");
+                return;
+            }
 
             btn.classList.add('loading');
             btn.disabled = true;
