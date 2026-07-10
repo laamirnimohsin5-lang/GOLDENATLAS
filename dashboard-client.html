@@ -444,6 +444,9 @@
             <li><a href="#" data-panel="complaints" onclick="switchPanel(event,'complaints')">
                 <i class="icon">📨</i> Réclamations
             </a></li>
+            <li><a href="#" data-panel="messages" onclick="switchPanel(event,'messages')">
+                <i class="icon">💬</i> Messagerie
+            </a></li>
             <li><a href="#" data-panel="profile" onclick="switchPanel(event,'profile')">
                 <i class="icon">👤</i> Mon Profil
             </a></li>
@@ -672,6 +675,28 @@
             </div>
         </div>
 
+        <!-- ══ MESSAGES ══ -->
+        <div class="dash-panel" id="panel-messages">
+            <div class="panel-header">
+                <span class="surtitle">Communication</span>
+                <h2>Messagerie administrateur</h2>
+            </div>
+            
+            <div class="info-card">
+                <h3>💬 Échanges avec la Direction</h3>
+                <div id="chat-thread-container" style="max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding: 20px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); margin-bottom: 20px; border-radius: 4px;">
+                    <!-- Chat bubbles will go here -->
+                </div>
+                
+                <form id="chat-send-form" style="display: flex; gap: 12px; align-items: flex-end;">
+                    <textarea id="chat-input-msg" placeholder="Écrivez un message ou répondez à l'administration..." required style="flex: 1; padding: 12px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text); outline: none; font-family: inherit; font-size: 0.88rem; border-radius: 4px; resize: none; height: 50px; min-height: 50px; line-height: 1.4;"></textarea>
+                    <button type="submit" class="btn-gold" id="btn-chat-submit" style="white-space: nowrap; height: 50px; display: flex; align-items: center; justify-content: center; padding: 0 30px; font-weight: 800;">
+                        Envoyer
+                    </button>
+                </form>
+            </div>
+        </div>
+
     </main>
 </div>
 
@@ -879,7 +904,7 @@ async function initDashboard() {
     renderProfile(profile);
 
     // Load data
-    await Promise.all([loadBookings(user.id), loadComplaints(user.id), loadClientPromotions()]);
+    await Promise.all([loadBookings(user.id), loadComplaints(user.id), loadClientPromotions(), loadClientMessages()]);
 
     // Init complaint form (auto-fill room from last validated reservation)
     await initComplaintForm();
@@ -1346,6 +1371,110 @@ document.getElementById('complaint-form').addEventListener('submit', async (e) =
         const dateEl = document.getElementById('c-date');
         if (dateEl) dateEl.value = new Date().toLocaleDateString('fr-FR', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
         await loadComplaints(currentUser.id);
+    }
+});
+
+// ── Load & Render Messages ──
+async function loadClientMessages() {
+    if (!currentUser) return;
+    
+    let clientMsgs = [];
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('ga_feedback')
+            .eq('user_email', currentUser.email)
+            .order('created_at', { ascending: true });
+            
+        if (!error && data) {
+            clientMsgs = data;
+        }
+    } catch (e) {
+        console.error("Error loading feedback messages:", e);
+    }
+
+    const localReplies = JSON.parse(localStorage.getItem('ga_admin_replies') || '[]');
+    const clientReplies = localReplies.filter(r => r.to_email === currentUser.email);
+
+    // Normalize messages
+    const msg1 = clientMsgs.map(m => ({
+        sender: 'client',
+        text: m.message,
+        date: new Date(m.created_at || Date.now())
+    }));
+
+    const msg2 = clientReplies.map(r => ({
+        sender: 'admin',
+        text: r.message,
+        date: new Date(r.date || Date.now())
+    }));
+
+    // Combine and sort chronologically
+    const thread = [...msg1, ...msg2].sort((a, b) => a.date - b.date);
+    const container = document.getElementById('chat-thread-container');
+    if (!container) return;
+
+    if (thread.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state" style="border: none; padding: 40px 0;">
+                <div class="empty-icon">💬</div>
+                <p>Aucun message échangé avec la direction. Commencez la conversation en écrivant ci-dessous.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = thread.map(msg => {
+        const isAdmin = msg.sender === 'admin';
+        const name = isAdmin ? 'Direction' : 'Vous';
+        const bg = isAdmin ? 'rgba(197, 160, 89, 0.12)' : 'rgba(255, 255, 255, 0.05)';
+        const border = isAdmin ? '1px solid rgba(197, 160, 89, 0.25)' : '1px solid rgba(255, 255, 255, 0.08)';
+        const align = isAdmin ? 'flex-start' : 'flex-end';
+        const timeStr = msg.date.toLocaleDateString('fr-FR') + ' ' + msg.date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
+        
+        return `
+            <div style="display: flex; flex-direction: column; align-items: ${align}; width: 100%;">
+                <div style="max-width: 80%; background: ${bg}; border: ${border}; padding: 12px 16px; border-radius: 8px;">
+                    <p style="margin: 0; font-size: 0.85rem; line-height: 1.5; color: var(--text);">${msg.text}</p>
+                </div>
+                <span style="font-size: 0.6rem; color: var(--muted); margin-top: 4px; padding: 0 4px;">${name} · ${timeStr}</span>
+            </div>
+        `;
+    }).join('');
+
+    setTimeout(() => { container.scrollTop = container.scrollHeight; }, 50);
+}
+
+// ── Chat Form Submit ──
+document.getElementById('chat-send-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentUser || !window.supabaseClient) return;
+
+    const inputMsg = document.getElementById('chat-input-msg');
+    const msg = inputMsg.value.trim();
+    if (!msg) return;
+
+    const submitBtn = document.getElementById('btn-chat-submit');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Envoi...';
+    }
+
+    const { error } = await window.supabaseClient.from('ga_feedback').insert([{
+        message: msg,
+        sender: currentUser.full_name || currentUser.email || 'Anonyme',
+        user_email: currentUser.email
+    }]);
+
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer';
+    }
+
+    if (error) {
+        showToast("Erreur lors de l'envoi : " + error.message, 'error');
+    } else {
+        showToast("Message envoyé avec succès !");
+        inputMsg.value = '';
+        await loadClientMessages();
     }
 });
 
