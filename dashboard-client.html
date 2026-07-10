@@ -722,8 +722,14 @@ window.switchPanel = function(e, id) {
     if (e) e.preventDefault();
     document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
-    document.getElementById('panel-' + id).classList.add('active');
-    document.querySelector(`.sidebar-nav a[data-panel="${id}"]`).classList.add('active');
+    
+    const panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.add('active');
+    
+    const navLink = document.querySelector(`.sidebar-nav a[data-panel="${id}"]`);
+    if (navLink) navLink.classList.add('active');
+    
+    localStorage.setItem('ga_active_panel', id);
 };
 
 // ── formatDate ──
@@ -908,6 +914,10 @@ async function initDashboard() {
 
     // Init complaint form (auto-fill room from last validated reservation)
     await initComplaintForm();
+
+    // Restore last active panel
+    const savedPanel = localStorage.getItem('ga_active_panel') || 'overview';
+    switchPanel(null, savedPanel);
 
     // Hide loader
     document.getElementById('loading-screen').classList.add('hidden');
@@ -1382,6 +1392,7 @@ async function loadClientMessages() {
     try {
         const { data, error } = await window.supabaseClient
             .from('ga_feedback')
+            .select('*')
             .eq('user_email', currentUser.email)
             .order('created_at', { ascending: true });
             
