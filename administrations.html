@@ -2643,10 +2643,14 @@ async function seedDefaultHotelData() {
                 if (roomsCount > 0) {
                     await window.supabaseClient.from('ga_rooms').delete().neq('id', '00000000-0000-0000-0000-000000000000');
                 }
-                const baseRooms = getLocalRooms().map(r => {
-                    const { id, ...rest } = r;
-                    return rest;
-                });
+                const baseRooms = getLocalRooms().map(r => ({
+                    name:        r.name,
+                    price:       r.price,
+                    description: r.description || '',
+                    category:    r.type || '',
+                    image_url:   r.img || '',
+                    available:   r.status !== 'Indisponible'
+                }));
                 await window.supabaseClient.from('ga_rooms').insert(baseRooms);
             }
         }
@@ -2681,7 +2685,16 @@ async function fetchRooms() {
             console.error('Rooms fetching from Supabase failed, using local storage:', error); 
             return getLocalRooms(); 
         }
-        return data && data.length > 0 ? data : getLocalRooms();
+        if (data && data.length > 0) {
+            // Normalize Supabase fields to local field names
+            return data.map(r => ({
+                ...r,
+                img: r.image_url || r.img || '',
+                type: r.category || r.type || '',
+                status: r.available === false ? 'Indisponible' : (r.status || 'Disponible')
+            }));
+        }
+        return getLocalRooms();
     } catch(e) {
         console.error('Rooms catch error:', e);
         return getLocalRooms();
@@ -2816,51 +2829,66 @@ document.getElementById('room-img').addEventListener('input', function(e) {
 document.getElementById('form-room').addEventListener('submit', async (e) => {
     e.preventDefault();
     const id = document.getElementById('room-id').value;
-    const roomData = {
-        type:        document.getElementById('room-type').value,
+    const typeVal     = document.getElementById('room-type').value;
+    const imgVal      = document.getElementById('room-img').value;
+    const statusVal   = document.getElementById('room-status').value;
+
+    // Fields for local mock (uses: type, img, status)
+    const localData = {
+        type:        typeVal,
         name:        document.getElementById('room-name').value,
         price:       parseInt(document.getElementById('room-price').value),
         capacity:    parseInt(document.getElementById('room-capacity').value),
         description: document.getElementById('room-desc').value,
-        img:         document.getElementById('room-img').value,
-        status:      document.getElementById('room-status').value
+        img:         imgVal,
+        status:      statusVal
     };
+    // Fields for Supabase (uses: category, image_url, available)
+    const dbData = {
+        category:    typeVal,
+        name:        localData.name,
+        price:       localData.price,
+        description: localData.description,
+        image_url:   imgVal,
+        available:   statusVal === 'Disponible'
+    };
+
     if (id) {
         const isMock = String(id).startsWith('r-') || String(id).length < 10;
         if (isMock) {
             let mockData = getLocalRooms();
             const idx = mockData.findIndex(r => String(r.id) === String(id));
             if (idx !== -1) {
-                mockData[idx] = { ...mockData[idx], ...roomData };
+                mockData[idx] = { ...mockData[idx], ...localData };
                 localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
             }
             showAdminToast('Élément (local) modifié ✓');
         } else {
-            const { error } = await window.supabaseClient.from('ga_rooms').update(roomData).eq('id', id);
+            const { error } = await window.supabaseClient.from('ga_rooms').update(dbData).eq('id', id);
             if (error) {
                 console.error('Update room error, falling back locally:', error);
                 let mockData = getLocalRooms();
                 const idx = mockData.findIndex(r => String(r.id) === String(id));
                 if (idx !== -1) {
-                    mockData[idx] = { ...mockData[idx], ...roomData };
+                    mockData[idx] = { ...mockData[idx], ...localData };
                     localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
                 }
                 showAdminToast('Élément modifié localement ✓');
             } else {
-                showAdminToast('Élément modifié ✓');
+                showAdminToast('Élément modifié dans la base de données ✓');
             }
         }
     } else {
-        const { error } = await window.supabaseClient.from('ga_rooms').insert([roomData]);
+        const { error } = await window.supabaseClient.from('ga_rooms').insert([dbData]);
         if (error) {
             console.error('Insert room error, falling back locally:', error);
             let mockData = getLocalRooms();
-            const newRoom = { id: 'r-' + Date.now(), ...roomData };
+            const newRoom = { id: 'r-' + Date.now(), ...localData };
             mockData.push(newRoom);
             localStorage.setItem('ga_rooms_mock', JSON.stringify(mockData));
             showAdminToast('Élément ajouté localement ✓');
         } else {
-            showAdminToast('Élément ajouté ✓');
+            showAdminToast('Élément ajouté dans la base de données ✓');
         }
     }
     closeModal('modal-room');

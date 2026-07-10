@@ -778,6 +778,17 @@ function getRoomPrice(roomName) {
     return partial ? priceMap[partial] : 1500;
 }
 
+function getRoomImage(roomName) {
+    if (!roomName || !window.dynamicRoomsDb) return '';
+    const exact = window.dynamicRoomsDb.find(r => r.name.toLowerCase() === roomName.toLowerCase());
+    if (exact && exact.image_url) return exact.image_url;
+    const partial = window.dynamicRoomsDb.find(r =>
+        roomName.toLowerCase().includes(r.name.toLowerCase()) ||
+        r.name.toLowerCase().includes(roomName.toLowerCase())
+    );
+    return (partial && partial.image_url) ? partial.image_url : '';
+}
+
 function calculateNights(arrival, departure) {
     if (!arrival || !departure) return 1;
     const a = new Date(arrival);
@@ -891,19 +902,19 @@ async function initDashboard() {
 
     currentUser = { ...profile, supabase_user: user };
 
-    // Fetch dynamic rooms prices
+    // Fetch dynamic rooms data (price + image)
     try {
-        const { data: dbRooms } = await window.supabaseClient.from('ga_rooms').select('name, price');
+        const { data: dbRooms } = await window.supabaseClient.from('ga_rooms').select('name, price, image_url');
         if (dbRooms && dbRooms.length > 0) {
             window.dynamicRoomsDb = dbRooms;
         } else {
             const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
-            window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+            window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price, image_url: r.img || '' }));
         }
     } catch(e) {
         console.error("Supabase dynamic rooms load error in dashboard client:", e);
         const mockRooms = JSON.parse(localStorage.getItem('ga_rooms_mock') || '[]');
-        window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price }));
+        window.dynamicRoomsDb = mockRooms.map(r => ({ name: r.name, price: r.price, image_url: r.img || '' }));
     }
 
     // Hydrate UI
@@ -1028,7 +1039,12 @@ function renderBookings(bookings) {
         return `
         <div class="booking-card" style="position:relative; margin-bottom: 16px;">
             ${isDiscountedRes ? '<div style="position:absolute; top:-10px; right:10px; background:var(--gold); color:#000; padding:4px 12px; font-size:0.55rem; font-weight:800; border-radius:4px; z-index:5;">RÉCOMPENSE FIDÉLITÉ</div>' : ''}
-            <div class="booking-icon">🏨</div>
+            <div class="booking-icon" style="padding:0; overflow:hidden; border-radius:4px;">
+                ${getRoomImage(b.room)
+                    ? `<img src="${getRoomImage(b.room)}" alt="${b.room}" style="width:48px; height:48px; object-fit:cover; border-radius:4px;" onerror="this.outerHTML='🏨'">`
+                    : '🏨'
+                }
+            </div>
             <div class="booking-info">
                 <div class="booking-room">${b.room || '—'}</div>
                 <div class="booking-meta">
