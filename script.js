@@ -1147,10 +1147,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!msg || !window.supabaseClient) return;
 
         const { error } = await window.supabaseClient.from('ga_feedback').insert([{
-            message: msg, sender: activeUser.name, status: 'Nouveau'
+            message: msg,
+            sender: activeUser.name || activeUser.email || 'Anonyme',
+            user_email: activeUser.email
         }]);
 
-        if (!error) {
+        if (error) {
+            console.error("Supabase feedback error:", error);
+            showToast("Erreur lors de l'envoi du message : " + error.message, "#ef4444");
+        } else {
             showToast("Merci pour votre message !");
             e.target.reset();
         }
