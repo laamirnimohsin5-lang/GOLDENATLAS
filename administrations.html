@@ -483,6 +483,7 @@
 <div class="nav-item" data-tab="hotel"> Gestion de l'Hôtel</div>
 <div class="nav-item" data-tab="reclamations"> Réclamations</div>
 <div class="nav-item" data-tab="promotions"> Offres Spéciales</div>
+<div class="nav-item" data-tab="loyalty"> 🌟 Programme Fidélité</div>
 <a class="nav-item" href="index.html" style="margin-top: 30px; text-decoration: none;"> Retour au Site</a>
 <div class="nav-item" onclick="sessionStorage.removeItem('ga_admin_logged'); location.reload()" style="color: #ef4444; margin-top: 8px; margin-bottom: 20px;"> Déconnexion</div>
 </nav>
@@ -876,6 +877,55 @@
             </thead>
             <tbody id="promo-body">
                 <tr><td colspan="6" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<!-- ── ONGLET PROGRAMME FIDÉLITÉ ── -->
+<div class="tab-content" id="tab-loyalty">
+    <div class="data-card">
+        <div style="margin-bottom:20px;">
+            <h3 style="margin:0 0 8px 0; font-family:'Playfair Display',serif; color:var(--primary);">⭐ Programme de Fidélité — Clients Éligibles</h3>
+            <p style="font-size:0.78rem; color:rgba(255,255,255,0.4); margin:0 0 15px 0;">Liste des clients ayant atteint ou dépassé 10 réservations et pouvant bénéficier du rabais fidélité de 25%.</p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div class="search-bar" style="flex:1; min-width:180px;"><input id="srch-loyalty" placeholder="Rechercher un client..." type="text" oninput="renderLoyaltyClients()" style="width:100%;"/></div>
+                <button class="btn-gold" style="background:transparent; border-color:var(--primary); color:var(--primary); white-space:nowrap;" onclick="loadAndRenderLoyalClients()">🔄 Actualiser</button>
+            </div>
+        </div>
+
+        <!-- KPI banner -->
+        <div id="loyalty-kpi" style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px;">
+            <div class="stat-box" style="border-color:rgba(201,168,76,0.3); background:rgba(201,168,76,0.04);">
+                <div style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.35); text-transform:uppercase; margin-bottom:8px;">Clients Fidèles (≥10 rés.)</div>
+                <span class="stat-num" id="loyalty-count" style="color:var(--primary); font-size:2rem;">—</span>
+            </div>
+            <div class="stat-box" style="border-color:rgba(34,197,94,0.3); background:rgba(34,197,94,0.04);">
+                <div style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.35); text-transform:uppercase; margin-bottom:8px;">Remises -25% Accordées</div>
+                <span class="stat-num" id="loyalty-discounts" style="color:#22c55e; font-size:2rem;">—</span>
+            </div>
+            <div class="stat-box" style="border-color:rgba(59,130,246,0.3); background:rgba(59,130,246,0.04);">
+                <div style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.35); text-transform:uppercase; margin-bottom:8px;">Réservations Totales Fidèles</div>
+                <span class="stat-num" id="loyalty-total-res" style="color:#3b82f6; font-size:2rem;">—</span>
+            </div>
+        </div>
+
+        <div style="overflow-x:auto;">
+        <table id="loyalty-table">
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Nb. Réservations</th>
+                    <th>Cycles Complétés (10x)</th>
+                    <th>Prochaine Remise dans</th>
+                    <th>Statut Actuel</th>
+                </tr>
+            </thead>
+            <tbody id="loyalty-body">
+                <tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>
             </tbody>
         </table>
         </div>
@@ -2233,7 +2283,7 @@ function switchToTab(tab) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     const activeTab = document.getElementById('tab-' + tab);
     if (activeTab) activeTab.classList.add('active');
-    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'employees': 'Employés', 'messages': 'Messages', 'dashboard': 'Tableau de Bord', 'promotions': 'Offres & Promotions', 'reclamations': 'Réclamations' };
+    const tabTitles = { 'hotel': "Gestion de l'Hôtel", 'reservations': 'Réservations', 'customers': 'Clients', 'employees': 'Employés', 'messages': 'Messages', 'dashboard': 'Tableau de Bord', 'promotions': 'Offres & Promotions', 'reclamations': 'Réclamations', 'loyalty': '⭐ Programme Fidélité' };
     document.getElementById('tab-title').textContent = tabTitles[tab] || (tab.charAt(0).toUpperCase() + tab.slice(1));
     sessionStorage.setItem('ga_admin_tab', tab);
 }
@@ -3145,7 +3195,145 @@ window.switchToTab = function(tab) {
     if (tab === 'promotions') loadAndRenderPromotions();
     if (tab === 'hotel') { loadAndRenderRooms(); loadAndRenderServices(); }
     if (tab === 'employees') loadAndRenderEmployees();
+    if (tab === 'loyalty') loadAndRenderLoyalClients();
 };
+
+/* ═══════════════════════════════════════════════════
+   ── MODULE PROGRAMME FIDÉLITÉ ──
+   ═══════════════════════════════════════════════════ */
+
+let cachedLoyalClients = [];
+
+async function loadAndRenderLoyalClients() {
+    const tbody = document.getElementById('loyalty-body');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">Chargement...</td></tr>';
+
+    try {
+        // Fetch ALL reservations
+        const { data: allRes, error } = await window.supabaseClient
+            .from('ga_reservations')
+            .select('name, user_email, created_at')
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        // Group by user_email (fallback to name)
+        const clientMap = {};
+        (allRes || []).forEach(r => {
+            const key = (r.user_email || r.name || '').toLowerCase().trim();
+            if (!key) return;
+            if (!clientMap[key]) {
+                clientMap[key] = { email: r.user_email || '', name: r.name || r.user_email || key, count: 0, dates: [] };
+            }
+            clientMap[key].count++;
+            clientMap[key].dates.push(r.created_at);
+        });
+
+        // Enrich with profile phone data
+        const emails = Object.values(clientMap).map(c => c.email).filter(Boolean);
+        let profileMap = {};
+        if (emails.length > 0) {
+            const { data: profiles } = await window.supabaseClient
+                .from('profiles')
+                .select('email, phone, full_name')
+                .in('email', emails);
+            (profiles || []).forEach(p => { profileMap[p.email] = p; });
+        }
+
+        // Filter clients with at least 1 complete cycle (≥10 reservations)
+        cachedLoyalClients = Object.values(clientMap)
+            .filter(c => c.count >= 10)
+            .map(c => {
+                const profile = profileMap[c.email] || {};
+                const completedCycles = Math.floor(c.count / 10);
+                const pointsInCurrentCycle = c.count % 10 || 10; // if exactly divisible, they're at 10
+                const nextDiscountIn = pointsInCurrentCycle === 10 ? 0 : (10 - pointsInCurrentCycle);
+                return {
+                    name: profile.full_name || c.name,
+                    email: c.email,
+                    phone: profile.phone || '—',
+                    count: c.count,
+                    completedCycles,
+                    pointsInCurrentCycle,
+                    nextDiscountIn
+                };
+            })
+            .sort((a, b) => b.count - a.count);
+
+        // KPI Stats
+        const totalRes = cachedLoyalClients.reduce((sum, c) => sum + c.count, 0);
+        const totalDiscounts = cachedLoyalClients.reduce((sum, c) => sum + c.completedCycles, 0);
+        const loyaltyCountEl = document.getElementById('loyalty-count');
+        const loyaltyDiscEl = document.getElementById('loyalty-discounts');
+        const loyaltyTotalEl = document.getElementById('loyalty-total-res');
+        if (loyaltyCountEl) loyaltyCountEl.textContent = cachedLoyalClients.length;
+        if (loyaltyDiscEl) loyaltyDiscEl.textContent = totalDiscounts;
+        if (loyaltyTotalEl) loyaltyTotalEl.textContent = totalRes;
+
+        renderLoyaltyClients();
+
+    } catch(e) {
+        console.error('Loyalty load error:', e);
+        const tbody = document.getElementById('loyalty-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444; padding:30px 0;">Erreur de chargement. Vérifiez la connexion Supabase.</td></tr>';
+    }
+}
+
+function renderLoyaltyClients() {
+    const tbody = document.getElementById('loyalty-body');
+    if (!tbody) return;
+
+    const term = (document.getElementById('srch-loyalty')?.value || '').toLowerCase();
+    const filtered = term
+        ? cachedLoyalClients.filter(c => c.name.toLowerCase().includes(term) || c.email.toLowerCase().includes(term))
+        : cachedLoyalClients;
+
+    if (!filtered.length) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:rgba(255,255,255,0.3); padding:40px 0;">
+            ${cachedLoyalClients.length === 0 ? 'Aucun client fidèle (≥10 réservations) trouvé.' : 'Aucun résultat pour cette recherche.'}
+        </td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(c => {
+        const isReadyForDiscount = c.nextDiscountIn === 0;
+        const progressPct = Math.round((c.pointsInCurrentCycle / 10) * 100);
+        const progressBar = `
+            <div style="width:100%; background:rgba(255,255,255,0.08); border-radius:4px; height:6px; margin-top:4px; overflow:hidden;">
+                <div style="width:${progressPct}%; height:100%; background: ${isReadyForDiscount ? '#22c55e' : 'var(--primary)'}; border-radius:4px; transition:width 0.5s;"></div>
+            </div>
+            <div style="font-size:0.6rem; color:rgba(255,255,255,0.3); margin-top:2px;">${c.pointsInCurrentCycle} / 10 points</div>`;
+
+        return `<tr>
+            <td>
+                <div style="font-weight:600; color:var(--primary);">${c.name}</div>
+            </td>
+            <td style="font-size:0.8rem;">${c.email || '—'}</td>
+            <td>${c.phone}</td>
+            <td>
+                <span style="font-size:1.1rem; font-weight:700; color:#3b82f6;">${c.count}</span>
+                ${progressBar}
+            </td>
+            <td style="text-align:center;">
+                <span style="background:rgba(201,168,76,0.15); color:var(--primary); padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.85rem;">
+                    ✕ ${c.completedCycles}
+                </span>
+            </td>
+            <td style="text-align:center;">
+                ${isReadyForDiscount
+                    ? `<span style="background:rgba(34,197,94,0.15); color:#22c55e; padding:4px 12px; border-radius:12px; font-weight:700; font-size:0.78rem;">🎁 REMISE DISPONIBLE</span>`
+                    : `<span style="color:rgba(255,255,255,0.5); font-size:0.85rem;">${c.nextDiscountIn} réservation${c.nextDiscountIn > 1 ? 's' : ''}</span>`
+                }
+            </td>
+            <td>
+                ${isReadyForDiscount
+                    ? `<span class="badge badge-success" style="font-size:0.65rem;">⭐ Fidèle — 25% OFF</span>`
+                    : `<span class="badge badge-pending" style="font-size:0.65rem;">En cours</span>`
+                }
+            </td>
+        </tr>`;
+    }).join('');
+}
 
 /* ═══════════════════════════════════════════════════
    ── MODULE OFFRES SPÉCIALES & PROMOTIONS ──
