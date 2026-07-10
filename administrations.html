@@ -1761,14 +1761,29 @@ async function loadDashboardData() {
     document.getElementById('db-taux-valid').textContent = total > 0 ? tauxPct + '%' : '—';
 
     // Estimated revenue: sum of validated reservations' actual prices * nights
+    // Estimated revenue: sum of validated reservations' actual prices * nights, factoring in 25% loyalty discounts
     let revEst = 0;
-    allRes.forEach(r => {
+    const clientResCounts = {};
+    const sortedAllRes = [...allRes].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+    sortedAllRes.forEach(r => {
+        const key = (r.user_email || r.name || '').toLowerCase().trim();
+        if (!key) return;
+        if (!clientResCounts[key]) {
+            clientResCounts[key] = 0;
+        }
+        clientResCounts[key]++;
+
         if (r.status === 'Validée') {
             const pricePerUnit = getRoomPrice(r.room, dbRooms);
             const nights = (r.room.includes('Chambre') || r.room.includes('Suite') || r.room.includes('Riad')) 
                 ? calculateNights(r.arrival, r.departure) 
                 : 1;
-            revEst += pricePerUnit * nights;
+            const baseTotal = pricePerUnit * nights;
+            
+            const isDiscounted = (clientResCounts[key] % 10 === 0);
+            const finalPrice = isDiscounted ? Math.round(baseTotal * 0.75) : baseTotal;
+            revEst += finalPrice;
         }
     });
 
@@ -3229,29 +3244,38 @@ async function loadAndRenderLoyalClients() {
             clientMap[key].dates.push(r.created_at);
         });
 
-        // Enrich with profile phone data
+        // Enrich with profile/user details from ga_users
         const emails = Object.values(clientMap).map(c => c.email).filter(Boolean);
+        const names = Object.values(clientMap).map(c => c.name).filter(Boolean);
         let profileMap = {};
-        if (emails.length > 0) {
-            const { data: profiles } = await window.supabaseClient
-                .from('profiles')
-                .select('email, phone, full_name')
-                .in('email', emails);
-            (profiles || []).forEach(p => { profileMap[p.email] = p; });
+        
+        try {
+            const { data: gaUsers } = await window.supabaseClient
+                .from('ga_users')
+                .select('email, phone, name');
+            (gaUsers || []).forEach(u => {
+                if (u.email) profileMap[u.email.toLowerCase().trim()] = u;
+                if (u.name) profileMap[u.name.toLowerCase().trim()] = u;
+            });
+        } catch(e) {
+            console.error("Error loading ga_users for loyalty enrichment:", e);
         }
 
         // Filter clients with at least 1 complete cycle (≥10 reservations)
         cachedLoyalClients = Object.values(clientMap)
             .filter(c => c.count >= 10)
             .map(c => {
-                const profile = profileMap[c.email] || {};
+                const emailKey = (c.email || '').toLowerCase().trim();
+                const nameKey = (c.name || '').toLowerCase().trim();
+                const profileObj = profileMap[emailKey] || profileMap[nameKey] || {};
+                
                 const completedCycles = Math.floor(c.count / 10);
                 const pointsInCurrentCycle = c.count % 10 || 10; // if exactly divisible, they're at 10
                 const nextDiscountIn = pointsInCurrentCycle === 10 ? 0 : (10 - pointsInCurrentCycle);
                 return {
-                    name: profile.full_name || c.name,
-                    email: c.email,
-                    phone: profile.phone || '—',
+                    name: profileObj.name || c.name,
+                    email: c.email || profileObj.email || '',
+                    phone: profileObj.phone || '—',
                     count: c.count,
                     completedCycles,
                     pointsInCurrentCycle,

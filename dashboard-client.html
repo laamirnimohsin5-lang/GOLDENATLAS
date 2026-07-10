@@ -758,16 +758,41 @@ function calculateNights(arrival, departure) {
 
 async function loadClientPromotions() {
     const client = window.supabaseClient;
-    const { data: promos, error } = await client
-        .from('ga_promotions')
-        .select('*')
-        .eq('active', true)
-        .order('created_at', { ascending: false });
+    let allPromos = [];
+    let isError = false;
+
+    try {
+        const { data, error } = await client
+            .from('ga_promotions')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('Supabase promotions error:', error);
+            isError = true;
+        } else {
+            allPromos = data || [];
+        }
+    } catch(e) {
+        console.error('Supabase promotions catch error:', e);
+        isError = true;
+    }
+
+    // Fallback: If Supabase fails OR returns empty, read from localStorage.getItem('ga_promotions_mock')
+    if (isError || allPromos.length === 0) {
+        const localData = JSON.parse(localStorage.getItem('ga_promotions_mock') || '[]');
+        allPromos = localData;
+    }
 
     const container = document.getElementById('promotions-client-list');
     if (!container) return;
 
-    if (error || !promos || promos.length === 0) {
+    // Filter active promotions — handle boolean true, string 'true', integer 1
+    const promos = (allPromos || []).filter(p =>
+        p.active === true || p.active === 'true' || p.active === 1
+    );
+
+    if (!promos || promos.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
                 <div class="empty-icon">🏷️</div>
@@ -803,6 +828,7 @@ async function loadClientPromotions() {
         `;
     }
 }
+
 
 async function initDashboard() {
     const client = window.supabaseClient;
